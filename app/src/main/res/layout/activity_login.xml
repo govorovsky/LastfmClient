@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/img_login_logo"
+
+        />
+
+    <TextView
+        android:id="@+id/promt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/promt"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:textSize="32sp"
+        android:fontFamily="sans-serif-light"
+        android:textColor="#333333"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/logo"
+        />
+    
+
+
+    <AutoCompleteTextView
+        android:id="@+id/login_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_below="@id/promt"
+        android:paddingBottom="18dp"
+        android:paddingTop="18dp"
+        android:fontFamily="sans-serif-light"
+        android:textColor="#333333"
+        android:textColorHint="#c1c1c1"
+        android:textSize="18sp"
+        android:hint="@string/user"
+        android:singleLine="true"
+        android:imeOptions="actionNext"
+        android:background="@drawable/line"
+
+        />
+
+
+    <EditText
+        android:id="@+id/pass_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/login_input"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:fontFamily="sans-serif-light"
+        android:textColor="#333333"
+        android:textColorHint="#c1c1c1"
+        android:textSize="18sp"
+        android:paddingBottom="18dp"
+        android:paddingTop="18dp"
+        android:singleLine="true"
+        android:imeActionLabel="Sign in"
+        android:imeActionId="@+id/login_form"
+        android:inputType="textPassword"
+        android:hint="@string/password"
+        android:background="@drawable/line"
+        />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pass_input"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/comein"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:background="#E1E1E1"
+        android:text="@string/comeonin"
+        android:textSize="18sp"
+        android:fontFamily="sans-serif"
+        android:textColor="#ACACAC"
+        android:layout_below="@id/pass_input"
+
+        />
+
+
+    <TextView
+        android:id="@+id/donthave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="18dp"
+        android:layout_marginLeft="32dp"
+        android:text="@string/donthave"
+        android:textColor="#D51007"
+        android:fontFamily="sans-serif"
+        />
+
+    <TextView
+        android:id="@+id/restorepass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:textSize="14sp"
+        android:text="@string/forgot"
+        android:layout_marginBottom="18dp"
+        android:layout_marginRight="32dp"
+
+
+        />
+
+
+
+
+</RelativeLayout>

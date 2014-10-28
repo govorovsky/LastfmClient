@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">LastfmClient</string>
+    <string name="promt">Discover\nmore music</string>
+    <string name="user">Username</string>
+    <string name="password">Password</string>
+    <string name="comeonin">COME ON IN</string>
+    <string name="donthave">Don\'t have profile?</string>
+    <string name="forgot">Forgot password</string>
+</resources>
