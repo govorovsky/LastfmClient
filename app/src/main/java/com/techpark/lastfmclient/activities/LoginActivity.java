@@ -21,7 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpark.lastfmclient.R;
-import com.techpark.lastfmclient.api.AuthGetMobileSession;
+import com.techpark.lastfmclient.api.auth.GetMobileSession;
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.tasks.ApiQueryTask;
 
@@ -131,7 +131,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
-        ApiQuery query = new AuthGetMobileSession(args.getString("username"), args.getString("password"));
+        ApiQuery query = new GetMobileSession(args.getString("username"), args.getString("password"));
         query.prepare();
         Log.d("tttt", "CREATED LOADER");
         return new ApiQueryTask(LoginActivity.this, query);
@@ -154,10 +154,9 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                     String name = session.getString("name");
                     String key = session.getString("key");
                     Toast.makeText(this, "OK, +" + key, Toast.LENGTH_LONG).show();
-                    SharedPreferences preferences = this.getPreferences(Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString("session", key);
-                    editor.commit();
+
+                    saveSession(key);
+
                 }
             } catch (JSONException e) {
             }
@@ -165,6 +164,13 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         }
         getLoaderManager().destroyLoader(0);
 
+    }
+
+    private void saveSession(String session) {
+        SharedPreferences preferences = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("session", session);
+        editor.commit();
     }
 
     @Override

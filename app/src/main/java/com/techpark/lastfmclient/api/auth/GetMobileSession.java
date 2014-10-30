@@ -1,11 +1,13 @@
-package com.techpark.lastfmclient.api;
+package com.techpark.lastfmclient.api.auth;
 
+import com.techpark.lastfmclient.api.ApiHelpers;
+import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.network.Method;
 
 /**
  * Created by andrew on 28.10.14.
  */
-public class AuthGetMobileSession extends ApiQuery {
+public class GetMobileSession extends ApiQuery {
     private String user;
     private String pass;
 
@@ -30,7 +32,7 @@ public class AuthGetMobileSession extends ApiQuery {
         return Method.POST;
     }
 
-    public AuthGetMobileSession(String user, String pass) {
+    public GetMobileSession(String user, String pass) {
         this.user = user;
         this.pass = pass;
     }

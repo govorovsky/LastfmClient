@@ -6,4 +6,6 @@
     <string name="comeonin">COME ON IN</string>
     <string name="donthave">Don\'t have profile?</string>
     <string name="forgot">Forgot password</string>
+    <string name="drawer_open">OPEN</string>
+    <string name="drawer_close">CLOSE</string>
 </resources>

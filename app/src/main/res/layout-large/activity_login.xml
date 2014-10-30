@@ -44,7 +44,7 @@
         android:textSize="18sp"
         android:hint="@string/user"
         android:singleLine="true"
-        android:background="@drawable/line"
+        android:background="@drawable/line_edit_login"
 
         />
 
@@ -67,7 +67,7 @@
         android:imeActionId="@+id/login_form"
         android:inputType="textPassword"
         android:hint="@string/password"
-        android:background="@drawable/line"
+        android:background="@drawable/line_edit_login"
         />
 
     <ProgressBar

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="#262626"
+    >
+
+    <TextView
+        android:id="@+id/label"
+        style="?android:attr/listSeparatorTextViewStyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="SECTION TddT"
+        android:paddingBottom="4dp"
+        android:paddingTop="16dp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/line_drawer_section"
+        android:textSize="14sp" />
+
+</RelativeLayout>
