@@ -8,4 +8,5 @@
     <string name="forgot">Forgot password</string>
     <string name="drawer_open">OPEN</string>
     <string name="drawer_close">CLOSE</string>
+    <string name="plays_since">plays since</string>
 </resources>

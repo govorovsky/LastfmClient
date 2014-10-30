@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/header"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
@@ -19,7 +20,7 @@
 
     <TextView
         android:id="@+id/since_text"
-        android:text="plays since"
+        android:text="@string/plays_since"
         android:layout_toEndOf="@id/avatar"
         android:layout_alignParentBottom="true"
         android:fontFamily="sans-serif-regular"

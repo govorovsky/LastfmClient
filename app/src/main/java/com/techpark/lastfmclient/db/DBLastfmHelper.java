@@ -7,14 +7,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 /**
  * Created by andrew on 30.10.14.
  */
-public class DBOpenHelper extends SQLiteOpenHelper {
+public class DBLastfmHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "lastfm.db";
     private static final int DB_VER = 1;
     public static final String AUTHORITY = "com.techpark.lastfmclient";
-    public DBOpenHelper(Context context) {
+    public DBLastfmHelper(Context context) {
         super(context, DB_NAME, null, DB_VER);
     }
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {

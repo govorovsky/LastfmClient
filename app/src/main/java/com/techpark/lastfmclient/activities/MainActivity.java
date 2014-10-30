@@ -1,5 +1,6 @@
 package com.techpark.lastfmclient.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.techpark.lastfmclient.R;
@@ -18,10 +19,14 @@ import java.util.List;
  */
 public class MainActivity extends BaseNavDrawerActivity {
 
+    private static final String TAG_NAME = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new MainListFragment()).addToBackStack(null).commit();
+        if (getSupportFragmentManager().findFragmentByTag(TAG_NAME) == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new MainListFragment(), TAG_NAME).commit();
+        }
     }
 
     @Override
@@ -49,8 +54,19 @@ public class MainActivity extends BaseNavDrawerActivity {
                 /* fragment creation */
                 break;
 
+            case NavDrawerConstants.LOG_OUT:
+                logOut();
+                break;
+
         }
 
+    }
+
+
+    private void logOut() {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private List<NavDrawerItem> createMenu() {
@@ -63,7 +79,9 @@ public class MainActivity extends BaseNavDrawerActivity {
                 NavMenuSection.getInstance(105, "Events"),
                 NavMenuItem.getInstance(104, "My Events"),
                 NavMenuItem.getInstance(106, "Your Recommendations"),
-                NavMenuItem.getInstance(107, "Events Near Me")
+                NavMenuItem.getInstance(107, "Events Near Me"),
+                NavMenuSection.getInstance(108, "PROFILE"),
+                NavMenuItem.getInstance(NavDrawerConstants.LOG_OUT, "Log out")
         };
         return Arrays.asList(menu);
     }

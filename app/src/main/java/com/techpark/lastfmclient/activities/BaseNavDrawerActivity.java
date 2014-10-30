@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -147,6 +148,15 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            mDrawerLayout.closeDrawer(Gravity.LEFT);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     public void selectItem(int position) {
         NavDrawerItem selectedItem = navConf.getNavItems().get(position);
 
@@ -157,7 +167,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity {
             setTitle(selectedItem.getLabel());
         }
 
-        if (mDrawerLayout.isDrawerOpen(this.mDrawerList)) {
+        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
             mDrawerLayout.closeDrawer(mDrawerList);
         }
     }

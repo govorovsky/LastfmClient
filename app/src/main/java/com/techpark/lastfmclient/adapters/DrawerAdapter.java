@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.techpark.lastfmclient.R;
@@ -106,6 +107,7 @@ public class DrawerAdapter extends ArrayAdapter<NavDrawerItem> {
     }
 
     private class NavHeaderHolder {
+        RelativeLayout poster;
         TextView fullname;
         ImageButton avatar;
         TextView since;

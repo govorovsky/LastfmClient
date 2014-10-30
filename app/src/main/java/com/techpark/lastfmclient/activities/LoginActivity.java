@@ -3,10 +3,12 @@ package com.techpark.lastfmclient.activities;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Debug;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -37,6 +39,8 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
     private EditText mPassView;
     private Button mLoginButton;
     private ProgressBar mProgressBar;
+
+    private static final boolean DEBUG = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +118,11 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
     private void attemptLogin() {
 
+        if (DEBUG) {
+            launchMainActivity();
+            return;
+        }
+
         String user = mLoginView.getText().toString();
         String pass = mPassView.getText().toString();
         mLoginView.setError(null);
@@ -149,6 +158,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                     mLoginButton.setVisibility(View.VISIBLE);
                     Toast.makeText(this, "Wrong login/pass", Toast.LENGTH_LONG).show();
                 } else {
+
                     Bundle bundle = new Bundle();
                     JSONObject session = object.getJSONObject("session");
                     String name = session.getString("name");
@@ -156,6 +166,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                     Toast.makeText(this, "OK, +" + key, Toast.LENGTH_LONG).show();
 
                     saveSession(key);
+                    launchMainActivity();
 
                 }
             } catch (JSONException e) {
@@ -164,6 +175,13 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         }
         getLoaderManager().destroyLoader(0);
 
+    }
+
+
+    private void launchMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void saveSession(String session) {
