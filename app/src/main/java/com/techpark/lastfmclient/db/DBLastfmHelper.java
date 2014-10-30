@@ -3,6 +3,7 @@ package com.techpark.lastfmclient.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by andrew on 30.10.14.
@@ -24,6 +25,8 @@ public class DBLastfmHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        Log.w("DB info", "UPDATING DB");
+        db.execSQL("DROP TABLE IF EXISTS " + UsersTable.TABLE_NAME);
+        onCreate(db);
     }
 }

@@ -9,6 +9,7 @@ public class NavMenuHeader implements NavDrawerItem {
     private int plays;
     private String since;
     private String fullname;
+    private String poster;
 
     public static NavDrawerItem getInstance(int id, int plays, String since, String fullname) {
         NavMenuHeader s = new NavMenuHeader();

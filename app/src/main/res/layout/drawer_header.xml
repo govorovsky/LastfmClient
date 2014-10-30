@@ -7,6 +7,12 @@
     android:layout_height="160dp"
     android:background="#262626">
 
+    <ImageView
+        android:id="@+id/poster"
+        android:layout_width="match_parent"
+        android:scaleType="fitXY"
+        android:layout_height="160dp" />
+
     <com.pkmmte.view.CircularImageView
         android:id="@+id/avatar"
         android:layout_width="64dp"

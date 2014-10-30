@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.techpark.lastfmclient.R;
@@ -59,11 +59,13 @@ public class DrawerAdapter extends ArrayAdapter<NavDrawerItem> {
             convertView = layoutInflater.inflate(R.layout.drawer_header, parent, false);
             TextView fullname = (TextView) convertView.findViewById(R.id.full_name);
             TextView since = (TextView) convertView.findViewById(R.id.since_date);
+            ImageView poster = (ImageView) convertView.findViewById(R.id.poster);
 //            ImageButton avatar = (ImageButton) convertView.findViewById(R.id.avatar);
             holder = new NavHeaderHolder();
 //            holder.avatar = avatar;
             holder.fullname = fullname;
             holder.since = since;
+            holder.poster = poster;
 
             convertView.setTag(holder);
         }
@@ -73,6 +75,7 @@ public class DrawerAdapter extends ArrayAdapter<NavDrawerItem> {
 
         holder.fullname.setText(navMenuHeader.getFullName());
         holder.since.setText(navMenuHeader.getSince());
+        holder.poster.setImageResource(R.drawable.gunit); /* TODO !! */
 //        holder.p.setText(navMenuHeader.getFullName());
 
         return convertView;
@@ -107,7 +110,7 @@ public class DrawerAdapter extends ArrayAdapter<NavDrawerItem> {
     }
 
     private class NavHeaderHolder {
-        RelativeLayout poster;
+        ImageView poster;
         TextView fullname;
         ImageButton avatar;
         TextView since;
