@@ -25,7 +25,7 @@ public class UserGetInfo extends ApiQuery {
     @Override
     public void prepare() {
         entity.add(API_USER, username);
-        ApiHelpers.buildQuery(this, false);
+        build(this, false);
     }
 
     @Override

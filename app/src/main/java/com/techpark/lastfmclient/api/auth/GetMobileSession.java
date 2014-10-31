@@ -24,7 +24,7 @@ public class GetMobileSession extends ApiQuery {
     public void prepare() {
         entity.add(API_USER, user);
         entity.add(API_PASSWORD, pass);
-        ApiHelpers.buildQuery(this, true);
+        build(this, true);
     }
 
     @Override

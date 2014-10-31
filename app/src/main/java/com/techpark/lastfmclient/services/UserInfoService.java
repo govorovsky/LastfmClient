@@ -2,6 +2,7 @@ package com.techpark.lastfmclient.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.api.user.UserGetInfo;
@@ -13,6 +14,8 @@ import java.io.IOException;
  * Created by andrew on 30.10.14.
  */
 public class UserInfoService extends IntentService {
+
+    public static final String TAG = UserInfoService.class.getName();
 
     public static final String USERNAME = "username";
 
@@ -32,6 +35,8 @@ public class UserInfoService extends IntentService {
         String response = null;
         try {
             response = NetworkUtils.httpRequest(query);
+            Log.d(TAG, response);
+            /* TODO */
         } catch (IOException e) {
             e.printStackTrace();
         }

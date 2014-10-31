@@ -15,39 +15,10 @@ import java.util.LinkedList;
 public class ApiHelpers {
 
     /**
-     *
-     * @param query query to build
-     * @param requireSig only POST requests require signature
-     */
-    public static void buildQuery(ApiQuery query, boolean requireSig) {
-
-        KeyValueHolder params = query.getEntity();
-        params.add(ApiParamNames.API_METHOD, query.getName())
-                .add(ApiParamNames.API_KEY, ApiConstants.API_KEY);
-
-        if (requireSig) {
-
-            LinkedList<KeyValueHolder.Holder> temp = new LinkedList<>(params.getList());
-
-            StringBuilder stringBuilder = new StringBuilder();
-            Collections.sort(temp);
-
-            for (KeyValueHolder.Holder holder : temp) {
-                stringBuilder.append(holder.getKey()).append(holder.getVal());
-            }
-            stringBuilder.append(ApiConstants.API_SECRET);
-            params.add(ApiParamNames.API_SIG, getMD5(stringBuilder.toString()));
-
-        }
-        params.add(ApiParamNames.API_FORMAT, "json");
-        Log.d("SESSION", params.toString());
-    }
-
-    /**
      * @param string to be encoded
      * @return 32 bytes MD5 hash
      */
-    private static String getMD5(String string) {
+    static String getMD5(String string) {
         try {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
             byte[] bytes = md.digest(string.getBytes(Charset.forName("UTF-8")));
