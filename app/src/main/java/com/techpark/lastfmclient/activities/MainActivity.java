@@ -2,6 +2,8 @@ package com.techpark.lastfmclient.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.adapters.DrawerAdapter;
@@ -10,6 +12,7 @@ import com.techpark.lastfmclient.adapters.NavMenuHeader;
 import com.techpark.lastfmclient.adapters.NavMenuItem;
 import com.techpark.lastfmclient.adapters.NavMenuSection;
 import com.techpark.lastfmclient.fragments.MainListFragment;
+import com.techpark.lastfmclient.services.UserInfoService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +28,11 @@ public class MainActivity extends BaseNavDrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = new Intent(this, UserInfoService.class);
+        intent.putExtra(UserInfoService.BUNDLE_USERNAME, "govorovsky");
+        startService(intent);
+
         if (getSupportFragmentManager().findFragmentByTag(TAG_NAME) == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new MainListFragment(), TAG_NAME).commit();
         }
@@ -71,7 +79,7 @@ public class MainActivity extends BaseNavDrawerActivity {
 
     private List<NavDrawerItem> createMenu() {
         NavDrawerItem[] menu = new NavDrawerItem[]{
-                NavMenuHeader.getInstance(99, 12, "12.4.09", "Andrew Govorovsky"),
+                NavMenuHeader.getInstance(NavDrawerConstants.PROFILE, 12, "12.4.09", "Andrew Govorovsky", ""),
                 NavMenuSection.getInstance(100, "RECOMMENDATIONS"),
                 NavMenuItem.getInstance(101, "Music"),
                 NavMenuItem.getInstance(102, "Albums"),

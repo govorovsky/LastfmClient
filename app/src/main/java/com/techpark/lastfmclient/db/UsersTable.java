@@ -12,7 +12,7 @@ public class UsersTable implements BaseColumns {
     private UsersTable() {
     }
 
-    public static final String TABLE_NAME = "users";
+    public static final String TABLE_NAME = "user";
     public static final Uri CONTENT_URI = Uri.parse("content://" + DBLastfmHelper.AUTHORITY + "/user");
 
     public static final String COLUMN_NAME_NAME = "name";
@@ -25,7 +25,7 @@ public class UsersTable implements BaseColumns {
     public static final String COLUMN_NAME_REGISTERED = "registered";
 
 
-    public static final String RAW_SQL = "CREATE TABLE " + TABLE_NAME + " ("
+    public static final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
             + _ID + " INTEGER PRIMARY KEY, "
             + COLUMN_NAME_NAME + " TEXT, "
             + COLUMN_NAME_REALNAME + " TEXT, "

@@ -10,13 +10,15 @@ public class NavMenuHeader implements NavDrawerItem {
     private String since;
     private String fullname;
     private String poster;
+    private String avatar;
 
-    public static NavDrawerItem getInstance(int id, int plays, String since, String fullname) {
+    public static NavDrawerItem getInstance(int id, int plays, String since, String fullname, String avatar) {
         NavMenuHeader s = new NavMenuHeader();
         s.id = id;
         s.plays = plays;
         s.since = since;
         s.fullname = fullname;
+        s.avatar = avatar;
         return s;
     }
 
@@ -74,5 +76,13 @@ public class NavMenuHeader implements NavDrawerItem {
     @Override
     public boolean isUserItem() {
         return false;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

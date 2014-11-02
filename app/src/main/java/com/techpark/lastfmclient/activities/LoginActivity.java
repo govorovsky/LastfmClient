@@ -146,6 +146,9 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
         String user = mLoginView.getText().toString();
         String pass = mPassView.getText().toString();
+
+        if(user.length() < MIN_LEN || pass.length() < MIN_LEN) return;
+
         mLoginView.setError(null);
         mPassView.setError(null);
 

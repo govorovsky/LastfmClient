@@ -27,8 +27,9 @@
             android:name=".activities.MainActivity"
             android:logo="@drawable/logo_with_padding"
             android:theme="@style/CustomActivityTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize">
-            </activity>
+            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
+
+        <service android:name=".services.UserInfoService"/>
     </application>
 
 </manifest>

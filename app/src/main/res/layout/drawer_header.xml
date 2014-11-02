@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/header"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/header"
     android:layout_width="fill_parent"
     android:layout_height="160dp"
     android:background="#262626">
@@ -10,64 +9,61 @@
     <ImageView
         android:id="@+id/poster"
         android:layout_width="match_parent"
-        android:scaleType="centerCrop"
-        android:layout_height="160dp" />
+        android:layout_height="160dp"
+        android:scaleType="centerCrop" />
 
-    <com.pkmmte.view.CircularImageView
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/avatar"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@drawable/test"
-        android:scaleType="centerCrop"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
-        android:background="@drawable/round_img_button"
-        app:shadow="true" />
+        android:src="@drawable/test"
+        app:border_color="#ffffff"
+        app:border_width="2dp"
+         />
+
 
     <TextView
         android:id="@+id/since_text"
-        android:text="@string/plays_since"
-        android:layout_toEndOf="@id/avatar"
-        android:layout_alignParentBottom="true"
-        android:fontFamily="sans-serif-regular"
-        android:textColor="#ffffff"
-        android:textSize="14sp"
-        android:layout_marginStart="12dp"
-        android:layout_marginBottom="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@id/avatar"
+        android:fontFamily="sans-serif-regular"
+        android:text="@string/plays_since"
+        android:textColor="#ffffff"
+        android:textSize="14sp" />
 
     <TextView
-        android:layout_toEndOf="@id/avatar"
         android:id="@+id/full_name"
-        android:text="Andrew Gov"
-        android:textColor="#ffffff"
-        android:textSize="18sp"
-        android:layout_above="@id/since_text"
-        android:layout_marginStart="12dp"
-        android:fontFamily="sans-serif-medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />
+        android:layout_above="@id/since_text"
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@id/avatar"
+        android:fontFamily="sans-serif-medium"
+        android:text="Andrew Gov"
+        android:textColor="#ffffff"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/since_date"
-        android:text="12.04.32"
-        android:layout_toEndOf="@id/since_text"
-        android:layout_alignParentBottom="true"
-        android:fontFamily="sans-serif-regular"
-        android:textColor="#ffffff"
-        android:textSize="14sp"
-        android:layout_marginStart="5dp"
-        android:layout_marginBottom="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        />
-
-
-
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/since_text"
+        android:fontFamily="sans-serif-regular"
+        android:text="12.04.32"
+        android:textColor="#ffffff"
+        android:textSize="14sp" />
 
 
 </RelativeLayout>

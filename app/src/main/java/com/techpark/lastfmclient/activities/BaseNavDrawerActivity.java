@@ -33,7 +33,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
 
-    private NavDrawerConfiguration navConf;
+    protected NavDrawerConfiguration navConf;
 
     protected abstract NavDrawerConfiguration getNavDrawerConfiguration();
 
