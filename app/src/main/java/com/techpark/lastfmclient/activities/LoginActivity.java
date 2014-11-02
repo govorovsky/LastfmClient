@@ -35,10 +35,14 @@ import org.json.JSONObject;
  */
 public class LoginActivity extends Activity implements LoaderManager.LoaderCallbacks<String> {
 
+    private static final String LOG_TAG = LoginActivity.class.getName();
+
     private AutoCompleteTextView mLoginView;
     private EditText mPassView;
     private Button mLoginButton;
     private ProgressBar mProgressBar;
+
+    private static final int MIN_LEN = 3;
 
     private static final boolean DEBUG = true;
 
@@ -75,6 +79,23 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
+        mLoginView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                loginButtonChangeAppearance(s, mPassView.getText());
+            }
+        });
+
         mPassView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -105,7 +126,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
     private void loginButtonChangeAppearance(Editable s, Editable s1) {
         /* TODO add different states in resources for button */
-        if (s.length() > 3 && s1.length() > 3) {
+        if (s.length() > MIN_LEN && s1.length() > MIN_LEN) {
             mLoginButton.setBackgroundColor(Color.parseColor("#D51007"));
             mLoginButton.setTextColor(Color.parseColor("#ffffff"));
             mLoginButton.setEnabled(true);
@@ -142,7 +163,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
     public Loader<String> onCreateLoader(int id, Bundle args) {
         ApiQuery query = new GetMobileSession(args.getString("username"), args.getString("password"));
         query.prepare();
-        Log.d("tttt", "CREATED LOADER");
+        Log.d(LOG_TAG, "CREATED LOADER");
         return new ApiQueryTask(LoginActivity.this, query);
     }
 
