@@ -1,9 +1,14 @@
 package com.techpark.lastfmclient.api.user;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by andrew on 30.10.14.
  */
 public class User {
+
+    static final int USER_SIZE = 8; // num of fields
+
     private String name;
     private String fullname;
     private String avatar;
@@ -14,7 +19,7 @@ public class User {
     private String registered;
 
 
-    public User(String name, String fullname, String avatar, String country, int age, String gender, int playcount, String registered) {
+    public User(@NonNull String name, @NonNull String fullname, @NonNull String avatar, @NonNull String country, int age, @NonNull String gender, int playcount, @NonNull String registered) {
         this.name = name;
         this.fullname = fullname;
         this.avatar = avatar;

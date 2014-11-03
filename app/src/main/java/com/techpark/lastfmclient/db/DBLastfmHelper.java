@@ -25,7 +25,7 @@ public class DBLastfmHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w("DB info", "UPDATING DB");
+        Log.e("DB info", "UPDATING DB");
         db.execSQL("DROP TABLE IF EXISTS " + UsersTable.TABLE_NAME);
         onCreate(db);
     }

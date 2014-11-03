@@ -1,13 +1,16 @@
 package com.techpark.lastfmclient.api.user;
 
+import android.content.ContentValues;
 import android.util.Log;
+
+import com.techpark.lastfmclient.db.UsersTable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by andrew on 31.10.14.
+ * Created by Andrew Gov on 31.10.14.
  */
 public class UserHelpers {
     private static final String LOG_TAG = UserHelpers.class.getName();
@@ -43,5 +46,18 @@ public class UserHelpers {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static ContentValues getContentValues(User user) {
+        ContentValues contentValues = new ContentValues(User.USER_SIZE);
+        contentValues.put(UsersTable.COLUMN_NAME, user.getName());
+        contentValues.put(UsersTable.COLUMN_AGE, user.getAge());
+        contentValues.put(UsersTable.COLUMN_REALNAME, user.getFullname());
+        contentValues.put(UsersTable.COLUMN_REGISTERED, user.getRegistered());
+        contentValues.put(UsersTable.COLUMN_AVATAR, user.getAvatar());
+        contentValues.put(UsersTable.COLUMN_COUNTRY, user.getCountry());
+        contentValues.put(UsersTable.COLUMN_PLAYCOUNT, user.getPlaycount());
+        contentValues.put(UsersTable.COLUMN_GENDER, user.getGender());
+        return contentValues;
     }
 }

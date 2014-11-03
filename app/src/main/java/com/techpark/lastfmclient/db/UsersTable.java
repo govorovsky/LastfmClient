@@ -15,25 +15,25 @@ public class UsersTable implements BaseColumns {
     public static final String TABLE_NAME = "user";
     public static final Uri CONTENT_URI = Uri.parse("content://" + DBLastfmHelper.AUTHORITY + "/user");
 
-    public static final String COLUMN_NAME_NAME = "name";
-    public static final String COLUMN_NAME_REALNAME = "realname";
-    public static final String COLUMN_NAME_AVATAR = "avatar";
-    public static final String COLUMN_NAME_COUNTRY = "country";
-    public static final String COLUMN_NAME_AGE = "age";
-    public static final String COLUMN_NAME_GENDER = "sex";
-    public static final String COLUMN_NAME_PLAYCOUNT = "playcount";
-    public static final String COLUMN_NAME_REGISTERED = "registered";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_REALNAME = "realname";
+    public static final String COLUMN_AVATAR = "avatar";
+    public static final String COLUMN_COUNTRY = "country";
+    public static final String COLUMN_AGE = "age";
+    public static final String COLUMN_GENDER = "sex";
+    public static final String COLUMN_PLAYCOUNT = "playcount";
+    public static final String COLUMN_REGISTERED = "registered";
 
 
     public static final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
             + _ID + " INTEGER PRIMARY KEY, "
-            + COLUMN_NAME_NAME + " TEXT, "
-            + COLUMN_NAME_REALNAME + " TEXT, "
-            + COLUMN_NAME_AVATAR + " TEXT, "
-            + COLUMN_NAME_COUNTRY + " TEXT, "
-            + COLUMN_NAME_AGE + " INTEGER, "
-            + COLUMN_NAME_GENDER + " TEXT, "
-            + COLUMN_NAME_PLAYCOUNT + " INTEGER, "
-            + COLUMN_NAME_REGISTERED + " TEXT "
+            + COLUMN_NAME + " TEXT, "
+            + COLUMN_REALNAME + " TEXT, "
+            + COLUMN_AVATAR + " TEXT, "
+            + COLUMN_COUNTRY + " TEXT, "
+            + COLUMN_AGE + " INTEGER, "
+            + COLUMN_GENDER + " TEXT, "
+            + COLUMN_PLAYCOUNT + " INTEGER, "
+            + COLUMN_REGISTERED + " TEXT "
             + " ); ";
 }

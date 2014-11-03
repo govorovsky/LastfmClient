@@ -13,14 +13,15 @@
     </style>
 
     <style name="CustomActivityTheme" parent="AppTheme">
-
+       <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
     </style>
 
-    <style name="myStyle">
-        <item name="android:textSize">9px</item>
-        <item name="android:gravity">center_horizontal</item>
-        <item name="android:textColor">#fff</item>
-        <item name="android:textStyle">bold</item>
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@android:color/white</item>
     </style>
+
+
+
 </resources>
 

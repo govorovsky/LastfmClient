@@ -1,12 +1,15 @@
 package com.techpark.lastfmclient.services;
 
 import android.app.IntentService;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.util.Log;
 
 import com.techpark.lastfmclient.api.ApiQuery;
+import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.api.user.UserGetInfo;
 import com.techpark.lastfmclient.api.user.UserHelpers;
+import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.network.NetworkUtils;
 
 import java.io.IOException;
@@ -45,8 +48,10 @@ public class UserInfoService extends IntentService {
         try {
             response = NetworkUtils.httpRequest(query);
             Log.d(TAG, response);
-            UserHelpers.getUserFromJson(response);
+            User user = UserHelpers.getUserFromJson(response);
+            ContentResolver resolver = getContentResolver();
             /* TODO */
+//            resolver.insert(UsersTable.CONTENT_URI, UserHelpers.getContentValues(user));
         } catch (IOException e) {
             e.printStackTrace();
         }
