@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.api.auth.GetMobileSession;
 import com.techpark.lastfmclient.api.ApiQuery;
+import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.tasks.ApiQueryTask;
 
 import org.json.JSONException;
@@ -36,6 +37,9 @@ import org.json.JSONObject;
 public class LoginActivity extends Activity implements LoaderManager.LoaderCallbacks<String> {
 
     private static final String LOG_TAG = LoginActivity.class.getName();
+
+    private static final String USERNAME_BUNDLE = "username";
+    private static final String PASSWORD_BUNDLE = "password";
 
     private AutoCompleteTextView mLoginView;
     private EditText mPassView;
@@ -114,7 +118,6 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         Loader loader = getLoaderManager().getLoader(0);
         if (loader != null) { // check for login task being executed
             showProgressBar(); // ok we are attempting to login now
-            Log.d("LOADER", "NOT NULL");
             getLoaderManager().initLoader(0, null, this);
         }
     }
@@ -147,7 +150,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         String user = mLoginView.getText().toString();
         String pass = mPassView.getText().toString();
 
-        if(user.length() < MIN_LEN || pass.length() < MIN_LEN) return;
+        if (user.length() < MIN_LEN || pass.length() < MIN_LEN) return;
 
         mLoginView.setError(null);
         mPassView.setError(null);
@@ -155,8 +158,8 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         showProgressBar();
 
         Bundle args = new Bundle();
-        args.putString("username", user);
-        args.putString("password", pass);
+        args.putString(USERNAME_BUNDLE, user);
+        args.putString(PASSWORD_BUNDLE, pass);
 
         getLoaderManager().restartLoader(0, args, LoginActivity.this);
 
@@ -164,7 +167,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
-        ApiQuery query = new GetMobileSession(args.getString("username"), args.getString("password"));
+        ApiQuery query = new GetMobileSession(args.getString(USERNAME_BUNDLE), args.getString(PASSWORD_BUNDLE));
         query.prepare();
         Log.d(LOG_TAG, "CREATED LOADER");
         return new ApiQueryTask(LoginActivity.this, query);
@@ -187,9 +190,9 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                     JSONObject session = object.getJSONObject("session");
                     String name = session.getString("name");
                     String key = session.getString("key");
-                    Toast.makeText(this, "OK, +" + key, Toast.LENGTH_LONG).show();
 
-                    saveSession(key);
+                    UserHelpers.saveUserSession(getApplicationContext(), key, name);
+
                     launchMainActivity();
 
                 }
@@ -208,12 +211,6 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         finish();
     }
 
-    private void saveSession(String session) {
-        SharedPreferences preferences = this.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("session", session);
-        editor.commit();
-    }
 
     @Override
     public void onLoaderReset(Loader<String> loader) {

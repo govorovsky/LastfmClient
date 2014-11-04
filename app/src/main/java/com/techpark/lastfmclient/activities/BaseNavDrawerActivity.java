@@ -1,6 +1,9 @@
 package com.techpark.lastfmclient.activities;
 
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -23,7 +26,7 @@ import com.techpark.lastfmclient.adapters.NavDrawerItem;
 /**
  * Created by andrew on 29.10.14.
  */
-public abstract class BaseNavDrawerActivity extends FragmentActivity {
+public abstract class BaseNavDrawerActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -175,6 +178,22 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity {
     public void setTitle(CharSequence title) {
         mTitle = title;
         getActionBar().setTitle(mTitle);
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
     }
 }
 
