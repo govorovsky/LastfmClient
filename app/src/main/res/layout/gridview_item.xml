@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView android:id="@+id/band_icon"
+        android:layout_width="match_parent"
+        android:layout_height="179dp"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:id="@+id/band_name"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_alignParentBottom="true"
+        android:fontFamily="Roboto Medium"
+        android:background="@color/black_transparent70"
+        android
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/band_photo1"
+        android:layout_above="@id/band_name"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="56dp"
+        android:layout_marginBottom="4dp"
+        android:src="@drawable/test"
+        app:border_color="@color/white"
+        app:border_width="2dp"
+        />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/band_photo2"
+        android:layout_above="@id/band_name"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:src="@drawable/test"
+        app:border_color="@color/white"
+        app:border_width="2dp"
+        />
+
+    <!--
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_alignParentBottom="true"
+        android:fontFamily="Roboto Medium"
+        android:background="@color/black_transparent70">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/band_similar"
+            android:textSize="12sp"
+            android:textColor="@color/white_transparent80"
+            />Layout>
+
+    </RelativeLayout>
+-->
+
+</RelativeLayout>

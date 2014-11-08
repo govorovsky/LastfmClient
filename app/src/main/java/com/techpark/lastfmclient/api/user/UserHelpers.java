@@ -76,6 +76,10 @@ public class UserHelpers {
         editor.apply();
     }
 
+    public static String getUserSession(Context context) {
+        return context.getSharedPreferences(PREF_STORAGE_FILE, Context.MODE_PRIVATE).getString(PREF_SESSION_KEY, null);
+    }
+
     public static SharedPreferences getUserSessionPrefs(Context context) {
         return context.getSharedPreferences(PREF_STORAGE_FILE, Context.MODE_PRIVATE);
     }

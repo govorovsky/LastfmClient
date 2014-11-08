@@ -6,7 +6,12 @@
 
     </style>
 
-
+    <style name="MoreButtonTheme" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/button_more</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:fontFamily">Roboto Medium Caps</item>
+    </style>
 
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">#ffd51007</item>

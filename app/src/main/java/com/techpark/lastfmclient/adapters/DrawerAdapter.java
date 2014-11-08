@@ -88,7 +88,7 @@ public class DrawerAdapter extends ArrayAdapter<NavDrawerItem> {
         String img = navMenuHeader.getAvatar();
 
         if (img.isEmpty()) {
-            Picasso.with(context).load(R.drawable.empty_avatar).into(holder.avatar);
+            //Picasso.with(context).load(R.drawable.empty_avatar).into(holder.avatar);
         } else {
             Picasso.with(context).load(img).into(holder.avatar);
         }
