@@ -4,22 +4,26 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 /**
  * Created by Andrew Gov on 03.11.14.
  */
-public class LastfmProvider extends ContentProvider {
+public class LastfmContentProvider extends ContentProvider {
 
     private DBLastfmHelper dbLastfmHelper;
     private UriMatcher uriMatcher;
+
+    private SQLiteDatabase readDb;
+    private SQLiteDatabase writeDb;
 
     // all entities here
     private static final int USER_INFO = 1;
     private static final int TRACK_INFO = 2;
 
 
-    public LastfmProvider() {
+    public LastfmContentProvider() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         /* for example "/user/name" will return full user info for name */
@@ -30,6 +34,7 @@ public class LastfmProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         dbLastfmHelper = new DBLastfmHelper(getContext());
+
         return true;
     }
 
@@ -45,6 +50,12 @@ public class LastfmProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
+        switch (uriMatcher.match(uri)) {
+            case USER_INFO:
+                /* replace old user info if exists */
+                writeDb.replace(UsersTable.TABLE_NAME, null, contentValues);
+                break;
+        }
         return null;
     }
 

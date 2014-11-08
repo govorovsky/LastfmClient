@@ -42,9 +42,7 @@ public class ApiQueryTask extends AsyncTaskLoader<String> {
             Thread.sleep(3000);
             Log.d("LOADER", "RUNNING REQUEST");
             res = NetworkUtils.httpRequest(query);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         return res;

@@ -28,7 +28,7 @@ public class UsersTable implements BaseColumns {
 
     public static final String SQL_CREATE_USER_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
             + _ID + " INTEGER PRIMARY KEY, "
-            + COLUMN_NAME + " TEXT, "
+            + COLUMN_NAME + " TEXT UNIQUE, "
             + COLUMN_REALNAME + " TEXT, "
             + COLUMN_AVATAR + " TEXT, "
             + COLUMN_COUNTRY + " TEXT, "
