@@ -28,6 +28,7 @@ import org.json.JSONObject;
 public class MainListFragment extends Fragment implements LoaderManager.LoaderCallbacks<String> {
     private GridView mRecommended;
     private ArtistList artistList = new ArtistList();
+    private MusicAdapter mAdapter = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -40,7 +41,8 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
         super.onViewCreated(view, savedInstanceState);
 
         mRecommended = (GridView) view.findViewById(R.id.grid_recommended);
-        mRecommended.setAdapter(new MusicAdapter(getActivity()));
+        mAdapter = new MusicAdapter(getActivity());
+        mRecommended.setAdapter(mAdapter);
         mRecommended.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -95,10 +97,9 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
         }
         getLoaderManager().destroyLoader(1);
 
-       // stop progressbar
-        ((MusicAdapter) mRecommended.getAdapter()).setArtists(artistList);
-        ((MusicAdapter) mRecommended.getAdapter()).notifyDataSetChanged();
-        mRecommended.setAdapter(mRecommended.getAdapter());
+        // stop progressbar
+        mAdapter.setArtists(artistList);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
