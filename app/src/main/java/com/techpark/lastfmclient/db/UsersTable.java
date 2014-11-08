@@ -13,7 +13,7 @@ public class UsersTable implements BaseColumns {
     }
 
     public static final String TABLE_NAME = "user";
-    public static final Uri CONTENT_URI_LIST = Uri.parse("content://" + DBLastfmHelper.AUTHORITY + "/user");
+    public static final Uri CONTENT_URI = Uri.parse("content://" + DBLastfmHelper.AUTHORITY + "/user");
     public static final Uri CONTENT_URI_ID_USER = Uri.parse("content://" + DBLastfmHelper.AUTHORITY + "/user/");
 
     public static final String COLUMN_NAME = "name";

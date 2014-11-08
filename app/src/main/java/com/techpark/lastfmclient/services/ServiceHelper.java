@@ -26,7 +26,7 @@ public class ServiceHelper {
         Bundle extras = new Bundle();
         extras.putString(UsersProvider.BUNDLE_USERNAME, username);
         intent.putExtras(extras);
-        Log.d(TAG + " invoking getUser with : ", username);
+        Log.d(TAG + " Try to invoke getUser with : ", username);
         mContext.startService(intent);
     }
 }

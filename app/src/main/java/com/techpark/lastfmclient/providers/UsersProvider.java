@@ -9,6 +9,7 @@ import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.api.user.UserGetInfo;
 import com.techpark.lastfmclient.api.user.UserHelpers;
+import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.network.NetworkUtils;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class UsersProvider implements IProvider {
         ApiQuery query = new UserGetInfo(username);
         query.prepare();
 
-        Log.e(TAG, "UsersProvider getUser");
+        Log.d(TAG, "getUser");
 
         String response = null;
         try {
@@ -58,7 +59,7 @@ public class UsersProvider implements IProvider {
             User user = UserHelpers.getUserFromJson(response);
             ContentResolver resolver = mContext.getContentResolver();
             /* TODO  */
-//            resolver.insert(UsersTable.CONTENT_URI, UserHelpers.getContentValues(user));
+            resolver.insert(UsersTable.CONTENT_URI, UserHelpers.getContentValues(user));
         } catch (IOException e) {
             e.printStackTrace();
         }

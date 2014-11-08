@@ -15,8 +15,11 @@ import java.util.LinkedList;
 public abstract class ApiQuery {
 
     protected KeyValueHolder entity = new KeyValueHolder();
+
     public abstract String getName();
+
     public abstract void prepare();
+
     public abstract Method getMethod();
 
     public KeyValueHolder getEntity() {
@@ -24,8 +27,7 @@ public abstract class ApiQuery {
     }
 
     /**
-     *
-     * @param query query to build
+     * @param query      query to build
      * @param requireSig only POST requests require signature, and some GET ....
      */
     public final void build(ApiQuery query, boolean requireSig) {
@@ -49,6 +51,6 @@ public abstract class ApiQuery {
 
         }
         params.add(ApiParamNames.API_FORMAT, "json");
-        Log.d("SESSION", params.toString());
+        Log.d("Build ApiQuery", params.toString());
     }
 }

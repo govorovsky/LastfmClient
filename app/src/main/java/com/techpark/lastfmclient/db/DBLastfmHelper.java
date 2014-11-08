@@ -17,10 +17,17 @@ public class DBLastfmHelper extends SQLiteOpenHelper {
         super(context, DB_NAME, null, DB_VER);
     }
 
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.e("DB info", "DOWNGRADE DB");
+        db.execSQL("DROP TABLE IF EXISTS " + UsersTable.TABLE_NAME);
+        onCreate(db);
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        Log.e("DB info", "CREATING TABLES....");
+        db.execSQL(UsersTable.SQL_CREATE_USER_TABLE);
     }
 
     @Override

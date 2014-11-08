@@ -16,7 +16,7 @@ import com.techpark.lastfmclient.adapters.NavMenuItem;
 import com.techpark.lastfmclient.adapters.NavMenuSection;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.fragments.MainListFragment;
-import com.techpark.lastfmclient.services.UserInfoService;
+import com.techpark.lastfmclient.services.ServiceHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,15 +27,16 @@ import java.util.List;
  */
 public class MainActivity extends BaseNavDrawerActivity {
 
+    private ServiceHelper mServiceHelper;
+
     private static final String TAG_NAME = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = new Intent(this, UserInfoService.class);
-        intent.putExtra(UserInfoService.BUNDLE_USERNAME, "govorovsky");
-        startService(intent);
+        mServiceHelper = new ServiceHelper(this);
+        mServiceHelper.getUser("govorovsky");
 
         if (getSupportFragmentManager().findFragmentByTag(TAG_NAME) == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new MainListFragment(), TAG_NAME).commit();

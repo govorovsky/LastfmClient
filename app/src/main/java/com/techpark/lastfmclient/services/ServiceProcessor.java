@@ -25,7 +25,7 @@ public class ServiceProcessor extends Service {
 
     private static final String TAG = ServiceProcessor.class.getSimpleName();
 
-    public static final String PROVIDER = "proovider";
+    public static final String PROVIDER = "provider";
     public static final String METHOD = "method";
 
     private int lastStartId;
@@ -77,6 +77,7 @@ public class ServiceProcessor extends Service {
 
             if (!mTasks.containsKey(taskId)) {
                 ServiceTask serviceTask = new ServiceTask(extras, taskId);
+                mTasks.put(taskId, serviceTask);
                 serviceTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
             }
         }
@@ -117,8 +118,8 @@ public class ServiceProcessor extends Service {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            int providerId = extras.getInt("prov");
-            int methodId = extras.getInt("meth");
+            int providerId = extras.getInt(PROVIDER);
+            int methodId = extras.getInt(METHOD);
 
             if ((providerId != 0 && methodId != 0)) {
                 IProvider ep = getProvider(providerId);
