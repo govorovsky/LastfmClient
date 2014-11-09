@@ -48,7 +48,17 @@ public class LastfmContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selArgs, String sortOrder) {
+        switch (uriMatcher.match(uri)) {
+            case USER_INFO:
+                return queryUser(uri, projection, selection, selArgs);
+        }
         return null;
+    }
+
+    private Cursor queryUser(Uri uri, String[] projection, String selection, String[] selArgs) {
+        Cursor c = readDb.query(UsersTable.TABLE_NAME, projection, UsersTable.COLUMN_NAME + "=?", new String[]{uri.getLastPathSegment()}, null, null, null);
+        c.setNotificationUri(getContext().getContentResolver(), uri);
+        return c;
     }
 
     @Override

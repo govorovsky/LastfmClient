@@ -30,6 +30,21 @@ public class User {
         this.registered = registered;
     }
 
+    /**
+     * Creates anon user, useful when no data
+     * are available
+     */
+    public User() {
+        this.name = "";
+        this.fullname = "";
+        this.avatar = "";
+        this.country = "";
+        this.age = -1;
+        this.gender = "";
+        this.playcount = 0;
+        this.registered = "";
+    }
+
     public String getName() {
         return name;
     }

@@ -1,12 +1,7 @@
 package com.techpark.lastfmclient.activities;
 
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.adapters.DrawerAdapter;
@@ -14,9 +9,8 @@ import com.techpark.lastfmclient.adapters.NavDrawerItem;
 import com.techpark.lastfmclient.adapters.NavMenuHeader;
 import com.techpark.lastfmclient.adapters.NavMenuItem;
 import com.techpark.lastfmclient.adapters.NavMenuSection;
-import com.techpark.lastfmclient.api.user.UserHelpers;
+import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.fragments.MainListFragment;
-import com.techpark.lastfmclient.services.ServiceHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +21,6 @@ import java.util.List;
  */
 public class MainActivity extends BaseNavDrawerActivity {
 
-    private ServiceHelper mServiceHelper;
 
     private static final String TAG_NAME = "MainActivity";
 
@@ -80,8 +73,8 @@ public class MainActivity extends BaseNavDrawerActivity {
     }
 
     private List<NavDrawerItem> createMenu() {
-        NavDrawerItem[] menu = new NavDrawerItem[]{
-                NavMenuHeader.getInstance(NavDrawerConstants.PROFILE, 12, "12.4.09", "Andrew Govorovsky", ""),
+        return new ArrayList<>(Arrays.asList(
+                NavMenuHeader.getInstance(NavDrawerConstants.PROFILE, new User()),
                 NavMenuSection.getInstance(100, "RECOMMENDATIONS"),
                 NavMenuItem.getInstance(101, "Music"),
                 NavMenuItem.getInstance(102, "Albums"),
@@ -91,8 +84,6 @@ public class MainActivity extends BaseNavDrawerActivity {
                 NavMenuItem.getInstance(106, "Your Recommendations"),
                 NavMenuItem.getInstance(107, "Events Near Me"),
                 NavMenuSection.getInstance(108, "PROFILE"),
-                NavMenuItem.getInstance(NavDrawerConstants.LOG_OUT, "Log out")
-        };
-        return Arrays.asList(menu);
+                NavMenuItem.getInstance(NavDrawerConstants.LOG_OUT, "Log out")));
     }
 }

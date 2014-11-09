@@ -62,15 +62,17 @@ public class DrawerAdapter extends ArrayAdapter<NavDrawerItem> {
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.drawer_header, parent, false);
             TextView fullname = (TextView) convertView.findViewById(R.id.full_name);
+            TextView playcnt = (TextView) convertView.findViewById(R.id.play_cnt);
             TextView since = (TextView) convertView.findViewById(R.id.since_date);
             ImageView poster = (ImageView) convertView.findViewById(R.id.poster);
             CircleImageView avatar = (CircleImageView) convertView.findViewById(R.id.avatar);
 
             holder = new NavHeaderHolder();
             holder.fullname = fullname;
-            holder.since = since;
             holder.poster = poster;
             holder.avatar = avatar;
+            holder.playcnt = playcnt;
+            holder.since = since;
 
             convertView.setTag(holder);
         }
@@ -78,6 +80,7 @@ public class DrawerAdapter extends ArrayAdapter<NavDrawerItem> {
             holder = (NavHeaderHolder) convertView.getTag();
         }
 
+        holder.playcnt.setText(navMenuHeader.getPlays() + " " + context.getResources().getString(R.string.plays_since));
         holder.fullname.setText(navMenuHeader.getFullName());
         holder.since.setText(navMenuHeader.getSince());
         holder.poster.setImageResource(R.drawable.gunit); /* TODO !! */
@@ -125,6 +128,7 @@ public class DrawerAdapter extends ArrayAdapter<NavDrawerItem> {
         ImageView poster;
         TextView fullname;
         CircleImageView avatar;
+        TextView playcnt;
         TextView since;
     }
 

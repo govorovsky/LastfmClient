@@ -1,11 +1,13 @@
 package com.techpark.lastfmclient.activities;
 
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Gravity;
@@ -18,6 +20,13 @@ import android.widget.ListView;
 
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.adapters.NavDrawerItem;
+import com.techpark.lastfmclient.adapters.NavMenuHeader;
+import com.techpark.lastfmclient.api.user.User;
+import com.techpark.lastfmclient.api.user.UserHelpers;
+import com.techpark.lastfmclient.db.UsersTable;
+import com.techpark.lastfmclient.services.ServiceHelper;
+
+import java.util.List;
 
 /**
  * Created by andrew on 29.10.14.
@@ -26,6 +35,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+    private ServiceHelper mServiceHelper;
 
     private ListView mDrawerList;
 
@@ -43,6 +53,15 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
         super.onCreate(savedInstanceState);
 
         navConf = getNavDrawerConfiguration();
+
+        String user = UserHelpers.getUserSessionPrefs(this).getString(UserHelpers.PREF_NAME, "");
+        if (user.isEmpty()) {
+            // user logged out
+            /*TODO */
+        }
+
+        mServiceHelper = new ServiceHelper(getApplicationContext());
+        mServiceHelper.getUser(user);
 
 //        requestWindowFeature(Window.FEATURE_NO_TITLE); // remove title bar
 
@@ -79,6 +98,8 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        getSupportLoaderManager().restartLoader(0, null, this);
     }
 
 
@@ -175,17 +196,33 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return null;
+        return new CursorLoader(this,
+                Uri.withAppendedPath(UsersTable.CONTENT_URI_ID_USER, UserHelpers.getUserSessionPrefs(this).getString(UserHelpers.PREF_NAME, "")),
+                null,
+                null,
+                null,
+                null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-
+        if (cursor != null) {
+            updateNavMenuHeader(cursor);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
+    }
+
+    private void updateNavMenuHeader(Cursor cursor) {
+        User u = UserHelpers.getUserFromCursor(cursor);
+        if (u != null) {
+            List<NavDrawerItem> l = navConf.getNavItems();
+            l.set(0, NavMenuHeader.getInstance(NavDrawerConstants.PROFILE, u));
+            navConf.getBaseAdapter().notifyDataSetChanged();
+        }
     }
 }
 

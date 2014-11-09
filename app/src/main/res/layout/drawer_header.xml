@@ -28,23 +28,23 @@
 
 
     <TextView
-        android:id="@+id/since_text"
+        android:id="@+id/play_cnt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:layout_marginStart="12dp"
         android:layout_toEndOf="@id/avatar"
-        android:fontFamily="sans-serif-regular"
-        android:text="@string/plays_since"
+        android:layout_alignParentBottom="true"
+        android:text="12"
+        android:layout_marginStart="12dp"
+        android:layout_marginBottom="30dp"
         android:textColor="#ffffff"
-        android:textSize="14sp" />
+        />
+
 
     <TextView
         android:id="@+id/full_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/since_text"
+        android:layout_above="@id/play_cnt"
         android:layout_marginStart="12dp"
         android:layout_toEndOf="@id/avatar"
         android:fontFamily="sans-serif-medium"
@@ -59,7 +59,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="30dp"
         android:layout_marginStart="5dp"
-        android:layout_toEndOf="@id/since_text"
+        android:layout_toEndOf="@id/play_cnt"
         android:fontFamily="sans-serif-regular"
         android:text="12.04.32"
         android:textColor="#ffffff"

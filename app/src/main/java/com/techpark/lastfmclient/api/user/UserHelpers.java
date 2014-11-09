@@ -3,11 +3,11 @@ package com.techpark.lastfmclient.api.user;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.techpark.lastfmclient.db.UsersTable;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,6 +51,24 @@ public class UserHelpers {
 
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static User getUserFromCursor(Cursor c) {
+        if (c.moveToFirst()) {
+            String name = c.getString(1);
+            String realname = c.getString(2);
+            String urlAvatar = c.getString(3);
+            String country = c.getString(4);
+            int age = c.getInt(5);
+            String sex = c.getString(6);
+            int playcnt = c.getInt(7);
+            String registered = c.getString(8);
+
+            Log.d(LOG_TAG, name + " " + realname + " " + urlAvatar + " " + country + " " + age + " " + sex + " " + playcnt + " " + registered);
+            return new User(name, realname, urlAvatar, country, age, sex, playcnt, registered);
         }
         return null;
     }

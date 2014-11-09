@@ -64,6 +64,7 @@ public class NetworkUtils {
         }
 
         Log.d("URL=", url);
+        Log.d("METHOD=", method.toString());
         URL link = new URL(url);
 
 

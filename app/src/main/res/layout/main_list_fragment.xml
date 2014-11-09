@@ -18,7 +18,9 @@
             android:layout_width="270dp"
             android:layout_height="match_parent"
             android:text="@string/recommended_title"
-            android:textSize="20sp"
+            android:layout_centerVertical="true"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-light"
             android:textColor="@android:color/white">
         </TextView>
 

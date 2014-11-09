@@ -1,5 +1,7 @@
 package com.techpark.lastfmclient.adapters;
 
+import com.techpark.lastfmclient.api.user.User;
+
 /**
  * Created by andrew on 29.10.14.
  */
@@ -12,13 +14,13 @@ public class NavMenuHeader implements NavDrawerItem {
     private String poster;
     private String avatar;
 
-    public static NavDrawerItem getInstance(int id, int plays, String since, String fullname, String avatar) {
+    public static NavDrawerItem getInstance(int id, User user) {
         NavMenuHeader s = new NavMenuHeader();
         s.id = id;
-        s.plays = plays;
-        s.since = since;
-        s.fullname = fullname;
-        s.avatar = avatar;
+        s.plays = user.getPlaycount();
+        s.since = user.getRegistered();
+        s.fullname = user.getFullname();
+        s.avatar = user.getAvatar();
         return s;
     }
 
