@@ -1,7 +1,6 @@
 package com.techpark.lastfmclient.db;
 
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -9,8 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-import com.techpark.lastfmclient.api.user.User;
-import com.techpark.lastfmclient.api.user.UserHelpers;
 
 /**
  * Created by Andrew Gov on 03.11.14.
@@ -98,6 +95,7 @@ public class LastfmContentProvider extends ContentProvider {
         }
         return null;
     }
+
 
     private boolean userExists(String username) {
         Cursor c = readDb.query(UsersTable.TABLE_NAME, new String[]{UsersTable.COLUMN_NAME}, UsersTable.COLUMN_NAME + " =?", new String[]{username}, null, null, null);
