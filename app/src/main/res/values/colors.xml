@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <color name="more_button_default">#D51007</color>
+    <color name="background">#262626</color>
     <color name="red">#D51007</color>
     <color name="white_light">#E5E5E5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="white_transparent80">#50FFFFFF</color>
+    <color name="black_transparent70">#46000000</color>
 </resources>

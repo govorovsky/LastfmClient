@@ -28,9 +28,7 @@ import com.techpark.lastfmclient.tasks.ApiQueryTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by andrew on 11.10.14.
- */
+
 public class LoginActivity extends Activity implements LoaderManager.LoaderCallbacks<String> {
 
     private static final String LOG_TAG = LoginActivity.class.getName();
@@ -49,6 +47,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("ON CREATE", "START");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -117,6 +116,17 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
             showProgressBar(); // ok we are attempting to login now
             getLoaderManager().initLoader(0, null, this);
         }
+
+    }
+
+    @Override
+    protected void onStart() {
+          super.onStart();
+        if (DEBUG) {
+            mLoginView.setText("SiCrash");
+            mPassView.setText("112358132134");
+            mLoginButton.callOnClick();
+        }
     }
 
     private void showProgressBar() {
@@ -139,10 +149,10 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
     private void attemptLogin() {
 
-        if (DEBUG) {
-            launchMainActivity();
-            return;
-        }
+        //if (DEBUG) {
+        //    launchMainActivity();
+        //    return;
+        //}
 
         String user = mLoginView.getText().toString();
         String pass = mPassView.getText().toString();
