@@ -17,6 +17,8 @@ import com.techpark.lastfmclient.api.user.UserHelpers;
  */
 public class LastfmContentProvider extends ContentProvider {
 
+    private static final String TAG = LastfmContentProvider.class.getSimpleName();
+
     private DBLastfmHelper dbLastfmHelper;
     private UriMatcher uriMatcher;
 
@@ -90,6 +92,7 @@ public class LastfmContentProvider extends ContentProvider {
         }
         if (rowId > 0) {
             Uri newUri = Uri.withAppendedPath(UsersTable.CONTENT_URI_ID_USER, username);
+            Log.d(TAG, "ADDED. NOTIFY URI: " + newUri.toString());
             getContext().getContentResolver().notifyChange(newUri, null);
             return newUri;
         }
@@ -97,7 +100,7 @@ public class LastfmContentProvider extends ContentProvider {
     }
 
     private boolean userExists(String username) {
-        Cursor c = readDb.query(UsersTable.TABLE_NAME, new String[]{UsersTable.COLUMN_NAME}, "name = ?", new String[]{username}, null, null, null);
+        Cursor c = readDb.query(UsersTable.TABLE_NAME, new String[]{UsersTable.COLUMN_NAME}, UsersTable.COLUMN_NAME + " =?", new String[]{username}, null, null, null);
         return c.getCount() != 0;
     }
 }
