@@ -1,11 +1,11 @@
 package com.techpark.lastfmclient.activities;
 
-import android.app.Activity;
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -29,7 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class LoginActivity extends Activity implements LoaderManager.LoaderCallbacks<String> {
+public class LoginActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<String> {
 
     private static final String LOG_TAG = LoginActivity.class.getName();
 
@@ -111,10 +111,10 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
             }
         });
 
-        Loader loader = getLoaderManager().getLoader(0);
+        Loader loader = getSupportLoaderManager().getLoader(0);
         if (loader != null) { // check for login task being executed
             showProgressBar(); // ok we are attempting to login now
-            getLoaderManager().initLoader(0, null, this);
+            getSupportLoaderManager().initLoader(0, null, this);
         }
 
     }
@@ -168,7 +168,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         args.putString(USERNAME_BUNDLE, user);
         args.putString(PASSWORD_BUNDLE, pass);
 
-        getLoaderManager().restartLoader(0, args, LoginActivity.this);
+        getSupportLoaderManager().restartLoader(0, args, LoginActivity.this);
 
     }
 

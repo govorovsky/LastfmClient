@@ -1,10 +1,11 @@
 package com.techpark.lastfmclient.fragments;
 
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,13 +51,14 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
             }
         });
 
-        Loader loader = getActivity().getLoaderManager().getLoader(1);
-        if (loader != null) {
-            //show progress bar
-            getActivity().getLoaderManager().initLoader(1, null, this);
-        } else {
-            getActivity().getLoaderManager().restartLoader(1, null, this);
-        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // to prevent loader callbacks called twice, we need to call initLoader after onStart()
+        // see http://stackoverflow.com/questions/11293441/android-loadercallbacks-onloadfinished-called-twice
+        getLoaderManager().initLoader(1, null, this);
     }
 
     @Override
@@ -73,7 +75,8 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<String> stringLoader, String data) {
         //progressbar
-        if (data != null) {
+
+        if (data != null && artistList.getArtists().isEmpty()) { //need to check if we already get artists
             try {
                 JSONObject object = new JSONObject(data);
                 if (!object.isNull("error")) {
@@ -90,20 +93,17 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
                                 images.getJSONObject(4).getString("#text")
                         ));
                     }
+                    mAdapter.setArtists(artistList);
+                    mAdapter.notifyDataSetChanged();
                 }
             } catch (JSONException e) {
                 Toast.makeText(getActivity(), "Exception while parsing music", Toast.LENGTH_LONG).show();
             }
         }
-        getLoaderManager().destroyLoader(1);
-
-        // stop progressbar
-        mAdapter.setArtists(artistList);
-        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(Loader<String> stringLoader) {
-        Toast.makeText(getActivity(), "Loader reset", Toast.LENGTH_LONG).show();
+        Log.d("Fragment", "Loader reset");
     }
 }

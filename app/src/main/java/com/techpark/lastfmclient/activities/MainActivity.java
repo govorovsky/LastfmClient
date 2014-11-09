@@ -35,9 +35,6 @@ public class MainActivity extends BaseNavDrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mServiceHelper = new ServiceHelper(this);
-        mServiceHelper.getUser("govorovsky");
-
         if (getSupportFragmentManager().findFragmentByTag(TAG_NAME) == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new MainListFragment(), TAG_NAME).commit();
         }
