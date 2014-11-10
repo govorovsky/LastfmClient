@@ -1,5 +1,7 @@
 package com.techpark.lastfmclient.network;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.util.Log;
 
 import com.techpark.lastfmclient.api.ApiConstants;
@@ -46,6 +48,7 @@ public class NetworkUtils {
      * @return response of the server
      * @throws IOException
      */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private static String httpRequest(String url, KeyValueHolder headers, KeyValueHolder urlParams, Method method) throws IOException {
 
         String postBody = "";

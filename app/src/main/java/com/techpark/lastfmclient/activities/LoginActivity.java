@@ -45,6 +45,9 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
 
     private static final boolean DEBUG = true;
 
+    private static final String NET_ERROR = "Network error. Try again.";
+    private static final String BAD_CREDENTIALS = "Wrong login/pass.";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("ON CREATE", "START");
@@ -121,7 +124,7 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
 
     @Override
     protected void onStart() {
-          super.onStart();
+        super.onStart();
         if (DEBUG) {
             mLoginView.setText("SiCrash");
             mPassView.setText("112358132134");
@@ -189,11 +192,10 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
                 JSONObject object = new JSONObject(data);
                 if (!object.isNull("error")) {
                     // error occurs..
-                    mLoginButton.setVisibility(View.VISIBLE);
-                    Toast.makeText(this, "Wrong login/pass", Toast.LENGTH_LONG).show();
+                    showError(BAD_CREDENTIALS, true);
                 } else {
 
-                    Bundle bundle = new Bundle();
+                    Bundle bundle = new Bundle(); /* TODO pass user data through activities in bundle */
                     JSONObject session = object.getJSONObject("session");
                     String name = session.getString("name");
                     String key = session.getString("key");
@@ -206,9 +208,17 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
             } catch (JSONException e) {
             }
 
+        } else {
+            showError(NET_ERROR, true);
         }
-        getSupportLoaderManager().destroyLoader(0);
+        getSupportLoaderManager().destroyLoader(0); //
+    }
 
+    private void showError(String text, boolean reattempt) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+        if (reattempt) {
+            mLoginButton.setVisibility(View.VISIBLE);
+        }
     }
 
 
