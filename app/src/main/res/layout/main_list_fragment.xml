@@ -20,6 +20,7 @@
             android:text="@string/recommended_title"
             android:layout_centerVertical="true"
             android:textSize="18sp"
+            android:includeFontPadding="false"
             android:fontFamily="sans-serif-light"
             android:textColor="@android:color/white">
         </TextView>

@@ -207,7 +207,7 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
             }
 
         }
-        getLoaderManager().destroyLoader(0);
+        getSupportLoaderManager().destroyLoader(0);
 
     }
 
