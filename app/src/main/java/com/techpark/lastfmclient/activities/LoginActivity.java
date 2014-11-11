@@ -33,8 +33,9 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
 
     private static final String LOG_TAG = LoginActivity.class.getName();
 
-    private static final String USERNAME_BUNDLE = "username";
-    private static final String PASSWORD_BUNDLE = "password";
+    public static final String USERNAME_BUNDLE = "username";
+    public static final String PASSWORD_BUNDLE = "password";
+    public static final String SESSION_BUNDLE = "session";
 
     private AutoCompleteTextView mLoginView;
     private EditText mPassView;
@@ -188,21 +189,23 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
 
         mProgressBar.setVisibility(View.INVISIBLE);
         if (data != null) {
-            try {
+            try { /* TODO move processing of ApiResponse to UserHelpers */
                 JSONObject object = new JSONObject(data);
                 if (!object.isNull("error")) {
                     // error occurs..
                     showError(BAD_CREDENTIALS, true);
                 } else {
 
-                    Bundle bundle = new Bundle(); /* TODO pass user data through activities in bundle */
+                    Bundle bundle = new Bundle();
                     JSONObject session = object.getJSONObject("session");
                     String name = session.getString("name");
                     String key = session.getString("key");
+                    bundle.putString(USERNAME_BUNDLE, name);
+                    bundle.putString(SESSION_BUNDLE, key);
 
                     UserHelpers.saveUserSession(getApplicationContext(), key, name);
 
-                    launchMainActivity();
+                    launchMainActivity(bundle);
 
                 }
             } catch (JSONException e) {
@@ -211,7 +214,7 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
         } else {
             showError(NET_ERROR, true);
         }
-        getSupportLoaderManager().destroyLoader(0); //
+        getSupportLoaderManager().destroyLoader(0);
     }
 
     private void showError(String text, boolean reattempt) {
@@ -222,8 +225,9 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
     }
 
 
-    private void launchMainActivity() {
+    private void launchMainActivity(Bundle extras) {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtras(extras);
         startActivity(intent);
         finish();
     }

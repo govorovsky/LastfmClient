@@ -10,6 +10,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -48,13 +49,25 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
 
     protected abstract void onNavItemSelected(int id);
 
+
+    protected String user;
+    protected String session;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         navConf = getNavDrawerConfiguration();
 
-        String user = UserHelpers.getUserSessionPrefs(this).getString(UserHelpers.PREF_NAME, "");
+
+        if (savedInstanceState != null) {
+            user = savedInstanceState.getString(LoginActivity.USERNAME_BUNDLE);
+            session = savedInstanceState.getString(LoginActivity.SESSION_BUNDLE);
+        } else {
+            user = getIntent().getExtras().getString(LoginActivity.USERNAME_BUNDLE);
+            session = getIntent().getExtras().getString(LoginActivity.SESSION_BUNDLE);
+        }
+        Log.e("USER=", user);
         if (user.isEmpty()) {
             // user logged out
             /*TODO */
@@ -193,6 +206,13 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
         getActionBar().setTitle(mTitle);
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(LoginActivity.SESSION_BUNDLE, session);
+        outState.putString(LoginActivity.USERNAME_BUNDLE, user);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
