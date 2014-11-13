@@ -7,14 +7,13 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
-import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.db.UsersTable;
+import com.techpark.lastfmclient.api.artist.ArtistHelpers;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 
 /**
  * Created by Andrew Gov on 31.10.14.
@@ -78,7 +77,7 @@ public class UserHelpers {
         return null;
     }
 
-    public static ContentValues getContentValues(User user) {
+    public static ContentValues getUserContentValues(User user) {
         ContentValues contentValues = new ContentValues(User.USER_SIZE);
         contentValues.put(UsersTable.COLUMN_NAME, user.getName());
         contentValues.put(UsersTable.COLUMN_AGE, user.getAge());
@@ -117,15 +116,15 @@ public class UserHelpers {
 
         for (int i = 0; i < artists.length(); ++i) {
             RecommendedArtistList.RecommendedArtist r = new RecommendedArtistList.RecommendedArtist(
-                    UserHelpers.getArtistFromJSON((JSONObject) artists.get(i))
+                    ArtistHelpers.getArtistFromJSON((JSONObject) artists.get(i))
             );
 
             JSONObject context = ((JSONObject) artists.get(i)).getJSONObject("context");
             JSONArray similars = context.getJSONArray("artist");
 
             r.setSimilarArtists(
-                    UserHelpers.getArtistFromJSON((JSONObject) similars.get(0)),
-                    UserHelpers.getArtistFromJSON((JSONObject) similars.get(1))
+                    ArtistHelpers.getArtistFromJSON((JSONObject) similars.get(0)),
+                    ArtistHelpers.getArtistFromJSON((JSONObject) similars.get(1))
             );
 
             list.addArtist(r);
@@ -133,20 +132,5 @@ public class UserHelpers {
         return list;
     }
 
-    private static Artist getArtistFromJSON(JSONObject json) throws JSONException {
-        JSONArray images = json.getJSONArray("image");
-        ArrayList<String> imgs = new ArrayList<>();
-
-        for (int i = 0; i < images.length(); ++i)
-            imgs.add(
-                images.getJSONObject(i).getString("#text")
-            );
-
-        return new Artist(
-            json.getString("name"),
-            json.getString("url"),
-            imgs
-        );
-    }
 
 }

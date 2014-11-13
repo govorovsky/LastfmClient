@@ -17,7 +17,7 @@ import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.adapters.MusicAdapter;
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
 import com.techpark.lastfmclient.api.ApiQuery;
-import com.techpark.lastfmclient.api.music.GetRecommended;
+import com.techpark.lastfmclient.api.user.UserGetRecommendedArtists;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.tasks.ApiQueryTask;
 
@@ -65,7 +65,7 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
         if (sk == null)
             return null;
 
-        ApiQuery query = new GetRecommended(sk);
+        ApiQuery query = new UserGetRecommendedArtists(sk);
         query.prepare();
         return new ApiQueryTask(getActivity(), query);
     }

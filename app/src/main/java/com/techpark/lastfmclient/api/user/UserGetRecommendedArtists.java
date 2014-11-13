@@ -1,6 +1,5 @@
-package com.techpark.lastfmclient.api.music;
+package com.techpark.lastfmclient.api.user;
 
-import com.techpark.lastfmclient.api.ApiHelpers;
 import com.techpark.lastfmclient.api.ApiParamNames;
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.network.Method;
@@ -8,10 +7,10 @@ import com.techpark.lastfmclient.network.Method;
 /**
  * Created by max on 07/11/14.
  */
-public class GetRecommended extends ApiQuery {
+public class UserGetRecommendedArtists extends ApiQuery {
     private String session_key;
 
-    public GetRecommended(String sk) {
+    public UserGetRecommendedArtists(String sk) {
         this.session_key = sk;
     }
 

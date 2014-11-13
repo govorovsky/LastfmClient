@@ -59,7 +59,7 @@ public class UsersProvider implements IProvider {
             User user = UserHelpers.getUserFromJson(response);
             ContentResolver resolver = mContext.getContentResolver();
             /* TODO  */
-            resolver.insert(UsersTable.CONTENT_URI, UserHelpers.getContentValues(user));
+            resolver.insert(UsersTable.CONTENT_URI, UserHelpers.getUserContentValues(user));
         } catch (IOException e) {
             e.printStackTrace();
         }

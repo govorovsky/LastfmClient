@@ -70,7 +70,7 @@ public class LastfmContentProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues contentValues) {
         switch (uriMatcher.match(uri)) {
             case USER:
-                return insertUser(contentValues);
+                return updateOrInsertUser(contentValues);
 
             default:
                 return null;
@@ -88,15 +88,16 @@ public class LastfmContentProvider extends ContentProvider {
     }
 
 
-    private Uri insertUser(ContentValues contentValues) {
-        /* update old user info if exists */
+
+    private Uri updateOrInsertUser(ContentValues contentValues) {
         String username = contentValues.getAsString(UsersTable.COLUMN_NAME);
-        long rowId;
-        if (userExists(username)) {
-            rowId = writeDb.update(UsersTable.TABLE_NAME, contentValues, UsersTable.COLUMN_NAME + "=?", new String[]{username});
-        } else {
+
+        long rowId = writeDb.update(UsersTable.TABLE_NAME, contentValues, UsersTable.COLUMN_NAME + "=?", new String[]{username});
+
+        if (rowId == 0) {
             rowId = writeDb.insert(UsersTable.TABLE_NAME, null, contentValues);
         }
+
         if (rowId > 0) {
             Uri newUri = Uri.withAppendedPath(UsersTable.CONTENT_URI_ID_USER, username);
             Log.d(TAG, "ADDED. NOTIFY URI: " + newUri.toString());
@@ -104,6 +105,7 @@ public class LastfmContentProvider extends ContentProvider {
             return newUri;
         }
         return null;
+
     }
 
 
