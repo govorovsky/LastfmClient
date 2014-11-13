@@ -11,12 +11,15 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.techpark.lastfmclient.R;
+import com.techpark.lastfmclient.api.artist.Artist;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MusicAdapter extends BaseAdapter {
     private Context mContext;
-    private ArtistList mArtistList;
+    private RecommendedArtistList mArtistList;
     private LayoutInflater layoutInflater;
 
     public MusicAdapter(Context c) {
@@ -24,7 +27,7 @@ public class MusicAdapter extends BaseAdapter {
         this.mContext = c;
     }
 
-    public void setArtists(ArtistList artists) {
+    public void setArtists(RecommendedArtistList artists) {
         this.mArtistList = artists;
     }
 
@@ -54,7 +57,9 @@ public class MusicAdapter extends BaseAdapter {
             holder = new MusicHolder();
             holder.image = (ImageView) convertView.findViewById(R.id.band_icon);
             holder.band = (TextView) convertView.findViewById(R.id.band_name);
-            //holder.similar_band = (TextView) convertView.findViewById(R.id.b)
+            holder.similar_band = (TextView) convertView.findViewById(R.id.band_similar);
+            holder.similar_first = (CircleImageView) convertView.findViewById(R.id.band_similar_first);
+            holder.similar_second = (CircleImageView) convertView.findViewById(R.id.band_similar_second);
             convertView.setTag(holder);
         }
 
@@ -62,13 +67,23 @@ public class MusicAdapter extends BaseAdapter {
             holder = (MusicHolder) convertView.getTag();
         }
 
-        String img = mArtistList.getArtists().get(pos).getImage();
-        String name = mArtistList.getArtists().get(pos).getName();
-        ArrayList<String> similar = mArtistList.getArtists().get(pos).getSimilar();
+        holder.band.setText(mArtistList.getArtists().get(pos).getArtistName());
 
-        holder.band.setText(name);
-        //holder.similar_band.setText("Similar to " +  similar.get(0) + " and " + similar.get(1));
-        Picasso.with(mContext).load(img).into(holder.image);
+        Picasso.with(mContext).load(
+                mArtistList.getArtists().get(pos).getImage(Artist.IMAGE_MEGA)
+        ).into(holder.image);
+
+        Artist afirst = mArtistList.getArtists().get(pos).getSimilarFirst();
+        Artist asecond = mArtistList.getArtists().get(pos).getSimilarSecond();
+
+        holder.similar_band.setText("Similar to " + afirst.getArtistName() + " and " + asecond.getArtistName());
+        Picasso.with(mContext).load(
+                afirst.getImage(Artist.IMAGE_LARGE)
+        ).into(holder.similar_first);
+
+        Picasso.with(mContext).load(
+                asecond.getImage(Artist.IMAGE_LARGE)
+        ).into(holder.similar_second);
 
         return convertView;
     }
@@ -77,5 +92,7 @@ public class MusicAdapter extends BaseAdapter {
         ImageView image;
         TextView band;
         TextView similar_band;
+        CircleImageView similar_first;
+        CircleImageView similar_second;
     }
 }
