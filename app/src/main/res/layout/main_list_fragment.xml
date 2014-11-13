@@ -4,44 +4,13 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="22dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        >
+    <include
+        android:id="@+id/recommended"
+        layout="@layout/music_layout" />
 
-        <TextView
-            android:id="@+id/recommended_id"
-            android:layout_width="270dp"
-            android:layout_height="match_parent"
-            android:text="@string/recommended_title"
-            android:layout_centerVertical="true"
-            android:textSize="18sp"
-            android:includeFontPadding="false"
-            android:fontFamily="sans-serif-light"
-            android:textColor="@android:color/white">
-        </TextView>
+    <include
+        android:id="@+id/releases"
+        layout="@layout/music_layout" />
 
-        <Button style="@style/MoreButtonTheme"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/recommended_more"
-            android:text="@string/more_button"
-            android:layout_alignParentRight="true"/>
-
-    </RelativeLayout>
-
-    <GridView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/grid_recommended"
-        android:horizontalSpacing="2dp"
-        android:numColumns="2"
-        android:verticalSpacing="2dp"
-        >
-    </GridView>
 
 </LinearLayout>

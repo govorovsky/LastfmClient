@@ -5,12 +5,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpark.lastfmclient.R;
@@ -25,9 +28,10 @@ import org.json.JSONException;
 
 
 public class MainListFragment extends Fragment implements LoaderManager.LoaderCallbacks<String> {
-    private GridView mRecommended;
     private RecommendedArtistList artistList = new RecommendedArtistList();
     private MusicAdapter mAdapter = null;
+
+    private RelativeLayout recommendedLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,16 +43,20 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mRecommended = (GridView) view.findViewById(R.id.grid_recommended);
+        recommendedLayout = (RelativeLayout) view.findViewById(R.id.recommended);
+        ((TextView)recommendedLayout.findViewById(R.id.label)).setText("Recommended Music");
+
         mAdapter = new MusicAdapter(getActivity());
-        mRecommended.setAdapter(mAdapter);
-        mRecommended.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        GridView grid = (GridView) recommendedLayout.findViewById(R.id.grid);
+
+        grid.setAdapter(mAdapter);
+        //TODO: url to page with artist
+        grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Toast.makeText(getActivity(), "" + i, Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     @Override
