@@ -6,5 +6,6 @@
     <color name="white_light">#E5E5E5</color>
     <color name="white">#FFFFFF</color>
     <color name="white_transparent80">#50FFFFFF</color>
+    <color name="white_transparent80_fix">#D8FFFFFF</color>
     <color name="black_transparent70">#46000000</color>
 </resources>
