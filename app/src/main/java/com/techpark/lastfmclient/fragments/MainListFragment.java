@@ -14,21 +14,19 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 import com.techpark.lastfmclient.R;
-import com.techpark.lastfmclient.adapters.ArtistList;
 import com.techpark.lastfmclient.adapters.MusicAdapter;
+import com.techpark.lastfmclient.adapters.RecommendedArtistList;
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.api.music.GetRecommended;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.tasks.ApiQueryTask;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 
 public class MainListFragment extends Fragment implements LoaderManager.LoaderCallbacks<String> {
     private GridView mRecommended;
-    private ArtistList artistList = new ArtistList();
+    private RecommendedArtistList artistList = new RecommendedArtistList();
     private MusicAdapter mAdapter = null;
 
     @Override
@@ -74,28 +72,11 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<String> stringLoader, String data) {
-        //progressbar
-
         if (data != null && artistList.getArtists().isEmpty()) { //need to check if we already get artists
             try {
-                JSONObject object = new JSONObject(data);
-                if (!object.isNull("error")) {
-                    Toast.makeText(getActivity(), "Error while loading music", Toast.LENGTH_LONG).show();
-                } else {
-                    JSONObject recommendations = object.getJSONObject("recommendations");
-                    JSONArray artists = recommendations.getJSONArray("artist");
-
-                    for (int i = 0; i < artists.length(); ++i) {
-                        JSONArray images = ((JSONObject) artists.get(i)).getJSONArray("image");
-                        artistList.addArtist(new ArtistList.Artist(
-                                ((JSONObject) artists.get(i)).getString("name"),
-                                ((JSONObject) artists.get(i)).getString("url"),
-                                images.getJSONObject(4).getString("#text")
-                        ));
-                    }
-                    mAdapter.setArtists(artistList);
-                    mAdapter.notifyDataSetChanged();
-                }
+                artistList = UserHelpers.getRecommendedArtistsFromJSON(data);
+                mAdapter.setArtists(artistList);
+                mAdapter.notifyDataSetChanged();
             } catch (JSONException e) {
                 Toast.makeText(getActivity(), "Exception while parsing music", Toast.LENGTH_LONG).show();
             }

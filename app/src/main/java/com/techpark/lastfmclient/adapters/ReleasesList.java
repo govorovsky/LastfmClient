@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class ReleasesList {
     private ArrayList<Release> releases = new ArrayList(); //Pair?
 
-    public static class Release implements MusicItem {
+    public static class Release {
         private String band;
         private String name;
         private String url;

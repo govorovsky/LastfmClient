@@ -6,10 +6,15 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.techpark.lastfmclient.adapters.RecommendedArtistList;
+import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.db.UsersTable;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by Andrew Gov on 31.10.14.
@@ -100,6 +105,48 @@ public class UserHelpers {
 
     public static SharedPreferences getUserSessionPrefs(Context context) {
         return context.getSharedPreferences(PREF_STORAGE_FILE, Context.MODE_PRIVATE);
+    }
+
+    //TODO: write to db
+    public static RecommendedArtistList getRecommendedArtistsFromJSON(/*@NotNull*/ String json) throws JSONException {
+        RecommendedArtistList list = new RecommendedArtistList();
+        JSONObject object = new JSONObject(json);
+
+        JSONObject recommendations = object.getJSONObject("recommendations");
+        JSONArray artists = recommendations.getJSONArray("artist");
+
+        for (int i = 0; i < artists.length(); ++i) {
+            RecommendedArtistList.RecommendedArtist r = new RecommendedArtistList.RecommendedArtist(
+                    UserHelpers.getArtistFromJSON((JSONObject) artists.get(i))
+            );
+
+            JSONObject context = ((JSONObject) artists.get(i)).getJSONObject("context");
+            JSONArray similars = context.getJSONArray("artist");
+
+            r.setSimilarArtists(
+                    UserHelpers.getArtistFromJSON((JSONObject) similars.get(0)),
+                    UserHelpers.getArtistFromJSON((JSONObject) similars.get(1))
+            );
+
+            list.addArtist(r);
+        }
+        return list;
+    }
+
+    private static Artist getArtistFromJSON(JSONObject json) throws JSONException {
+        JSONArray images = json.getJSONArray("image");
+        ArrayList<String> imgs = new ArrayList<>();
+
+        for (int i = 0; i < images.length(); ++i)
+            imgs.add(
+                images.getJSONObject(i).getString("#text")
+            );
+
+        return new Artist(
+            json.getString("name"),
+            json.getString("url"),
+            imgs
+        );
     }
 
 }
