@@ -20,13 +20,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpark.lastfmclient.R;
+import com.techpark.lastfmclient.api.ApiResponse;
+import com.techpark.lastfmclient.api.auth.Auth;
+import com.techpark.lastfmclient.api.auth.AuthHelpers;
 import com.techpark.lastfmclient.api.auth.GetMobileSession;
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.tasks.ApiQueryTask;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 public class LoginActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<String> {
@@ -189,28 +189,21 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
 
         mProgressBar.setVisibility(View.INVISIBLE);
         if (data != null) {
-            try { /* TODO move processing of ApiResponse to UserHelpers */
-                JSONObject object = new JSONObject(data);
-                if (!object.isNull("error")) {
-                    // error occurs..
-                    showError(BAD_CREDENTIALS, true);
-                } else {
+            ApiResponse<Auth> resp = AuthHelpers.parseAuthFormJson(data);
+            if (resp.getError().isEmpty()) {
+                String name = resp.getData().getName();
+                String key = resp.getData().getKey();
 
-                    Bundle bundle = new Bundle();
-                    JSONObject session = object.getJSONObject("session");
-                    String name = session.getString("name");
-                    String key = session.getString("key");
-                    bundle.putString(USERNAME_BUNDLE, name);
-                    bundle.putString(SESSION_BUNDLE, key);
+                Bundle bundle = new Bundle();
+                bundle.putString(USERNAME_BUNDLE, name);
+                bundle.putString(SESSION_BUNDLE, key);
 
-                    UserHelpers.saveUserSession(getApplicationContext(), key, name);
+                UserHelpers.saveUserSession(getApplicationContext(), key, name);
 
-                    launchMainActivity(bundle);
-
-                }
-            } catch (JSONException e) {
+                launchMainActivity(bundle);
+            } else {
+                showError(BAD_CREDENTIALS, true);
             }
-
         } else {
             showError(NET_ERROR, true);
         }
