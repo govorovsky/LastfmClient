@@ -17,12 +17,12 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MusicAdapter extends BaseAdapter {
+public class RecommendedAdapter extends BaseAdapter {
     private Context mContext;
     private RecommendedArtistList mArtistList;
     private LayoutInflater layoutInflater;
 
-    public MusicAdapter(Context c) {
+    public RecommendedAdapter(Context c) {
         this.layoutInflater = LayoutInflater.from(c);
         this.mContext = c;
     }
@@ -50,11 +50,11 @@ public class MusicAdapter extends BaseAdapter {
 
     @Override
     public View getView(int pos, View convertView, ViewGroup parent) {
-        MusicHolder holder = null;
+        ArtistHolder holder = null;
 
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.gridview_item, parent, false);
-            holder = new MusicHolder();
+            holder = new ArtistHolder();
             holder.image = (ImageView) convertView.findViewById(R.id.band_icon);
             holder.band = (TextView) convertView.findViewById(R.id.band_name);
             holder.similar_band = (TextView) convertView.findViewById(R.id.band_similar);
@@ -64,7 +64,7 @@ public class MusicAdapter extends BaseAdapter {
         }
 
         if (holder == null) {
-            holder = (MusicHolder) convertView.getTag();
+            holder = (ArtistHolder) convertView.getTag();
         }
 
         holder.band.setText(mArtistList.getArtists().get(pos).getArtistName());
@@ -88,7 +88,7 @@ public class MusicAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class MusicHolder {
+    private class ArtistHolder {
         ImageView image;
         TextView band;
         TextView similar_band;
