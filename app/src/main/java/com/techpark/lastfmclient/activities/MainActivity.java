@@ -67,12 +67,6 @@ public class MainActivity extends BaseNavDrawerActivity {
 
     }
 
-    private void logOut() {
-        UserHelpers.clearUserSession(this);
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
     private List<NavDrawerItem> createMenu() {
         return new ArrayList<>(Arrays.asList(

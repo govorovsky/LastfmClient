@@ -24,5 +24,4 @@ public class AuthHelpers {
             return new ApiResponse<>(new Auth(null, null), "json error!");
         }
     }
-
 }
