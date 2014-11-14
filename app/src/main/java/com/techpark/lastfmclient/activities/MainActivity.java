@@ -10,6 +10,7 @@ import com.techpark.lastfmclient.adapters.NavMenuHeader;
 import com.techpark.lastfmclient.adapters.NavMenuItem;
 import com.techpark.lastfmclient.adapters.NavMenuSection;
 import com.techpark.lastfmclient.api.user.User;
+import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.fragments.MainListFragment;
 
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ public class MainActivity extends BaseNavDrawerActivity {
     }
 
     private void logOut() {
+        UserHelpers.clearUserSession(this);
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();

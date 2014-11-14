@@ -98,8 +98,12 @@ public class UserHelpers {
         editor.apply();
     }
 
+    public static void clearUserSession(Context c) {
+        saveUserSession(c, "", "");
+    }
+
     public static String getUserSession(Context context) {
-        return context.getSharedPreferences(PREF_STORAGE_FILE, Context.MODE_PRIVATE).getString(PREF_SESSION_KEY, null);
+        return context.getSharedPreferences(PREF_STORAGE_FILE, Context.MODE_PRIVATE).getString(PREF_SESSION_KEY, "");
     }
 
     public static SharedPreferences getUserSessionPrefs(Context context) {

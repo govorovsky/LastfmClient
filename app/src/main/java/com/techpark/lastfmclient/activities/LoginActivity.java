@@ -1,6 +1,7 @@
 package com.techpark.lastfmclient.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -53,6 +54,19 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("ON CREATE", "START");
         super.onCreate(savedInstanceState);
+
+        SharedPreferences sp = UserHelpers.getUserSessionPrefs(this);
+        String name = sp.getString(UserHelpers.PREF_NAME, "");
+        String key = sp.getString(UserHelpers.PREF_SESSION_KEY, "");
+
+        if (!name.isEmpty() && !key.isEmpty()) {
+            //user already logged in...
+            Bundle bundle = new Bundle();
+            bundle.putString(USERNAME_BUNDLE, name);
+            bundle.putString(SESSION_BUNDLE, key);
+            launchMainActivity(bundle);
+        }
+
         setContentView(R.layout.activity_login);
 
         mLoginView = (AutoCompleteTextView) findViewById(R.id.login_input);
@@ -115,6 +129,7 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
             }
         });
 
+
         Loader loader = getSupportLoaderManager().getLoader(0);
         if (loader != null) { // check for login task being executed
             showProgressBar(); // ok we are attempting to login now
@@ -129,7 +144,7 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
         if (DEBUG) {
             mLoginView.setText("SiCrash");
             mPassView.setText("112358132134");
-            mLoginButton.callOnClick();
+//            mLoginButton.callOnClick();
         }
     }
 
