@@ -2,6 +2,8 @@ package com.techpark.lastfmclient.providers;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -20,6 +22,8 @@ import java.io.IOException;
 public class UsersProvider implements IProvider {
 
     public static final String BUNDLE_USERNAME = "username";
+
+    private static final int CACHE_EXPIRATION = 60 * 1000; // 1 minute
 
     private final Context mContext;
     private static final String TAG = UsersProvider.class.getSimpleName();
@@ -47,18 +51,36 @@ public class UsersProvider implements IProvider {
     /* call to REST and update SQL if necessary */
     private void getUser(String username) {
 
+        ContentResolver resolver = mContext.getContentResolver();
+
+        // first, check if we have actual record in db
+        Cursor c = null;
+        try {
+            c = resolver.query(Uri.withAppendedPath(UsersTable.CONTENT_URI_ID_USER, username), null, null, null, null);
+            if (c.moveToFirst()) {
+                // we have such user, check cache time
+                long timestamp = c.getLong(9);
+                if (System.currentTimeMillis() - timestamp < CACHE_EXPIRATION) {
+                    // user is up to date, nothing to do
+                    Log.d(TAG, "getUser DB Request");
+                    return;
+                }
+            }
+        } finally {
+            if (c != null && !c.isClosed()) {
+                c.close();
+            }
+        }
+
         ApiQuery query = new UserGetInfo(username);
         query.prepare();
 
-        Log.d(TAG, "getUser");
+        Log.d(TAG, "getUser API Request");
 
-        String response = null;
         try {
-            response = NetworkUtils.httpRequest(query);
+            String response = NetworkUtils.httpRequest(query);
             Log.d(TAG, response);
             User user = UserHelpers.getUserFromJson(response);
-            ContentResolver resolver = mContext.getContentResolver();
-            /* TODO  */
             resolver.insert(UsersTable.CONTENT_URI, UserHelpers.getUserContentValues(user));
         } catch (IOException e) {
             e.printStackTrace();

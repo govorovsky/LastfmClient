@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
  */
 public class User {
 
-    static final int USER_SIZE = 8; // num of fields
 
     private String name;
     private String fullname;

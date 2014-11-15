@@ -78,7 +78,7 @@ public class UserHelpers {
     }
 
     public static ContentValues getUserContentValues(User user) {
-        ContentValues contentValues = new ContentValues(User.USER_SIZE);
+        ContentValues contentValues = new ContentValues(UsersTable.USER_SIZE);
         contentValues.put(UsersTable.COLUMN_NAME, user.getName());
         contentValues.put(UsersTable.COLUMN_AGE, user.getAge());
         contentValues.put(UsersTable.COLUMN_REALNAME, user.getFullname());
@@ -87,6 +87,7 @@ public class UserHelpers {
         contentValues.put(UsersTable.COLUMN_COUNTRY, user.getCountry());
         contentValues.put(UsersTable.COLUMN_PLAYCOUNT, user.getPlaycount());
         contentValues.put(UsersTable.COLUMN_GENDER, user.getGender());
+        contentValues.put(UsersTable.COLUMN_TIMESTAMP, System.currentTimeMillis());
         return contentValues;
     }
 
