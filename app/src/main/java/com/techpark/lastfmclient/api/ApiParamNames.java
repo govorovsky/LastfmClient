@@ -10,9 +10,7 @@ public class ApiParamNames {
     public static final String API_METHOD = "method";
     public static final String API_FORMAT = "format";
 
-    /*  get recommended music
-     *
-    */
     public static final String API_LIMIT = "limit";
     public static final String API_PAGE = "page";
+    public static final String API_USER = "user";
 }

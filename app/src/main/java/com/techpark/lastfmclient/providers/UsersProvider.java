@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.techpark.lastfmclient.api.ApiQuery;
+import com.techpark.lastfmclient.api.library.LibraryGetArtists;
+import com.techpark.lastfmclient.api.library.LibraryHelpers;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.api.user.UserGetInfo;
 import com.techpark.lastfmclient.api.user.UserHelpers;
@@ -59,7 +61,7 @@ public class UsersProvider implements IProvider {
             c = resolver.query(Uri.withAppendedPath(UsersTable.CONTENT_URI_ID_USER, username), null, null, null, null);
             if (c.moveToFirst()) {
                 // we have such user, check cache time
-                long timestamp = c.getLong(9);
+                long timestamp = c.getLong(10);
                 if (System.currentTimeMillis() - timestamp < CACHE_EXPIRATION) {
                     // user is up to date, nothing to do
                     Log.d(TAG, "getUser DB Request");
@@ -72,15 +74,22 @@ public class UsersProvider implements IProvider {
             }
         }
 
-        ApiQuery query = new UserGetInfo(username);
-        query.prepare();
+        ApiQuery queryUser = new UserGetInfo(username);
+        queryUser.prepare();
+
+        ApiQuery queryMostPlayed = new LibraryGetArtists(username, 1);
+        queryMostPlayed.prepare();
 
         Log.d(TAG, "getUser API Request");
 
         try {
-            String response = NetworkUtils.httpRequest(query);
+            String response = NetworkUtils.httpRequest(queryUser);
             Log.d(TAG, response);
             User user = UserHelpers.getUserFromJson(response);
+
+            response = NetworkUtils.httpRequest(queryMostPlayed);
+            user.setMostPlayedArtist(LibraryHelpers.parseMostPlayedFromJson(response));
+
             resolver.insert(UsersTable.CONTENT_URI, UserHelpers.getUserContentValues(user));
         } catch (IOException e) {
             e.printStackTrace();

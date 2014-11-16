@@ -16,6 +16,7 @@ public class User {
     private String gender;
     private int playcount;
     private String registered;
+    private String mostPlayedArtist;
 
 
     public User(@NonNull String name, @NonNull String fullname, @NonNull String avatar, @NonNull String country, int age, @NonNull String gender, int playcount, @NonNull String registered) {
@@ -29,20 +30,19 @@ public class User {
         this.registered = registered;
     }
 
+
     /**
-     * Creates anon user, useful when no data
+     * empty user, useful when no data
      * are available
      */
-    public User() {
-        this.name = "";
-        this.fullname = "";
-        this.avatar = "";
-        this.country = "";
-        this.age = -1;
-        this.gender = "";
-        this.playcount = 0;
-        this.registered = "";
+    private static class EmptyUser extends User {
+        EmptyUser() {
+            super("", "", "", "", -1, "", 0, "");
+            setMostPlayedArtist("");
+        }
     }
+
+    public static final EmptyUser EMPTY_USER = new EmptyUser();
 
     public String getName() {
         return name;
@@ -74,5 +74,13 @@ public class User {
 
     public String getRegistered() {
         return registered;
+    }
+
+    public String getMostPlayedArtist() {
+        return mostPlayedArtist;
+    }
+
+    public void setMostPlayedArtist(String mostPlayedArtist) {
+        this.mostPlayedArtist = mostPlayedArtist;
     }
 }

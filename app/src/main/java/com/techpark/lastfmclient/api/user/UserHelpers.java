@@ -70,9 +70,12 @@ public class UserHelpers {
             String sex = c.getString(6);
             int playcnt = c.getInt(7);
             String registered = c.getString(8);
+            String cover = c.getString(9);
 
-            Log.d(LOG_TAG, name + " " + realname + " " + urlAvatar + " " + country + " " + age + " " + sex + " " + playcnt + " " + registered);
-            return new User(name, realname, urlAvatar, country, age, sex, playcnt, registered);
+            Log.d(LOG_TAG, name + " " + realname + " " + urlAvatar + " " + country + " " + age + " " + sex + " " + playcnt + " " + registered + " " + cover);
+            User u = new User(name, realname, urlAvatar, country, age, sex, playcnt, registered);
+            u.setMostPlayedArtist(cover);
+            return u;
         }
         return null;
     }
@@ -87,6 +90,7 @@ public class UserHelpers {
         contentValues.put(UsersTable.COLUMN_COUNTRY, user.getCountry());
         contentValues.put(UsersTable.COLUMN_PLAYCOUNT, user.getPlaycount());
         contentValues.put(UsersTable.COLUMN_GENDER, user.getGender());
+        contentValues.put(UsersTable.COLUMN_COVER, user.getMostPlayedArtist());
         contentValues.put(UsersTable.COLUMN_TIMESTAMP, System.currentTimeMillis());
         return contentValues;
     }

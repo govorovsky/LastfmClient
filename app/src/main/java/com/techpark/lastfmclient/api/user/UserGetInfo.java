@@ -1,6 +1,6 @@
 package com.techpark.lastfmclient.api.user;
 
-import com.techpark.lastfmclient.api.ApiHelpers;
+import com.techpark.lastfmclient.api.ApiParamNames;
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.network.Method;
 
@@ -11,7 +11,6 @@ public class UserGetInfo extends ApiQuery {
 
     private String username;
 
-    private static final String API_USER = "user";
 
     public UserGetInfo(String username) {
         this.username = username;
@@ -24,7 +23,7 @@ public class UserGetInfo extends ApiQuery {
 
     @Override
     public void prepare() {
-        entity.add(API_USER, username);
+        entity.add(ApiParamNames.API_USER, username);
         build(this, false);
     }
 

@@ -8,7 +8,7 @@ import android.provider.BaseColumns;
  */
 public class UsersTable implements BaseColumns {
 
-    public static final int USER_SIZE = 9; // num of fields
+    public static final int USER_SIZE = 10; // num of fields
 
     private UsersTable() {
     }
@@ -25,6 +25,7 @@ public class UsersTable implements BaseColumns {
     public static final String COLUMN_GENDER = "sex";
     public static final String COLUMN_PLAYCOUNT = "playcount";
     public static final String COLUMN_REGISTERED = "registered";
+    public static final String COLUMN_COVER = "cover";
     public static final String COLUMN_TIMESTAMP = "timestamp";
 
 
@@ -38,6 +39,7 @@ public class UsersTable implements BaseColumns {
             + COLUMN_GENDER + " TEXT, "
             + COLUMN_PLAYCOUNT + " INTEGER, "
             + COLUMN_REGISTERED + " TEXT, "
+            + COLUMN_COVER + " TEXT, "
             + COLUMN_TIMESTAMP + " INTEGER "
             + " ); ";
 }

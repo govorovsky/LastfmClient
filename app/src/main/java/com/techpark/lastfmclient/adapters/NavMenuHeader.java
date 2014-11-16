@@ -21,6 +21,7 @@ public class NavMenuHeader implements NavDrawerItem {
         s.since = user.getRegistered();
         s.fullname = user.getFullname();
         s.avatar = user.getAvatar();
+        s.poster = user.getMostPlayedArtist();
         return s;
     }
 
@@ -86,5 +87,13 @@ public class NavMenuHeader implements NavDrawerItem {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getPoster() {
+        return poster;
+    }
+
+    public void setPoster(String poster) {
+        this.poster = poster;
     }
 }

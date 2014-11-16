@@ -48,6 +48,7 @@
         android:hint="@string/user"
         android:singleLine="true"
         android:imeOptions="actionNext"
+        android:textCursorDrawable="@null"
         android:background="@drawable/line_edit_login"
 
         />
@@ -71,6 +72,7 @@
         android:imeActionId="@+id/login_form"
         android:inputType="textPassword"
         android:hint="@string/password"
+        android:textCursorDrawable="@null"
         android:background="@drawable/line_edit_login"
         />
 
@@ -125,7 +127,6 @@
         android:text="@string/forgot"
         android:layout_marginBottom="18dp"
         android:layout_marginRight="32dp"
-
 
         />
 

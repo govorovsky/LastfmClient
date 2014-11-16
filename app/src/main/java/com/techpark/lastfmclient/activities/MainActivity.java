@@ -1,7 +1,7 @@
 package com.techpark.lastfmclient.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.adapters.DrawerAdapter;
@@ -10,7 +10,6 @@ import com.techpark.lastfmclient.adapters.NavMenuHeader;
 import com.techpark.lastfmclient.adapters.NavMenuItem;
 import com.techpark.lastfmclient.adapters.NavMenuSection;
 import com.techpark.lastfmclient.api.user.User;
-import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.fragments.MainListFragment;
 
 import java.util.ArrayList;
@@ -24,20 +23,32 @@ public class MainActivity extends BaseNavDrawerActivity {
 
 
     private static final String TAG_NAME = "MainActivity";
+    private Fragment curr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setFragment(new MainListFragment(), TAG_NAME);
 
-        if (getSupportFragmentManager().findFragmentByTag(TAG_NAME) == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new MainListFragment(), TAG_NAME).commit();
+    }
+
+    @Override
+    protected void fadeActionBar(float slideOffset) {
+       /* TODO */
+    }
+
+
+    private <T extends Fragment> boolean setFragment(T fragment, String tag) {
+        curr = fragment;
+        if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, tag).commit();
+            return true;
         }
+        return false;
     }
 
     @Override
     protected NavDrawerConfiguration getNavDrawerConfiguration() {
-
-
         NavDrawerConfiguration configuration = new NavDrawerConfiguration();
         configuration.setMainLayout(R.layout.activity_main);
         configuration.setDrawerLayoutId(R.id.drawer_layout);
@@ -46,8 +57,7 @@ public class MainActivity extends BaseNavDrawerActivity {
 //        configuration.setDrawerShadow(R.drawable.drawer_shadow);
         configuration.setDrawerOpenDesc(R.string.drawer_open); // unnecessary
         configuration.setDrawerCloseDesc(R.string.drawer_close);
-        configuration.setBaseAdapter(
-                new DrawerAdapter(this, R.layout.drawer_item, configuration.getNavItems()));
+        configuration.setBaseAdapter(new DrawerAdapter(this, R.layout.drawer_item, configuration.getNavItems()));
         return configuration;
     }
 
@@ -70,7 +80,7 @@ public class MainActivity extends BaseNavDrawerActivity {
 
     private List<NavDrawerItem> createMenu() {
         return new ArrayList<>(Arrays.asList(
-                NavMenuHeader.getInstance(NavDrawerConstants.PROFILE, new User()),
+                NavMenuHeader.getInstance(NavDrawerConstants.PROFILE, User.EMPTY_USER),
                 NavMenuSection.getInstance(100, "RECOMMENDATIONS"),
                 NavMenuItem.getInstance(101, "Music"),
                 NavMenuItem.getInstance(102, "Albums"),

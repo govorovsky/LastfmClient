@@ -58,6 +58,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         navConf = getNavDrawerConfiguration();
 
 
@@ -109,12 +110,19 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
                 getActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu();
             }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                fadeActionBar(slideOffset);
+            }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         createUserLoader(user);
 
     }
+
+    protected abstract void fadeActionBar(float slideOffset);
 
     private Loader createUserLoader(String username) {
         Bundle b = new Bundle();
