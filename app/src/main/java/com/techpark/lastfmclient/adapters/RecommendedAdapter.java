@@ -70,20 +70,31 @@ public class RecommendedAdapter extends BaseAdapter {
         holder.band.setText(mArtistList.getArtists().get(pos).getArtistName());
 
         Picasso.with(mContext).load(
-                mArtistList.getArtists().get(pos).getImage(Artist.IMAGE_MEGA)
+                mArtistList.getArtists().get(pos).getImage(Artist.ImageSize.MEGA)
         ).into(holder.image);
 
         Artist afirst = mArtistList.getArtists().get(pos).getSimilarFirst();
         Artist asecond = mArtistList.getArtists().get(pos).getSimilarSecond();
 
-        holder.similar_band.setText("Similar to " + afirst.getArtistName() + " and " + asecond.getArtistName());
+        StringBuilder similar_label = new StringBuilder("Similar to ")
+                                            .append(afirst.getArtistName());
+
+        if (asecond != null) {
+            similar_label.append(" and ").append(asecond.getArtistName());
+        }
+
+        holder.similar_band.setText(similar_label.toString());
         Picasso.with(mContext).load(
-                afirst.getImage(Artist.IMAGE_LARGE)
+                afirst.getImage(Artist.ImageSize.LARGE)
         ).into(holder.similar_first);
 
-        Picasso.with(mContext).load(
-                asecond.getImage(Artist.IMAGE_LARGE)
-        ).into(holder.similar_second);
+        if (asecond != null) {
+            Picasso.with(mContext).load(
+                    asecond.getImage(Artist.ImageSize.LARGE)
+            ).into(holder.similar_second);
+        } else {
+            holder.similar_second.setVisibility(View.GONE);
+        }
 
         return convertView;
     }

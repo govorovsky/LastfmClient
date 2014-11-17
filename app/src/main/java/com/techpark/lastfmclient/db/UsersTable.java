@@ -36,5 +36,5 @@ public class UsersTable implements BaseColumns {
             + COLUMN_GENDER + " TEXT, "
             + COLUMN_PLAYCOUNT + " INTEGER, "
             + COLUMN_REGISTERED + " TEXT "
-            + " ); ";
+            + ")";
 }
