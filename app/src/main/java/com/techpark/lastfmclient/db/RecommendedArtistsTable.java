@@ -21,7 +21,7 @@ public class RecommendedArtistsTable implements BaseColumns {
     public static final String SQL_CREATE_RECOMMENDED_TABLE = "CREATE TABLE "
             + TABLE_NAME + " (" + _ID + " INTEGER PRIMARY KEY, "
             + COLUMN_NAME + " TEXT UNIQUE, "
-            + COLUMN_SIMILAR_FIRST + " TEXT,"
+            + COLUMN_SIMILAR_FIRST + " TEXT, "
             + COLUMN_SIMILAR_SECOND + " TEXT "
             + ");";
 }

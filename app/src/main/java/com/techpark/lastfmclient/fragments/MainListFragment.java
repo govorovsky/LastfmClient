@@ -93,6 +93,10 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
                 ((GridView) recommendedLayout.findViewById(R.id.grid)).getAdapter();
 
         artistList = UserHelpers.getRecommendedArtistsFromCursor(cursor, 4);
+        if (artistList != null)
+            Log.d("Recommended onLoadFinished", "" + artistList.getArtists().size());
+        else
+            Log.d("Recommended onLoadFinished", "null");
         adapter.setArtists(artistList);
 
         ((GridView) recommendedLayout.findViewById(R.id.grid))
@@ -104,7 +108,9 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             });
 
+        
         adapter.notifyDataSetChanged();
+        Log.d("Recommended onLoadFinished", "endless");
     }
 
     @Override

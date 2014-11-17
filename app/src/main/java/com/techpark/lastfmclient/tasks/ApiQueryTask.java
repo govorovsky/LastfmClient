@@ -25,13 +25,17 @@ public class ApiQueryTask extends AsyncTaskLoader<String> {
     @Override
     public void deliverResult(String data) {
         resp = data;
-        super.deliverResult(data);
+        if (isStarted()) {
+            super.deliverResult(data);
+        }
     }
 
     @Override
     protected void onStartLoading() {
-        if(resp == null) {
+        if (resp == null) {
             forceLoad();
+        } else {
+            deliverResult(resp);
         }
     }
 

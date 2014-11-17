@@ -1,6 +1,7 @@
 package com.techpark.lastfmclient.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -20,13 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpark.lastfmclient.R;
+import com.techpark.lastfmclient.api.ApiResponse;
+import com.techpark.lastfmclient.api.auth.Auth;
+import com.techpark.lastfmclient.api.auth.AuthHelpers;
 import com.techpark.lastfmclient.api.auth.GetMobileSession;
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.tasks.ApiQueryTask;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 
 public class LoginActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<String> {
@@ -53,6 +54,19 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("ON CREATE", "START");
         super.onCreate(savedInstanceState);
+
+        SharedPreferences sp = UserHelpers.getUserSessionPrefs(this);
+        String name = sp.getString(UserHelpers.PREF_NAME, "");
+        String key = sp.getString(UserHelpers.PREF_SESSION_KEY, "");
+
+        if (!name.isEmpty() && !key.isEmpty()) {
+            //user already logged in...
+            Bundle bundle = new Bundle();
+            bundle.putString(USERNAME_BUNDLE, name);
+            bundle.putString(SESSION_BUNDLE, key);
+            launchMainActivity(bundle);
+        }
+
         setContentView(R.layout.activity_login);
 
         mLoginView = (AutoCompleteTextView) findViewById(R.id.login_input);
@@ -115,6 +129,7 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
             }
         });
 
+
         Loader loader = getSupportLoaderManager().getLoader(0);
         if (loader != null) { // check for login task being executed
             showProgressBar(); // ok we are attempting to login now
@@ -129,7 +144,7 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
         if (DEBUG) {
             mLoginView.setText("SiCrash");
             mPassView.setText("112358132134");
-            mLoginButton.callOnClick();
+//            mLoginButton.callOnClick();
         }
     }
 
@@ -189,28 +204,21 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
 
         mProgressBar.setVisibility(View.INVISIBLE);
         if (data != null) {
-            try { /* TODO move processing of ApiResponse to UserHelpers */
-                JSONObject object = new JSONObject(data);
-                if (!object.isNull("error")) {
-                    // error occurs..
-                    showError(BAD_CREDENTIALS, true);
-                } else {
+            ApiResponse<Auth> resp = AuthHelpers.parseAuthFormJson(data);
+            if (resp.getError().isEmpty()) {
+                String name = resp.getData().getName();
+                String key = resp.getData().getKey();
 
-                    Bundle bundle = new Bundle();
-                    JSONObject session = object.getJSONObject("session");
-                    String name = session.getString("name");
-                    String key = session.getString("key");
-                    bundle.putString(USERNAME_BUNDLE, name);
-                    bundle.putString(SESSION_BUNDLE, key);
+                Bundle bundle = new Bundle();
+                bundle.putString(USERNAME_BUNDLE, name);
+                bundle.putString(SESSION_BUNDLE, key);
 
-                    UserHelpers.saveUserSession(getApplicationContext(), key, name);
+                UserHelpers.saveUserSession(getApplicationContext(), key, name);
 
-                    launchMainActivity(bundle);
-
-                }
-            } catch (JSONException e) {
+                launchMainActivity(bundle);
+            } else {
+                showError(BAD_CREDENTIALS, true);
             }
-
         } else {
             showError(NET_ERROR, true);
         }

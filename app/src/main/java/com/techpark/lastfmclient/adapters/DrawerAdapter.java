@@ -83,7 +83,13 @@ public class DrawerAdapter extends ArrayAdapter<NavDrawerItem> {
         holder.playcnt.setText(navMenuHeader.getPlays() + " " + context.getResources().getString(R.string.plays_since));
         holder.fullname.setText(navMenuHeader.getFullName());
         holder.since.setText(navMenuHeader.getSince());
-        holder.poster.setImageResource(R.drawable.gunit); /* TODO !! */
+
+        String posterUrl = navMenuHeader.getPoster();
+        if (posterUrl.isEmpty()) {
+            /* no played tracks? need to show smth... TODO */
+        } else {
+            Picasso.with(context).load(posterUrl).into(holder.poster);
+        }
 
         String img = navMenuHeader.getAvatar();
 

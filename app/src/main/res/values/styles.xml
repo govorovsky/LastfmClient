@@ -1,10 +1,14 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="AppTheme" parent="android:Theme.Holo">
         <item name="android:actionBarStyle">@style/MyActionBar</item>
-
     </style>
+
+
+    <style name="LoginTheme" parent="android:Theme.Holo.NoActionBar">
+    </style>
+
 
     <style name="MoreButtonTheme" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/button_more</item>

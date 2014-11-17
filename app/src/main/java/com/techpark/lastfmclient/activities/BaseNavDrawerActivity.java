@@ -1,5 +1,6 @@
 package com.techpark.lastfmclient.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
@@ -57,6 +58,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         navConf = getNavDrawerConfiguration();
 
 
@@ -69,8 +71,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
         }
         Log.e("USER=", user);
         if (user.isEmpty()) {
-            // user logged out
-            /*TODO */
+            logOut();
         }
 
         mServiceHelper = new ServiceHelper(getApplicationContext());
@@ -109,12 +110,33 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
                 getActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu();
             }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                fadeActionBar(slideOffset);
+            }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        getSupportLoaderManager().restartLoader(0, null, this);
+        createUserLoader(user);
+
     }
 
+    protected abstract void fadeActionBar(float slideOffset);
+
+    private Loader createUserLoader(String username) {
+        Bundle b = new Bundle();
+        b.putString(LoginActivity.USERNAME_BUNDLE, username);
+        return getSupportLoaderManager().restartLoader(0, b, this);
+    }
+
+
+    protected void logOut() {
+        UserHelpers.clearUserSession(this);
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
 
     protected int getDrawerIcon() {
         return R.drawable.ic_ab_burger;
@@ -216,8 +238,9 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        String user = bundle.getString(LoginActivity.USERNAME_BUNDLE);
         return new CursorLoader(this,
-                Uri.withAppendedPath(UsersTable.CONTENT_URI_ID_USER, UserHelpers.getUserSessionPrefs(this).getString(UserHelpers.PREF_NAME, "")),
+                Uri.withAppendedPath(UsersTable.CONTENT_URI_ID_USER, user),
                 null,
                 null,
                 null,

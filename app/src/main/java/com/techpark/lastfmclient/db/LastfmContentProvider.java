@@ -4,13 +4,9 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.CursorJoiner;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
-
-import com.techpark.lastfmclient.api.artist.Artist;
-
 
 /**
  * Created by Andrew Gov on 03.11.14.
@@ -32,6 +28,7 @@ public class LastfmContentProvider extends ContentProvider {
         final static int TRACK_INFO = 3;
         final static int ARTIST = 4;
         final static int RECOMMENDED = 5;
+        final static int RECOMMENDED_INFO = 6;
     }
 
     public LastfmContentProvider() {
@@ -42,7 +39,8 @@ public class LastfmContentProvider extends ContentProvider {
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, UsersTable.TABLE_NAME + "/*", DBEntity.USER_INFO);
 
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, ArtistsTable.TABLE_NAME + "/", DBEntity.ARTIST);
-        uriMatcher.addURI(DBLastfmHelper.AUTHORITY, RecommendedArtistsTable.TABLE_NAME + "/*", DBEntity.RECOMMENDED);
+        uriMatcher.addURI(DBLastfmHelper.AUTHORITY, RecommendedArtistsTable.TABLE_NAME + "/", DBEntity.RECOMMENDED);
+        uriMatcher.addURI(DBLastfmHelper.AUTHORITY, RecommendedArtistsTable.TABLE_NAME + "/*", DBEntity.RECOMMENDED_INFO);
 
     }
 
@@ -62,7 +60,7 @@ public class LastfmContentProvider extends ContentProvider {
                 return queryUser(uri, projection, selection, selArgs);
             case DBEntity.ARTIST:
                 return queryArtist(uri, projection, selection, selArgs);
-            case DBEntity.RECOMMENDED:
+            case DBEntity.RECOMMENDED_INFO:
                 return queryRecommended(uri, projection, selection, selArgs);
         }
         return null;
@@ -81,7 +79,9 @@ public class LastfmContentProvider extends ContentProvider {
         return c;
     }
 
+    //TODO
     private Cursor queryRecommended(Uri uri, String[] projection, String selection, String[] selArgs) {
+        Log.d("queryRecommended", "here");
         //Cursor rec = readDb.query(RecommendedArtistsTable.TABLE_NAME, projection, RecommendedArtistsTable.COLUMN_NAME + "=?",
         //        new String[]{uri.getLastPathSegment()}, null, null, null);
         //Cursor art = readDb.query(ArtistsTable.TABLE_NAME, null, null, null, null, null, null);
@@ -108,12 +108,16 @@ public class LastfmContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
+        Log.d("insert", uri.toString());
         switch (uriMatcher.match(uri)) {
             case DBEntity.USER:
-                return insertUser(contentValues);
+                Log.d("insert", "USER");
+                return updateOrInsertUser(contentValues);
             case DBEntity.ARTIST:
+                Log.d("insert", "ARTIST");
                 return insertArtist(contentValues);
             case DBEntity.RECOMMENDED:
+                Log.d("insert", "RECOMMENDED");
                 return insertRecommended(contentValues);
 
             default:
@@ -131,16 +135,15 @@ public class LastfmContentProvider extends ContentProvider {
         return 0;
     }
 
-
-    private Uri insertUser(ContentValues contentValues) {
-        /* update old user info if exists */
+    private Uri updateOrInsertUser(ContentValues contentValues) {
         String username = contentValues.getAsString(UsersTable.COLUMN_NAME);
-        long rowId;
-        if (userExists(username)) {
-            rowId = writeDb.update(UsersTable.TABLE_NAME, contentValues, UsersTable.COLUMN_NAME + "=?", new String[]{username});
-        } else {
+
+        long rowId = writeDb.update(UsersTable.TABLE_NAME, contentValues, UsersTable.COLUMN_NAME + "=?", new String[]{username});
+
+        if (rowId == 0) {
             rowId = writeDb.insert(UsersTable.TABLE_NAME, null, contentValues);
         }
+
         if (rowId > 0) {
             Uri newUri = Uri.withAppendedPath(UsersTable.CONTENT_URI_ID_USER, username);
             Log.d(TAG, "ADDED. NOTIFY URI: " + newUri.toString());
@@ -148,6 +151,7 @@ public class LastfmContentProvider extends ContentProvider {
             return newUri;
         }
         return null;
+
     }
 
     private Uri insertArtist(ContentValues contentValues) {
@@ -177,8 +181,10 @@ public class LastfmContentProvider extends ContentProvider {
                     RecommendedArtistsTable.COLUMN_NAME + "=?",
                     new String[]{artistName}
             );
+            Log.d("insertRecommended", "update: " + rowId);
         } else {
             rowId = writeDb.insert(RecommendedArtistsTable.TABLE_NAME, null, contentValues);
+            Log.d("insertRecommended", "insert: " + rowId);
         }
 
         if (rowId > 0) {
