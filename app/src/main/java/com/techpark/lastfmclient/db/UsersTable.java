@@ -42,4 +42,5 @@ public class UsersTable implements BaseColumns {
             + COLUMN_COVER + " TEXT, "
             + COLUMN_TIMESTAMP + " INTEGER "
             + " ); ";
+
 }

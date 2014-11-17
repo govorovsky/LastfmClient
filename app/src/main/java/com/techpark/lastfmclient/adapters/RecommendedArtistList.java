@@ -1,6 +1,7 @@
 package com.techpark.lastfmclient.adapters;
 
 import com.techpark.lastfmclient.api.artist.Artist;
+import com.techpark.lastfmclient.api.artist.RecommendedArtist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,17 +10,17 @@ import java.util.Arrays;
  * Created by max on 30/10/14.
  */
 public class RecommendedArtistList {
-    private ArrayList<RecommendedArtist> artists = new ArrayList<>();
+    private ArrayList<RecommendedArtistWrapper> artists = new ArrayList<>();
 
-    public static class RecommendedArtist extends Artist {
+    public static class RecommendedArtistWrapper extends Artist {
         private Artist similar_first;
         private Artist similar_second;
 
-        public RecommendedArtist(Artist a) {
+        public RecommendedArtistWrapper(Artist a) {
             super(a.getArtistName(), a.getUrl(), a.getImages());
         }
 
-        public RecommendedArtist(String artist, String url, ArrayList<String> images) {
+        public RecommendedArtistWrapper(String artist, String url, ArrayList<String> images) {
             super(artist, url, images);
         }
 
@@ -35,13 +36,25 @@ public class RecommendedArtistList {
         public Artist getSimilarSecond() {
             return this.similar_second;
         }
+
+        public RecommendedArtist castRecommendedArtist() {
+            String second = null;
+            if (this.similar_second != null)
+                second = this.similar_second.getArtistName();
+
+            return new RecommendedArtist(
+                    this.getArtistName(),
+                    similar_first.getArtistName(),
+                    second
+            );
+        }
     }
 
-    public void addArtist(RecommendedArtist a) {
+    public void addArtist(RecommendedArtistWrapper a) {
         artists.add(a);
     }
 
-    public ArrayList<RecommendedArtist> getArtists() {
+    public ArrayList<RecommendedArtistWrapper> getArtists() {
         return artists;
     }
 }

@@ -6,11 +6,16 @@ import java.util.ArrayList;
  * Created by max on 13/11/14.
  */
 public class Artist {
-    public static int IMAGE_SMALL = 0;
-    public static int IMAGE_MEDIUM = 1;
-    public static int IMAGE_LARGE = 2;
-    public static int IMAGE_EXTRALARGE = 3;
-    public static int IMAGE_MEGA = 4;
+
+    public static final int ARTIST_SIZE = 7;
+
+    public class ImageSize {
+        public final static int SMALL = 0;
+        public final static int MEDIUM = 1;
+        public final static int LARGE = 2;
+        public final static int EXTRALARGE = 3;
+        public final static int MEGA = 4;
+    }
 
     private String artist;
     private String url;

@@ -1,9 +1,13 @@
 package com.techpark.lastfmclient.fragments;
 
+import android.app.Service;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,23 +15,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpark.lastfmclient.R;
-import com.techpark.lastfmclient.adapters.MusicAdapter;
+import com.techpark.lastfmclient.adapters.RecommendedAdapter;
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
-import com.techpark.lastfmclient.api.ApiQuery;
-import com.techpark.lastfmclient.api.user.UserGetRecommendedArtists;
 import com.techpark.lastfmclient.api.user.UserHelpers;
-import com.techpark.lastfmclient.tasks.ApiQueryTask;
+import com.techpark.lastfmclient.db.RecommendedArtistsTable;
+import com.techpark.lastfmclient.services.ServiceHelper;
 
-import org.json.JSONException;
 
-
-public class MainListFragment extends Fragment implements LoaderManager.LoaderCallbacks<String> {
-    private GridView mRecommended;
+public class MainListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private RecommendedArtistList artistList = new RecommendedArtistList();
-    private MusicAdapter mAdapter = null;
+
+    private ServiceHelper mServiceHelper;
+
+    private RelativeLayout recommendedLayout;
+    private RelativeLayout releasesLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -37,18 +43,24 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Log.d("MainListFragment", "onViewCreated, begin");
         super.onViewCreated(view, savedInstanceState);
 
-        mRecommended = (GridView) view.findViewById(R.id.grid_recommended);
-        mAdapter = new MusicAdapter(getActivity());
-        mRecommended.setAdapter(mAdapter);
-        mRecommended.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getActivity(), "" + i, Toast.LENGTH_SHORT).show();
-            }
-        });
+        recommendedLayout = (RelativeLayout) view.findViewById(R.id.recommended);
+        ((TextView)recommendedLayout.findViewById(R.id.label)).setText("Recommended Music");
 
+        releasesLayout = (RelativeLayout) view.findViewById(R.id.releases);
+        ((TextView)releasesLayout.findViewById(R.id.label)).setText("New Releases");
+
+        GridView grid = (GridView) recommendedLayout.findViewById(R.id.grid);
+        //TODO: need here?
+        grid.setAdapter(new RecommendedAdapter(getActivity()));
+
+        Log.d("MainListFragment", "onViewCreated, before init ServiceHelper");
+        mServiceHelper = new ServiceHelper(getActivity());
+        Log.d("MainListFragment", "onViewCreated, before getRecommendedArtists()");
+        mServiceHelper.getRecommendedArtists();
+        Log.d("MainListFragment", "onViewCreated, end");
     }
 
     @Override
@@ -60,31 +72,49 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public Loader<String> onCreateLoader(int i, Bundle bundle) {
-        String sk = UserHelpers.getUserSession(getActivity());
-        if (sk == null)
-            return null;
-
-        ApiQuery query = new UserGetRecommendedArtists(sk);
-        query.prepare();
-        return new ApiQueryTask(getActivity(), query);
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        return new CursorLoader(getActivity(),
+                Uri.withAppendedPath(RecommendedArtistsTable.CONTENT_URI_ID_RECOMMENDED,
+                        UserHelpers.getUserSessionPrefs(getActivity()).getString(UserHelpers.PREF_NAME, "")),
+                        null,
+                        null,
+                        null,
+                        null);
     }
 
     @Override
-    public void onLoadFinished(Loader<String> stringLoader, String data) {
-        if (data != null && artistList.getArtists().isEmpty()) { //need to check if we already get artists
-            try {
-                artistList = UserHelpers.getRecommendedArtistsFromJSON(data);
-                mAdapter.setArtists(artistList);
-                mAdapter.notifyDataSetChanged();
-            } catch (JSONException e) {
-                Toast.makeText(getActivity(), "Exception while parsing music", Toast.LENGTH_LONG).show();
-            }
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        if (cursor == null) {
+            Toast.makeText(getActivity(), "Network is broken...", Toast.LENGTH_LONG).show();
+            return;
         }
+
+        RecommendedAdapter adapter = (RecommendedAdapter)
+                ((GridView) recommendedLayout.findViewById(R.id.grid)).getAdapter();
+
+        artistList = UserHelpers.getRecommendedArtistsFromCursor(cursor, 4);
+        if (artistList != null)
+            Log.d("Recommended onLoadFinished", "" + artistList.getArtists().size());
+        else
+            Log.d("Recommended onLoadFinished", "null");
+        adapter.setArtists(artistList);
+
+        ((GridView) recommendedLayout.findViewById(R.id.grid))
+            .setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    //TODO: make different for all images (similar and main)
+                    Toast.makeText(getActivity(), "" + i, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        
+        adapter.notifyDataSetChanged();
+        Log.d("Recommended onLoadFinished", "endless");
     }
 
     @Override
-    public void onLoaderReset(Loader<String> stringLoader) {
+    public void onLoaderReset(Loader<Cursor> stringLoader) {
         Log.d("Fragment", "Loader reset");
     }
 }

@@ -17,25 +17,26 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MusicAdapter extends BaseAdapter {
+public class ReleasesAdapter extends BaseAdapter {
     private Context mContext;
-    private RecommendedArtistList mArtistList;
+    private ReleasesList mReleasesList;
     private LayoutInflater layoutInflater;
 
-    public MusicAdapter(Context c) {
+    public ReleasesAdapter(Context c) {
         this.layoutInflater = LayoutInflater.from(c);
         this.mContext = c;
     }
 
-    public void setArtists(RecommendedArtistList artists) {
-        this.mArtistList = artists;
+    public void setArtists(ReleasesList releases) {
+        this.mReleasesList = releases;
     }
 
     @Override
     public int getCount() {
-        if (mArtistList == null)
+        if (mReleasesList == null)
             return 0;
-        return mArtistList.getArtists().size();
+    //    return mReleasesList.getReleases().size();
+        return 0;
     }
 
     @Override
@@ -50,6 +51,7 @@ public class MusicAdapter extends BaseAdapter {
 
     @Override
     public View getView(int pos, View convertView, ViewGroup parent) {
+/*
         MusicHolder holder = null;
 
         if (convertView == null) {
@@ -84,7 +86,7 @@ public class MusicAdapter extends BaseAdapter {
         Picasso.with(mContext).load(
                 asecond.getImage(Artist.IMAGE_LARGE)
         ).into(holder.similar_second);
-
+*/
         return convertView;
     }
 

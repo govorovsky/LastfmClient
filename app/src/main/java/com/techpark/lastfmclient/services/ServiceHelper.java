@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.techpark.lastfmclient.providers.RecommendedProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
 
 /**
@@ -27,6 +28,14 @@ public class ServiceHelper {
         extras.putString(UsersProvider.BUNDLE_USERNAME, username);
         intent.putExtras(extras);
         Log.d(TAG + " Try to invoke getUser with : ", username);
+        mContext.startService(intent);
+    }
+
+    public void getRecommendedArtists() {
+        Intent intent = new Intent(mContext, ServiceProcessor.class);
+        intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.RECOMMENDED_PROVIDER);
+        intent.putExtra(ServiceProcessor.METHOD, RecommendedProvider.Actions.GET);
+
         mContext.startService(intent);
     }
 }
