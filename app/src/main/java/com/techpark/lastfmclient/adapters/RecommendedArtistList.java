@@ -1,10 +1,9 @@
 package com.techpark.lastfmclient.adapters;
 
 import com.techpark.lastfmclient.api.artist.Artist;
-import com.techpark.lastfmclient.api.artist.RecommendedArtist;
+import com.techpark.lastfmclient.api.user.RecommendedArtist;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by max on 30/10/14.
