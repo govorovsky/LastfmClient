@@ -138,6 +138,10 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
         finish();
     }
 
+    protected void dropDatabase() {
+        mServiceHelper.freeDataBase();
+    }
+
     protected int getDrawerIcon() {
         return R.drawable.ic_ab_burger;
     }

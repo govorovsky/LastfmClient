@@ -1,4 +1,4 @@
-package com.techpark.lastfmclient.api.artist;
+package com.techpark.lastfmclient.api.user;
 
 import com.techpark.lastfmclient.api.ApiParamNames;
 import com.techpark.lastfmclient.api.ApiQuery;

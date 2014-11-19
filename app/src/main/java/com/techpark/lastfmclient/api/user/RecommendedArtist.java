@@ -1,11 +1,11 @@
-package com.techpark.lastfmclient.api.artist;
+package com.techpark.lastfmclient.api.user;
 
 /**
  * Created by max on 15/11/14.
  */
 public class RecommendedArtist {
 
-    public static final int RECOMMENDED_SIZE = 3; //TODO: through reflection?
+    public static final int RECOMMENDED_SIZE = 3;
 
     private String artist;
     private String similar_first;
