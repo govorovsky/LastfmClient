@@ -25,7 +25,6 @@ public class LibraryHelpers {
                 return image.getString("#text");
             }
         } catch (JSONException e) {
-            e.printStackTrace();
             return "";
         }
     }

@@ -177,17 +177,6 @@ public class LastfmContentProvider extends ContentProvider {
         return null;
     }
 
-    private boolean userExists(String username) {
-        Cursor c = readDb.query(
-                UsersTable.TABLE_NAME,
-                new String[]{UsersTable.COLUMN_NAME},
-                UsersTable.COLUMN_NAME + " =?",
-                new String[]{username},
-                null, null, null
-        );
-        return c.getCount() != 0;
-    }
-
     private boolean artistExist(String artistName) {
         Cursor c = readDb.query(ArtistsTable.TABLE_NAME, new String[]{ArtistsTable.COLUMN_NAME}, ArtistsTable.COLUMN_NAME + " =?",
                 new String[]{artistName}, null, null, null);
