@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
 import com.techpark.lastfmclient.api.artist.Artist;
+import com.techpark.lastfmclient.api.artist.RecommendedArtist;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
 import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.api.artist.ArtistHelpers;

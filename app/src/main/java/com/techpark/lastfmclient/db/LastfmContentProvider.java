@@ -107,9 +107,9 @@ public class LastfmContentProvider extends ContentProvider {
             case DBEntity.USER:
                 return updateOrInsertUser(contentValues);
             case DBEntity.ARTIST:
-                return insertArtist(contentValues);
+                return updateOrInsertArtist(contentValues, false);
             case DBEntity.RECOMMENDED:
-                return insertRecommended(contentValues);
+                return updateOrInsertRecommended(contentValues, false);
             default:
                 return null;
         }
@@ -117,7 +117,11 @@ public class LastfmContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String s, String[] strings) {
-        return writeDb.delete(uri.getLastPathSegment(), s, strings);
+        switch (uriMatcher.match(uri)) {
+            case DBEntity.RECOMMENDED:
+                return writeDb.delete(uri.getLastPathSegment(), s, strings);
+        }
+        return 0;
     }
 
     @Override
@@ -143,52 +147,91 @@ public class LastfmContentProvider extends ContentProvider {
 
     }
 
-    private Uri insertArtist(ContentValues contentValues) {
+    private Uri updateOrInsertArtist(ContentValues contentValues, boolean isBatch) {
         String artistName = contentValues.getAsString(ArtistsTable.COLUMN_NAME);
-        long rowId;
-        if (artistExist(artistName)) {
-            rowId = writeDb.update(ArtistsTable.TABLE_NAME, contentValues, ArtistsTable.COLUMN_NAME + "=?", new String[]{artistName});
-        } else {
+
+        long rowId = writeDb.update(ArtistsTable.TABLE_NAME, contentValues, ArtistsTable.COLUMN_NAME + "=?", new String[]{artistName});
+
+        if (rowId == 0) {
             rowId = writeDb.insert(ArtistsTable.TABLE_NAME, null, contentValues);
         }
 
         if (rowId > 0) {
             Uri newUri = Uri.withAppendedPath(ArtistsTable.CONTENT_URI_ID_ARTIST, artistName);
-            getContext().getContentResolver().notifyChange(newUri, null);
+            if (!isBatch) {
+                getContext().getContentResolver().notifyChange(newUri, null);
+            }
             return newUri;
         }
+        Log.e("INSERT ERROR", "id=" + rowId + "name=" + artistName);
         return null;
     }
 
-    private Uri insertRecommended(ContentValues contentValues) {
+    private Uri updateOrInsertRecommended(ContentValues contentValues, boolean isBatch) {
         String artistName = contentValues.getAsString(RecommendedArtistsTable.COLUMN_NAME);
 
-        if (recommendedExist(artistName)) {
-            writeDb.update(
-                    RecommendedArtistsTable.TABLE_NAME,
-                    contentValues,
-                    RecommendedArtistsTable.COLUMN_NAME + "=?",
-                    new String[]{artistName}
-            );
-        } else {
-            writeDb.insert(RecommendedArtistsTable.TABLE_NAME, null, contentValues);
+        long rowId = writeDb.update(
+                RecommendedArtistsTable.TABLE_NAME,
+                contentValues,
+                RecommendedArtistsTable.COLUMN_NAME + "=?",
+                new String[]{artistName}
+        );
+
+        if (rowId == 0) {
+            rowId = writeDb.insert(RecommendedArtistsTable.TABLE_NAME, null, contentValues);
         }
+
+
+        if (rowId > 0) {
+            Uri newUri = Uri.withAppendedPath(RecommendedArtistsTable.CONTENT_URI_ID_RECOMMENDED, artistName);
+            if (!isBatch) {
+                getContext().getContentResolver().notifyChange(newUri, null);
+            }
+            return newUri;
+        }
+
+        Log.e("INSERT ERROR", "id=" + rowId + "name=" + artistName);
 
         return null;
     }
 
-    private boolean artistExist(String artistName) {
-        Cursor c = readDb.query(ArtistsTable.TABLE_NAME, new String[]{ArtistsTable.COLUMN_NAME}, ArtistsTable.COLUMN_NAME + " =?",
-                new String[]{artistName}, null, null, null);
-        return c.getCount() > 0;
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        switch (uriMatcher.match(uri)) {
+            case DBEntity.RECOMMENDED:
+                Log.v("Bulk insert", "recommended");
+                return bulkInsertEntity(uri, values, new BulkEntity() {
+                    @Override
+                    public void insert(ContentValues cv) {
+                        updateOrInsertRecommended(cv, true);
+                    }
+                });
+            case DBEntity.ARTIST:
+                Log.v("Bulk insert", "artists");
+                return bulkInsertEntity(uri, values, new BulkEntity() {
+                    @Override
+                    public void insert(ContentValues cv) {
+                        updateOrInsertArtist(cv, true);
+                    }
+                });
+        }
+        return 0;
     }
 
-    private boolean recommendedExist(String artistName) {
-        Cursor c = readDb.query(
-                RecommendedArtistsTable.TABLE_NAME,
-                new String[]{RecommendedArtistsTable.COLUMN_NAME},
-                RecommendedArtistsTable.COLUMN_NAME + " =?",
-                new String[]{artistName}, null, null, null);
-        return c.getCount() > 0;
+    private interface BulkEntity {
+        void insert(ContentValues cv);
+    }
+
+    private int bulkInsertEntity(Uri uri, ContentValues[] values, BulkEntity entity) {
+        writeDb.beginTransaction();
+        try {
+            for (ContentValues cv : values)
+                entity.insert(cv);
+            writeDb.setTransactionSuccessful();
+        } finally {
+            writeDb.endTransaction();
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
+        return values.length;
     }
 }

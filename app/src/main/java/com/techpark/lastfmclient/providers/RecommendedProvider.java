@@ -8,7 +8,7 @@ import android.os.Bundle;
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.api.artist.ArtistHelpers;
-import com.techpark.lastfmclient.api.user.GetRecommended;
+import com.techpark.lastfmclient.api.user.UserGetRecommendedArtists;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.db.ArtistsTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
@@ -37,7 +37,7 @@ public class RecommendedProvider implements IProvider {
     }
 
     private void getRecommendations() {
-        ApiQuery query = new GetRecommended(UserHelpers.getUserSession(mContext));
+        ApiQuery query = new UserGetRecommendedArtists(UserHelpers.getUserSession(mContext));
         query.prepare();
 
         ArrayList<ContentValues> artistsValues = new ArrayList<>();
@@ -59,6 +59,7 @@ public class RecommendedProvider implements IProvider {
 
         } catch (Exception e) {
             e.printStackTrace();
+            return;
         }
 
         ContentResolver resolver = mContext.getContentResolver();
@@ -68,9 +69,8 @@ public class RecommendedProvider implements IProvider {
         ContentValues[] aV = new ContentValues[artistsValues.size()];
         aV = artistsValues.toArray(aV);
 
-        resolver.bulkInsert(RecommendedArtistsTable.CONTENT_URI, rV);
         resolver.bulkInsert(ArtistsTable.CONTENT_URI, aV);
-        resolver.notifyChange(RecommendedArtistsTable.CONTENT_URI, null);
+        resolver.bulkInsert(RecommendedArtistsTable.CONTENT_URI, rV);
     }
 
     public RecommendedProvider(Context context) {

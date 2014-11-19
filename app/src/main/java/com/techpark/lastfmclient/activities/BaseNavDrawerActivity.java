@@ -133,6 +133,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
 
 
     protected void logOut() {
+        dropDatabase();
         UserHelpers.clearUserSession(this);
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);

@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -55,6 +54,7 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
 
         mServiceHelper = new ServiceHelper(getActivity());
         mServiceHelper.getRecommendedArtists();
+        Log.e("VUEW CREATED", "CCCC");
     }
 
     @Override
@@ -77,10 +77,11 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.d("onLoadFinished", "begin");
+        Log.e("onLoadFinished", "begin");
         if (cursor == null) {
             Toast.makeText(getActivity(), "Network is broken...", Toast.LENGTH_LONG).show();
-            Log.d("onLoadFinished", "Network error");
+            Log.e("onLoadFinished", "Network error");
+            return;
         }
 
         if (cursor.getCount() == 0) {
@@ -88,6 +89,7 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
             TextView messageView = (TextView) recommendedLayout.findViewById(R.id.db_message);
             messageView.setVisibility(View.VISIBLE);
             messageView.setText("No recommendations");
+            Log.e("onLoadFinished", "Empty cursor");
             return;
         }
 

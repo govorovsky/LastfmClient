@@ -1,4 +1,4 @@
-package com.techpark.lastfmclient.api.user;
+package com.techpark.lastfmclient.api.artist;
 
 /**
  * Created by max on 15/11/14.
