@@ -25,6 +25,17 @@
 
         android:text="MORE"/>
 
+    <TextView
+        android:id="@+id/db_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/label"
+        android:textSize="22sp"
+        android:gravity="center_horizontal"
+        android:visibility="gone"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"/>
+
     <GridView
         android:id="@+id/grid"
         android:layout_height="wrap_content"
