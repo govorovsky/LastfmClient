@@ -19,15 +19,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RecommendedAdapter extends BaseAdapter {
     private Context mContext;
-    private RecommendedArtistList mArtistList;
-    private LayoutInflater layoutInflater;
+    private RecommendedArtistList mArtistList = null;
+    private LayoutInflater layoutInflater = null;
 
-    public RecommendedAdapter(Context c) {
-        this.layoutInflater = LayoutInflater.from(c);
+    public RecommendedAdapter(Context c, RecommendedArtistList artists) {
         this.mContext = c;
-    }
-
-    public void setArtists(RecommendedArtistList artists) {
+        this.layoutInflater = LayoutInflater.from(mContext);
         this.mArtistList = artists;
     }
 
@@ -39,8 +36,10 @@ public class RecommendedAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
-        return null;
+    public Object getItem(int pos) {
+        if (mArtistList == null)
+            return null;
+        return mArtistList.getArtists().get(pos);
     }
 
     @Override
@@ -53,13 +52,9 @@ public class RecommendedAdapter extends BaseAdapter {
         ArtistHolder holder = null;
 
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.gridview_item, parent, false);
-            holder = new ArtistHolder();
-            holder.image = (ImageView) convertView.findViewById(R.id.band_icon);
-            holder.band = (TextView) convertView.findViewById(R.id.band_name);
-            holder.similar_band = (TextView) convertView.findViewById(R.id.band_similar);
-            holder.similar_first = (CircleImageView) convertView.findViewById(R.id.band_similar_first);
-            holder.similar_second = (CircleImageView) convertView.findViewById(R.id.band_similar_second);
+            //convertView = layoutInflater.inflate(R.layout.recommended_item, parent, false);
+            convertView = layoutInflater.inflate(R.layout.recommended_item, null);
+            holder = new ArtistHolder(convertView);
             convertView.setTag(holder);
         }
 
@@ -99,11 +94,36 @@ public class RecommendedAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class ArtistHolder {
+    private class ArtistHolder implements View.OnClickListener {
         ImageView image;
         TextView band;
         TextView similar_band;
         CircleImageView similar_first;
         CircleImageView similar_second;
+
+        private boolean clickFlag = false;
+
+
+        ArtistHolder(View v) {
+            this.image = (ImageView) v.findViewById(R.id.band_icon);
+            this.band = (TextView) v.findViewById(R.id.band_name);
+            this.similar_band = (TextView) v.findViewById(R.id.band_similar);
+            this.similar_first = (CircleImageView) v.findViewById(R.id.band_similar_first);
+            this.similar_second = (CircleImageView) v.findViewById(R.id.band_similar_second);
+
+            this.similar_band.setOnClickListener(this);
+        }
+
+        //TODO + redirect for click on images
+        @Override
+        public void onClick(View view) {
+            /*
+            Log.d("onClick", view.toString());
+            this.clickFlag = !this.clickFlag;
+            ViewGroup.LayoutParams params = view.getLayoutParams();
+            params.height = (this.clickFlag) ? ViewGroup.LayoutParams.MATCH_PARENT : 22;
+            view.setLayoutParams(params);
+            */
+        }
     }
 }

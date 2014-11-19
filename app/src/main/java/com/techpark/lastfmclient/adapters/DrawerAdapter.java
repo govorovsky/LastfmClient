@@ -30,7 +30,6 @@ public class DrawerAdapter extends ArrayAdapter<NavDrawerItem> {
         this.drawerItemList = list;
         this.layoutInflater = LayoutInflater.from(context);
         this.context = context;
-        Log.d("adapter", "init");
     }
 
     @Override
