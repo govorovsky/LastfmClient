@@ -12,5 +12,9 @@
         android:id="@+id/releases"
         layout="@layout/music_layout" />
 
+    <include
+        android:id="@+id/events"
+        layout="@layout/music_layout" />
+
 
 </LinearLayout>
