@@ -13,8 +13,6 @@ import com.squareup.picasso.Picasso;
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.api.artist.Artist;
 
-import java.util.ArrayList;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RecommendedAdapter extends BaseAdapter {
@@ -52,7 +50,6 @@ public class RecommendedAdapter extends BaseAdapter {
         ArtistHolder holder = null;
 
         if (convertView == null) {
-            //convertView = layoutInflater.inflate(R.layout.recommended_item, parent, false);
             convertView = layoutInflater.inflate(R.layout.recommended_item, null);
             holder = new ArtistHolder(convertView);
             convertView.setTag(holder);

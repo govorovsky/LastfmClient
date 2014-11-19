@@ -1,8 +1,6 @@
 package com.techpark.lastfmclient.fragments;
 
-import android.app.Service;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,7 +26,7 @@ import com.techpark.lastfmclient.services.ServiceHelper;
 
 
 public class MainListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private RecommendedArtistList artistList = new RecommendedArtistList();
+    private RecommendedArtistList mArtistList = null;
 
     private ServiceHelper mServiceHelper;
 
@@ -43,7 +41,6 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Log.d("MainListFragment", "onViewCreated, begin");
         super.onViewCreated(view, savedInstanceState);
 
         recommendedLayout = (RelativeLayout) view.findViewById(R.id.recommended);
@@ -52,15 +49,12 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
         releasesLayout = (RelativeLayout) view.findViewById(R.id.releases);
         ((TextView)releasesLayout.findViewById(R.id.label)).setText("New Releases");
 
+        mArtistList = new RecommendedArtistList();
         GridView grid = (GridView) recommendedLayout.findViewById(R.id.grid);
-        //TODO: need here?
-        grid.setAdapter(new RecommendedAdapter(getActivity()));
+        grid.setAdapter(new RecommendedAdapter(getActivity(), mArtistList));
 
-        Log.d("MainListFragment", "onViewCreated, before init ServiceHelper");
         mServiceHelper = new ServiceHelper(getActivity());
-        Log.d("MainListFragment", "onViewCreated, before getRecommendedArtists()");
         mServiceHelper.getRecommendedArtists();
-        Log.d("MainListFragment", "onViewCreated, end");
     }
 
     @Override
@@ -74,47 +68,45 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(getActivity(),
-                Uri.withAppendedPath(RecommendedArtistsTable.CONTENT_URI_ID_RECOMMENDED,
-                        UserHelpers.getUserSessionPrefs(getActivity()).getString(UserHelpers.PREF_NAME, "")),
-                        null,
-                        null,
-                        null,
-                        null);
+                RecommendedArtistsTable.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d("onLoadFinished", "begin");
         if (cursor == null) {
             Toast.makeText(getActivity(), "Network is broken...", Toast.LENGTH_LONG).show();
+            Log.d("onLoadFinished", "Network error");
+        }
+
+        if (cursor.getCount() == 0) {
+            recommendedLayout.findViewById(R.id.grid).setVisibility(View.GONE);
+            TextView messageView = (TextView) recommendedLayout.findViewById(R.id.db_message);
+            messageView.setVisibility(View.VISIBLE);
+            messageView.setText("No recommendations");
             return;
         }
+
+        Log.d("onLoadFinished", "" + cursor.getColumnName(2) + "" + cursor.getCount());
+
+        recommendedLayout.findViewById(R.id.db_message).setVisibility(View.GONE);
+        recommendedLayout.findViewById(R.id.grid).setVisibility(View.VISIBLE);
 
         RecommendedAdapter adapter = (RecommendedAdapter)
                 ((GridView) recommendedLayout.findViewById(R.id.grid)).getAdapter();
 
-        artistList = UserHelpers.getRecommendedArtistsFromCursor(cursor, 4);
-        if (artistList != null)
-            Log.d("Recommended onLoadFinished", "" + artistList.getArtists().size());
-        else
-            Log.d("Recommended onLoadFinished", "null");
-        adapter.setArtists(artistList);
-
-        ((GridView) recommendedLayout.findViewById(R.id.grid))
-            .setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    //TODO: make different for all images (similar and main)
-                    Toast.makeText(getActivity(), "" + i, Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        
+        RecommendedArtistList list = UserHelpers.getRecommendedArtistsFromCursor(cursor, 4);
+        mArtistList.getArtists().clear();
+        mArtistList.getArtists().addAll(list.getArtists());
         adapter.notifyDataSetChanged();
-        Log.d("Recommended onLoadFinished", "endless");
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> stringLoader) {
-        Log.d("Fragment", "Loader reset");
+        /* void */
     }
 }
