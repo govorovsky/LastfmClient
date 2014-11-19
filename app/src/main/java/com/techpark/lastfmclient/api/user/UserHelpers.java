@@ -8,8 +8,6 @@ import android.util.Log;
 
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
 import com.techpark.lastfmclient.api.artist.Artist;
-import com.techpark.lastfmclient.api.artist.RecommendedArtist;
-import com.techpark.lastfmclient.db.ArtistsTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
 import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.api.artist.ArtistHelpers;
@@ -111,18 +109,6 @@ public class UserHelpers {
         return content;
     }
 
-    public static ContentValues getContentValues(Artist artist) {
-        ContentValues content = new ContentValues(Artist.ARTIST_SIZE);
-        content.put(ArtistsTable.COLUMN_NAME, artist.getArtistName());
-        content.put(ArtistsTable.COLUMN_URL, artist.getUrl());
-        content.put(ArtistsTable.COLUMN_IMAGE_SMALL, artist.getImage(Artist.ImageSize.SMALL));
-        content.put(ArtistsTable.COLUMN_IMAGE_MEDIUM, artist.getImage(Artist.ImageSize.MEDIUM));
-        content.put(ArtistsTable.COLUMN_IMAGE_LARGE, artist.getImage(Artist.ImageSize.LARGE));
-        content.put(ArtistsTable.COLUMN_IMAGE_EXTRALARGE, artist.getImage(Artist.ImageSize.EXTRALARGE));
-        content.put(ArtistsTable.COLUMN_IMAGE_MEGA, artist.getImage(Artist.ImageSize.MEGA));
-        return content;
-    }
-
     public static void saveUserSession(Context c, String session, String uname) {
         SharedPreferences preferences = c.getSharedPreferences(PREF_STORAGE_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -153,7 +139,7 @@ public class UserHelpers {
 
         for (int i = 0; i < artists.length(); ++i) {
             RecommendedArtistList.RecommendedArtistWrapper r = new RecommendedArtistList.RecommendedArtistWrapper(
-                    UserHelpers.getArtistFromJSON((JSONObject) artists.get(i))
+                    ArtistHelpers.getArtistFromJSON((JSONObject) artists.get(i))
             );
 
             JSONObject context = ((JSONObject) artists.get(i)).getJSONObject("context");
@@ -161,13 +147,13 @@ public class UserHelpers {
 
             if (similars != null) {
                 r.setSimilarArtists(
-                        UserHelpers.getArtistFromJSON((JSONObject) similars.get(0)),
-                        UserHelpers.getArtistFromJSON((JSONObject) similars.get(1))
+                        ArtistHelpers.getArtistFromJSON((JSONObject) similars.get(0)),
+                        ArtistHelpers.getArtistFromJSON((JSONObject) similars.get(1))
                 );
             } else {
                 JSONObject similar = context.getJSONObject("artist");
                 r.setSimilarArtists(
-                        UserHelpers.getArtistFromJSON(similar),
+                        ArtistHelpers.getArtistFromJSON(similar),
                         null
                 );
             }
@@ -180,59 +166,39 @@ public class UserHelpers {
     public static RecommendedArtistList getRecommendedArtistsFromCursor(Cursor cursor, int limit) {
         RecommendedArtistList list = new RecommendedArtistList();
 
-        if (cursor.moveToFirst()) {
-            for (int i = 0; i < limit; ++i, cursor.moveToNext()) {
-                Log.d("AAAAAAAAAAAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAAA");
-                for (int j = 0; j < cursor.getColumnCount(); ++j)
-                    Log.d("fill adapter", cursor.getString(j));
+        //cursor.moveToPosition(new Random().nextInt(cursor.getCount() - 1)); //TODO
+        cursor.moveToLast();
+        for (int i = 0; i < limit && cursor.move(0); ++i) {
+            ArrayList<String> images = new ArrayList<>();
+            images.addAll(Arrays.asList(
+                cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)
+            ));
 
-                ArrayList<String> images = new ArrayList<>();
-                images.addAll(Arrays.asList(
-                        cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)
-                ));
+            RecommendedArtistList.RecommendedArtistWrapper r = new RecommendedArtistList.RecommendedArtistWrapper(
+                    cursor.getString(0),
+                    cursor.getString(0),
+                    images
+            );
 
-                RecommendedArtistList.RecommendedArtistWrapper r = new RecommendedArtistList.RecommendedArtistWrapper(
-                        cursor.getString(0),
-                        cursor.getString(0),
-                        images
-                );
+            ArrayList<String> images_s1 = new ArrayList<>();
+            images_s1.addAll(Arrays.asList(
+                cursor.getString(8), cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12)
+            ));
 
-                ArrayList<String> images_s1 = new ArrayList<>();
-                images_s1.addAll(Arrays.asList(
-                        cursor.getString(8), cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12)
-                ));
+            ArrayList<String> images_s2 = new ArrayList<>();
+            images_s2.addAll(Arrays.asList(
+                cursor.getString(13), cursor.getString(14), cursor.getString(15), cursor.getString(16), cursor.getString(17)
+            ));
 
-                ArrayList<String> images_s2 = new ArrayList<>();
-                images_s2.addAll(Arrays.asList(
-                        cursor.getString(13), cursor.getString(14), cursor.getString(15), cursor.getString(16), cursor.getString(17)
-                ));
+            r.setSimilarArtists(
+                    new Artist(cursor.getString(1), "url", images_s1),
+                    new Artist(cursor.getString(2), "url", images_s2)
+            );
 
-                r.setSimilarArtists(
-                        new Artist(cursor.getString(1), "url", images_s1),
-                        new Artist(cursor.getString(2), "url", images_s2)
-                );
-
-                list.addArtist(r);
-            }
+            list.addArtist(r);
+            cursor.moveToPrevious();
         }
 
         return list;
-    }
-
-
-    private static Artist getArtistFromJSON(JSONObject json) throws JSONException {
-        JSONArray images = json.getJSONArray("image");
-        ArrayList<String> imgs = new ArrayList<>();
-
-        for (int i = 0; i < images.length(); ++i)
-            imgs.add(
-                images.getJSONObject(i).getString("#text")
-            );
-
-        return new Artist(
-            json.getString("name"),
-            json.getString("url"),
-            imgs
-        );
     }
 }
