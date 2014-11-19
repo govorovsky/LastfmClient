@@ -13,8 +13,6 @@ import android.util.Log;
  */
 public class LastfmContentProvider extends ContentProvider {
 
-    private static final String TAG = LastfmContentProvider.class.getSimpleName();
-
     private DBLastfmHelper dbLastfmHelper;
     private UriMatcher uriMatcher;
 
@@ -49,7 +47,6 @@ public class LastfmContentProvider extends ContentProvider {
         dbLastfmHelper = new DBLastfmHelper(getContext());
         writeDb = dbLastfmHelper.getWritableDatabase();
         readDb = dbLastfmHelper.getReadableDatabase();
-
         return true;
     }
 
@@ -60,7 +57,7 @@ public class LastfmContentProvider extends ContentProvider {
                 return queryUser(uri, projection, selection, selArgs);
             case DBEntity.ARTIST:
                 return queryArtist(uri, projection, selection, selArgs);
-            case DBEntity.RECOMMENDED_INFO:
+            case DBEntity.RECOMMENDED: //TODO: limit as param?
                 return queryRecommended(uri, projection, selection, selArgs);
         }
         return null;
@@ -81,7 +78,6 @@ public class LastfmContentProvider extends ContentProvider {
 
     //TODO
     private Cursor queryRecommended(Uri uri, String[] projection, String selection, String[] selArgs) {
-        Log.d("queryRecommended", "here");
         //Cursor rec = readDb.query(RecommendedArtistsTable.TABLE_NAME, projection, RecommendedArtistsTable.COLUMN_NAME + "=?",
         //        new String[]{uri.getLastPathSegment()}, null, null, null);
         //Cursor art = readDb.query(ArtistsTable.TABLE_NAME, null, null, null, null, null, null);
@@ -96,7 +92,6 @@ public class LastfmContentProvider extends ContentProvider {
                 "join artist s2 on r.similar_second = s2.name";
 
         Cursor c = readDb.rawQuery(query, null); //TODO: selection
-
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
     }
@@ -108,18 +103,13 @@ public class LastfmContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues contentValues) {
-        Log.d("insert", uri.toString());
         switch (uriMatcher.match(uri)) {
             case DBEntity.USER:
-                Log.d("insert", "USER");
                 return updateOrInsertUser(contentValues);
             case DBEntity.ARTIST:
-                Log.d("insert", "ARTIST");
                 return insertArtist(contentValues);
             case DBEntity.RECOMMENDED:
-                Log.d("insert", "RECOMMENDED");
                 return insertRecommended(contentValues);
-
             default:
                 return null;
         }
@@ -127,7 +117,7 @@ public class LastfmContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String s, String[] strings) {
-        return 0;
+        return writeDb.delete(uri.getLastPathSegment(), s, strings);
     }
 
     @Override
@@ -146,7 +136,6 @@ public class LastfmContentProvider extends ContentProvider {
 
         if (rowId > 0) {
             Uri newUri = Uri.withAppendedPath(UsersTable.CONTENT_URI_ID_USER, username);
-            Log.d(TAG, "ADDED. NOTIFY URI: " + newUri.toString());
             getContext().getContentResolver().notifyChange(newUri, null);
             return newUri;
         }
@@ -173,38 +162,20 @@ public class LastfmContentProvider extends ContentProvider {
 
     private Uri insertRecommended(ContentValues contentValues) {
         String artistName = contentValues.getAsString(RecommendedArtistsTable.COLUMN_NAME);
-        long rowId;
+
         if (recommendedExist(artistName)) {
-            rowId = writeDb.update(
+            writeDb.update(
                     RecommendedArtistsTable.TABLE_NAME,
                     contentValues,
                     RecommendedArtistsTable.COLUMN_NAME + "=?",
                     new String[]{artistName}
             );
-            Log.d("insertRecommended", "update: " + rowId);
         } else {
-            rowId = writeDb.insert(RecommendedArtistsTable.TABLE_NAME, null, contentValues);
-            Log.d("insertRecommended", "insert: " + rowId);
+            writeDb.insert(RecommendedArtistsTable.TABLE_NAME, null, contentValues);
         }
 
-        if (rowId > 0) {
-            Uri newUri = Uri.withAppendedPath(RecommendedArtistsTable.CONTENT_URI_ID_RECOMMENDED, artistName);
-            getContext().getContentResolver().notifyChange(newUri, null);
-            return newUri;
-        }
         return null;
     }
-
-    public Cursor getArtistTable() {
-        return readDb.query(
-                ArtistsTable.TABLE_NAME,
-                null,
-                null,
-                null,
-                null, null, null
-        );
-    }
-
 
     private boolean userExists(String username) {
         Cursor c = readDb.query(

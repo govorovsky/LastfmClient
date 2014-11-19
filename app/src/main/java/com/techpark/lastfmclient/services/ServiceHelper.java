@@ -1,10 +1,18 @@
 package com.techpark.lastfmclient.services;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.techpark.lastfmclient.api.artist.Artist;
+import com.techpark.lastfmclient.db.ArtistsTable;
+import com.techpark.lastfmclient.db.DBLastfmHelper;
+import com.techpark.lastfmclient.db.RecommendedArtistsTable;
+import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.providers.RecommendedProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
 
@@ -13,7 +21,6 @@ import com.techpark.lastfmclient.providers.UsersProvider;
  */
 public class ServiceHelper {
     private Context mContext;
-    private static final String TAG = ServiceHelper.class.getSimpleName();
 
     public ServiceHelper(Context context) {
         this.mContext = context;
@@ -27,7 +34,6 @@ public class ServiceHelper {
         Bundle extras = new Bundle();
         extras.putString(UsersProvider.BUNDLE_USERNAME, username);
         intent.putExtras(extras);
-        Log.d(TAG + " Try to invoke getUser with : ", username);
         mContext.startService(intent);
     }
 
@@ -37,5 +43,12 @@ public class ServiceHelper {
         intent.putExtra(ServiceProcessor.METHOD, RecommendedProvider.Actions.GET);
 
         mContext.startService(intent);
+    }
+
+    public void freeDataBase() {
+        ContentResolver resolver = mContext.getContentResolver();
+        resolver.delete(UsersTable.CONTENT_URI, null, null);
+        resolver.delete(ArtistsTable.CONTENT_URI, null, null);
+        resolver.delete(RecommendedArtistsTable.CONTENT_URI, null, null);
     }
 }
