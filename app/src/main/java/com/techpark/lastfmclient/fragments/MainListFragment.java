@@ -79,7 +79,7 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         Log.d("onLoadFinished", "begin");
         if (cursor == null) {
-            Toast.makeText(getActivity(), "Network is broken...", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "Network is bromken...", Toast.LENGTH_LONG).show();
             Log.d("onLoadFinished", "Network error");
         }
 
