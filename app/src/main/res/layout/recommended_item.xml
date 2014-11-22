@@ -13,7 +13,8 @@
     <TextView
         android:id="@+id/band_similar"
         android:layout_width="match_parent"
-        android:layout_height="22dp"
+        android:layout_height="wrap_content"
+        android:text="test"
         android:layout_alignBottom="@id/band_icon"
         android:fontFamily="Roboto Medium"
         android:textSize="12sp"
@@ -21,12 +22,14 @@
         android:background="@color/black_transparent70"
         android:layout_alignParentEnd="false"
         android:layout_alignParentStart="false"
+        android:paddingBottom="5dp"
+        android:gravity="center_vertical"
         android:paddingStart="8dp"/>
 
     <TextView
         android:id="@+id/band_name"
         android:layout_width="match_parent"
-        android:layout_height="22dp"
+        android:layout_height="wrap_content"
         android:fontFamily="Roboto Regular"
         android:layout_above="@id/band_similar"
         android:background="@color/black_transparent70"

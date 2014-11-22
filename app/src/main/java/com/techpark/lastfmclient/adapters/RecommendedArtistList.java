@@ -1,7 +1,7 @@
 package com.techpark.lastfmclient.adapters;
 
 import com.techpark.lastfmclient.api.artist.Artist;
-import com.techpark.lastfmclient.api.user.RecommendedArtist;
+import com.techpark.lastfmclient.api.artist.RecommendedArtist;
 
 import java.util.ArrayList;
 

@@ -11,7 +11,7 @@ import android.util.Log;
 public class DBLastfmHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "lastfm.db";
-    private static final int DB_VER = 11;
+    private static final int DB_VER = 1;
     public static final String AUTHORITY = "com.techpark.lastfmclient";
     public DBLastfmHelper(Context context) {
         super(context, DB_NAME, null, DB_VER);

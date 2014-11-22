@@ -144,7 +144,7 @@ public class LoginActivity extends FragmentActivity implements LoaderManager.Loa
         if (DEBUG) {
             mLoginView.setText("SiCrash");
             mPassView.setText("112358132134");
-            mLoginButton.callOnClick();
+//            mLoginButton.callOnClick();
         }
     }
 

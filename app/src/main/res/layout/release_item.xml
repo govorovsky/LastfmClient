@@ -1,5 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.techpark.lastfmclient.views.SquareImageView
+        android:id="@+id/release_icon"
+        android:layout_width="match_parent"
+        android:layout_height="179dp"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:id="@+id/release_band"
+        android:layout_width="match_parent"
+        android:layout_height="22dp"
+        android:layout_alignBottom="@id/release_icon"
+        android:fontFamily="Roboto Medium"
+        android:textSize="12sp"
+        android:textColor="@color/white_transparent80_fix"
+        android:background="@color/black_transparent70"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:paddingStart="8dp"/>
+
+    <TextView
+        android:id="@+id/release_name"
+        android:layout_width="match_parent"
+        android:layout_height="22dp"
+        android:fontFamily="Roboto Regular"
+        android:layout_above="@id/release_band"
+        android:background="@color/black_transparent70"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:paddingStart="8dp"
+        android:gravity="center_vertical"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/release_band_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_above="@id/release_name"
+        android:src="@drawable/test"
+        app:border_color="@color/white"
+        app:border_width="2dp"
+        android:layout_alignParentStart="false" />
 
 </RelativeLayout>

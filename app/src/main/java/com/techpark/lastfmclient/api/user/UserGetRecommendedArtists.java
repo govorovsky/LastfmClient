@@ -7,10 +7,10 @@ import com.techpark.lastfmclient.network.Method;
 /**
  * Created by max on 15/11/14.
  */
-public class GetRecommended extends ApiQuery {
+public class UserGetRecommendedArtists extends ApiQuery {
     private String sk;
 
-    public GetRecommended(String sk) {
+    public UserGetRecommendedArtists(String sk) {
         this.sk = sk;
     }
 

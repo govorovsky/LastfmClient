@@ -70,16 +70,9 @@ public class MainActivity extends BaseNavDrawerActivity {
                 break;
 
             case NavDrawerConstants.LOG_OUT:
-                dropDatabase();
                 logOut();
                 break;
-
-            case NavDrawerConstants.EXIT:
-                dropDatabase();
-                finish();
-                break; //TODO: need? Oo
         }
-
     }
 
 
@@ -95,10 +88,7 @@ public class MainActivity extends BaseNavDrawerActivity {
                 NavMenuItem.getInstance(106, "Your Recommendations"),
                 NavMenuItem.getInstance(107, "Events Near Me"),
                 NavMenuSection.getInstance(108, "PROFILE"),
-                NavMenuItem.getInstance(NavDrawerConstants.LOG_OUT, "Log out"),
-
-                NavMenuSection.getInstance(110, "SYSTEM"),
-                NavMenuItem.getInstance(NavDrawerConstants.EXIT, "Exit")
+                NavMenuItem.getInstance(NavDrawerConstants.LOG_OUT, "Log out")
         ));
     }
 }

@@ -3,16 +3,9 @@ package com.techpark.lastfmclient.services;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.techpark.lastfmclient.api.artist.Artist;
-import com.techpark.lastfmclient.db.ArtistsTable;
-import com.techpark.lastfmclient.db.DBLastfmHelper;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
-import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.providers.RecommendedProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
 
@@ -47,8 +40,8 @@ public class ServiceHelper {
 
     public void freeDataBase() {
         ContentResolver resolver = mContext.getContentResolver();
-        resolver.delete(UsersTable.CONTENT_URI, null, null);
-        resolver.delete(ArtistsTable.CONTENT_URI, null, null);
+//        resolver.delete(UsersTable.CONTENT_URI, null, null);
+//        resolver.delete(ArtistsTable.CONTENT_URI, null, null);
         resolver.delete(RecommendedArtistsTable.CONTENT_URI, null, null);
     }
 }
