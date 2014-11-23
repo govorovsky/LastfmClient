@@ -1,5 +1,6 @@
 package com.techpark.lastfmclient.api.user;
 
+import com.techpark.lastfmclient.api.ApiConstants;
 import com.techpark.lastfmclient.api.ApiParamNames;
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.network.Method;
@@ -9,9 +10,11 @@ import com.techpark.lastfmclient.network.Method;
  */
 public class UserGetRecommendedArtists extends ApiQuery {
     private String sk;
+    private int page;
 
-    public UserGetRecommendedArtists(String sk) {
+    public UserGetRecommendedArtists(String sk, int page) {
         this.sk = sk;
+        this.page = page;
     }
 
     @Override
@@ -21,7 +24,8 @@ public class UserGetRecommendedArtists extends ApiQuery {
 
     @Override
     public void prepare() {
-        //entity.add(ApiParamNames.API_LIMIT, "4"); //TODO: or get all and cursor them?
+        entity.add(ApiParamNames.API_LIMIT, ApiConstants.API_RECOMMENDED_PER_PAGE);
+        entity.add(ApiParamNames.API_PAGE, "" + page);
         entity.add(ApiParamNames.API_SESSION_KEY, sk);
         build(this, true);
     }

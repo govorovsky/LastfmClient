@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class RecommendedArtistList {
     private ArrayList<RecommendedArtistWrapper> artists = new ArrayList<>();
+    private int totalPages = 0;
 
     public static class RecommendedArtistWrapper extends Artist {
         private Artist similar_first;
@@ -52,6 +53,8 @@ public class RecommendedArtistList {
     public void addArtist(RecommendedArtistWrapper a) {
         artists.add(a);
     }
+    public void setTotalPages(int pages) {this.totalPages = pages; }
+    public int getTotalPages() {return this.totalPages; }
 
     public ArrayList<RecommendedArtistWrapper> getArtists() {
         return artists;

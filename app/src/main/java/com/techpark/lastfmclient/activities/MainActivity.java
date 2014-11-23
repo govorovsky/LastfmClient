@@ -29,7 +29,6 @@ public class MainActivity extends BaseNavDrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setFragment(new MainListFragment(), TAG_NAME);
-
     }
 
     @Override

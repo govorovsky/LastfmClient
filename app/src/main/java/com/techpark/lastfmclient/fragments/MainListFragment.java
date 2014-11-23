@@ -1,5 +1,6 @@
 package com.techpark.lastfmclient.fragments;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,9 +30,16 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
     private RecommendedArtistList mArtistList = null;
 
     private ServiceHelper mServiceHelper;
+    private Activity mActivity;
 
     private RelativeLayout recommendedLayout;
     private RelativeLayout releasesLayout;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.mActivity = activity;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,7 +63,18 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
 
         mServiceHelper = new ServiceHelper(getActivity());
         mServiceHelper.getRecommendedArtists();
-        Log.e("VUEW CREATED", "CCCC");
+
+        Button more_recommended = (Button) recommendedLayout.findViewById(R.id.button_more);
+        more_recommended.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, new RecommendedMoreFragment())
+                        .commit();
+            }
+        });
     }
 
     @Override
@@ -91,7 +111,6 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
            Log.e("onLoadFinished", "Empty cursor");
            return;
        }
-
 
        recommendedLayout.findViewById(R.id.db_message).setVisibility(View.GONE);
        recommendedLayout.findViewById(R.id.grid).setVisibility(View.VISIBLE);

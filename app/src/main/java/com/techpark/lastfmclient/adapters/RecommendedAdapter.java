@@ -61,9 +61,9 @@ public class RecommendedAdapter extends BaseAdapter {
 
         holder.band.setText(mArtistList.getArtists().get(pos).getArtistName());
 
-        Picasso.with(mContext).load(
-                mArtistList.getArtists().get(pos).getImage(Artist.ImageSize.MEGA)
-        ).into(holder.image);
+        String image_artist_path = mArtistList.getArtists().get(pos).getImage(Artist.ImageSize.MEGA);
+        if (!image_artist_path.equals(""))
+            Picasso.with(mContext).load(image_artist_path).into(holder.image);
 
         Artist afirst = mArtistList.getArtists().get(pos).getSimilarFirst();
         Artist asecond = mArtistList.getArtists().get(pos).getSimilarSecond();
@@ -76,14 +76,14 @@ public class RecommendedAdapter extends BaseAdapter {
         }
 
         holder.similar_band.setText(similar_label.toString());
-        Picasso.with(mContext).load(
-                afirst.getImage(Artist.ImageSize.LARGE)
-        ).into(holder.similar_first);
+        image_artist_path = afirst.getImage(Artist.ImageSize.LARGE);
+        if (!image_artist_path.equals(""))
+            Picasso.with(mContext).load(image_artist_path).into(holder.similar_first);
 
         if (asecond != null) {
-            Picasso.with(mContext).load(
-                    asecond.getImage(Artist.ImageSize.LARGE)
-            ).into(holder.similar_second);
+            image_artist_path = asecond.getImage(Artist.ImageSize.LARGE);
+            if (!image_artist_path.equals(""))
+                Picasso.with(mContext).load(image_artist_path).into(holder.similar_second);
         } else {
             holder.similar_second.setVisibility(View.GONE);
         }
@@ -99,7 +99,6 @@ public class RecommendedAdapter extends BaseAdapter {
         CircleImageView similar_second;
 
         private boolean clickFlag = false;
-
 
         ArtistHolder(View v) {
             this.image = (ImageView) v.findViewById(R.id.band_icon);
