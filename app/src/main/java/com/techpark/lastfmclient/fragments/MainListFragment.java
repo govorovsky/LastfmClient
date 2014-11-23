@@ -70,7 +70,7 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
                 getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.content_frame, new RecommendedMoreFragment())
+                        .replace(R.id.content_frame, new RecommendedMoreFragment(),"more")
                         .commit();
             }
         });

@@ -2,6 +2,7 @@ package com.techpark.lastfmclient.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.adapters.DrawerAdapter;
@@ -28,7 +29,9 @@ public class MainActivity extends BaseNavDrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setFragment(new MainListFragment(), TAG_NAME);
+        if (savedInstanceState == null) {
+            setFragment(new MainListFragment(), TAG_NAME);
+        }
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.techpark.lastfmclient.fragments;
 
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,14 +24,18 @@ import com.techpark.lastfmclient.api.ApiParamNames;
  */
 public class RecommendedMoreFragment extends Fragment
         implements LoaderManager.LoaderCallbacks<RecommendedArtistList>,
-                    AbsListView.OnScrollListener
-{
+        AbsListView.OnScrollListener {
     private RecommendedArtistList mArtistList = null;
     private GridView mRecommendedGrid = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.music_layout, container, false);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -49,7 +53,15 @@ public class RecommendedMoreFragment extends Fragment
         ((Button) view.findViewById(R.id.button_more))
                 .setText("BACK");
 
-        getActivity().getLoaderManager().initLoader(2, null, this);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mArtistList.getArtists().isEmpty()) {
+            getLoaderManager().restartLoader(0, null, this);
+        }
     }
 
     @Override
@@ -58,9 +70,7 @@ public class RecommendedMoreFragment extends Fragment
         if (bundle != null)
             page = bundle.getInt(ApiParamNames.API_PAGE);
 
-        MusicListLoader loader = new MusicListLoader(getActivity(), page);
-        loader.forceLoad();
-        return loader;
+        return new MusicListLoader(getActivity(), page);
     }
 
     @Override
@@ -84,7 +94,7 @@ public class RecommendedMoreFragment extends Fragment
     private void loadMore() {
         Bundle bundle = new Bundle();
         bundle.putInt(ApiParamNames.API_PAGE, this.currentPage);
-        getActivity().getLoaderManager().restartLoader(2, bundle, this);
+        getLoaderManager().restartLoader(0, bundle, this);
     }
 
     private int currentPage = 2;
