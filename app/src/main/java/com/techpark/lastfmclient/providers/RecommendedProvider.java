@@ -14,6 +14,9 @@ import com.techpark.lastfmclient.db.ArtistsTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
 import com.techpark.lastfmclient.network.NetworkUtils;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -36,16 +39,19 @@ public class RecommendedProvider implements IProvider {
         }
     }
 
-    private void getRecommendations() {
-        ApiQuery query = new UserGetRecommendedArtists(UserHelpers.getUserSession(mContext));
+    public RecommendedArtistList getRecomendationsNet(int page) throws JSONException, IOException {
+        ApiQuery query = new UserGetRecommendedArtists(UserHelpers.getUserSession(mContext), page);
         query.prepare();
+        String response = NetworkUtils.httpRequest(query);
+        return UserHelpers.getRecommendedArtistsFromJSON(response);
+    }
 
+    private void getRecommendations() {
         ArrayList<ContentValues> artistsValues = new ArrayList<>();
         ArrayList<ContentValues> recommendationsValues = new ArrayList<>();
 
         try {
-            String response = NetworkUtils.httpRequest(query);
-            RecommendedArtistList rlist = UserHelpers.getRecommendedArtistsFromJSON(response); //TODO: GetRecommended in artist and this in userhelper/
+            RecommendedArtistList rlist = getRecomendationsNet(0);
 
             for (RecommendedArtistList.RecommendedArtistWrapper r : rlist.getArtists()) {
                 recommendationsValues.add(UserHelpers.getContentValues(r.castRecommendedArtist()));

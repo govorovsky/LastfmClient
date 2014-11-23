@@ -8,7 +8,8 @@
         android:id="@+id/band_icon"
         android:layout_width="match_parent"
         android:layout_height="179dp"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:src="@drawable/star"/>
 
     <TextView
         android:id="@+id/band_similar"

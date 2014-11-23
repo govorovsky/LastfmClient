@@ -134,7 +134,6 @@ public class UserHelpers {
         RecommendedArtistList list = new RecommendedArtistList();
         JSONObject object = new JSONObject(json);
 
-        Log.d("getRecommendedArtistsFromJSON", json);
         JSONObject recommendations = object.getJSONObject("recommendations");
         JSONArray artists = recommendations.getJSONArray("artist");
 
@@ -161,13 +160,20 @@ public class UserHelpers {
 
             list.addArtist(r);
         }
+
+        JSONObject attrs = recommendations.getJSONObject("@attr");
+        String totalPages = attrs.getString("totalPages");
+        list.setTotalPages(Integer.parseInt(totalPages));
+
         return list;
     }
 
     public static RecommendedArtistList getRecommendedArtistsFromCursor(Cursor cursor, int limit) {
         RecommendedArtistList list = new RecommendedArtistList();
 
-        //cursor.moveToPosition(new Random().nextInt(cursor.getCount() - 1)); //TODO
+        if (limit == -1)
+            limit = cursor.getCount();
+
         cursor.moveToLast();
         for (int i = 0; i < limit && cursor.move(0); ++i) {
             ArrayList<String> images = new ArrayList<>();

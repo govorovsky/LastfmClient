@@ -55,7 +55,7 @@ public class ReleasesAdapter extends BaseAdapter {
         MusicHolder holder = null;
 
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.gridview_item, parent, false);
+            convertView = layoutInflater.inflate(R.layout.release_item, parent, false);
             holder = new MusicHolder();
             holder.image = (ImageView) convertView.findViewById(R.id.band_icon);
             holder.band = (TextView) convertView.findViewById(R.id.band_name);
