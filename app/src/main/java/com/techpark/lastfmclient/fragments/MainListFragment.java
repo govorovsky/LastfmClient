@@ -54,7 +54,6 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
 
         mServiceHelper = new ServiceHelper(getActivity());
         mServiceHelper.getRecommendedArtists();
-        Log.e("VUEW CREATED", "CCCC");
     }
 
     @Override
