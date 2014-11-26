@@ -1,15 +1,18 @@
 package com.techpark.lastfmclient.activities;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
@@ -27,6 +30,7 @@ import com.techpark.lastfmclient.adapters.NavMenuHeader;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.db.UsersTable;
+import com.techpark.lastfmclient.fragments.FragmentConf;
 import com.techpark.lastfmclient.services.ServiceHelper;
 
 import java.util.List;
@@ -46,7 +50,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
 
     protected NavDrawerConfiguration navConf;
     protected Drawable mActionBarDrawable;
-    protected ActionBarDrawerToggle mDrawerToggle;
+    protected MyActionBarDrawerToggle mDrawerToggle;
 
     protected abstract NavDrawerConfiguration getNavDrawerConfiguration();
 
@@ -101,33 +105,14 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
         mActionBarDrawable.setAlpha(255); // may it be visible
         getActionBar().setBackgroundDrawable(mActionBarDrawable);
 
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,
-                mDrawerLayout,
-                navConf.getDrawerOpenDesc(),
-                navConf.getDrawerCloseDesc()
-        ) {
-            public void onDrawerClosed(View view) {
-//                getActionBar().setTitle(mTitle);
-                invalidateOptionsMenu();
-            }
 
-            public void onDrawerOpened(View drawerView) {
-//                getActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-//                fadeActionBar(slideOffset);
-            }
-        };
+        mDrawerToggle = new MyActionBarDrawerToggle();
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         createUserLoader(user);
 
     }
+
 
     protected void setUpEnabled(boolean enabled) {
         mDrawerToggle.setDrawerIndicatorEnabled(!enabled);
@@ -167,6 +152,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+
     }
 
     @Override
@@ -213,6 +199,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
         }
     }
 
+
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
@@ -223,6 +210,11 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
     }
 
     public void selectItem(int position) {
+
+        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+            mDrawerLayout.closeDrawer(mDrawerList);
+        }
+
         NavDrawerItem selectedItem = navConf.getNavItems().get(position);
 
         onNavItemSelected(selectedItem.getId());
@@ -232,9 +224,6 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
             setTitle(selectedItem.getLabel());
         }
 
-        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-            mDrawerLayout.closeDrawer(mDrawerList);
-        }
     }
 
     @Override
@@ -283,6 +272,47 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
         }
     }
 
-}
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    class MyActionBarDrawerToggle extends ActionBarDrawerToggle {
 
+        int alphaStart = -1;
+
+        public MyActionBarDrawerToggle() {
+            super(BaseNavDrawerActivity.this, BaseNavDrawerActivity.this.mDrawerLayout, BaseNavDrawerActivity.this.navConf.getDrawerOpenDesc(), BaseNavDrawerActivity.this.navConf.getDrawerCloseDesc());
+        }
+
+        @Override
+        public void onDrawerClosed(View view) {
+//                getActionBar().setTitle(mTitle);
+            invalidateOptionsMenu();
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+//                getActionBar().setTitle(mDrawerTitle);
+            invalidateOptionsMenu();
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            super.onDrawerStateChanged(newState);
+            if (alphaStart == -1) {
+                alphaStart = mActionBarDrawable.getAlpha(); // get initial alpha
+            }
+        }
+
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+            super.onDrawerSlide(drawerView, slideOffset);
+            mActionBarDrawable.setAlpha(((int) Math.max(alphaStart, 255f * slideOffset)));
+            if (slideOffset <= 0.000001f) alphaStart = -1;
+        }
+    }
+
+    void closeDrawer() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            mDrawerLayout.closeDrawer(Gravity.LEFT);
+        }
+    }
+}
 

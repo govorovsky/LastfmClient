@@ -116,6 +116,7 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
 
     @Override
     public boolean onNavigateUp() {
+        closeDrawer();
         getSupportFragmentManager().popBackStack();
         return true;
     }
@@ -127,6 +128,7 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
 
     @Override
     public void setActionBarFade(int alpha) {
+        mDrawerToggle.alphaStart = alpha; // kostil'
         mActionBarDrawable.setAlpha(alpha);
     }
 
