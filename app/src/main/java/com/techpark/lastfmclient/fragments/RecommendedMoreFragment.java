@@ -2,13 +2,10 @@ package com.techpark.lastfmclient.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -22,15 +19,24 @@ import com.techpark.lastfmclient.api.ApiParamNames;
 /**
  * Created by max on 22/11/14.
  */
-public class RecommendedMoreFragment extends Fragment
+public class RecommendedMoreFragment extends BaseFragment
         implements LoaderManager.LoaderCallbacks<RecommendedArtistList>,
         AbsListView.OnScrollListener {
     private RecommendedArtistList mArtistList = null;
     private GridView mRecommendedGrid = null;
 
+    public static final String TITLE = "Recommended Music";
+
+    public static final String TAG = RecommendedMoreFragment.class.getSimpleName();
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.music_layout, container, false);
+    protected FragmentConf getFragmentConf() {
+        FragmentConf conf = new FragmentConf();
+        conf.setActionBarFade(FragmentConf.ActionBarState.VISIBLE);
+        conf.setLogo(R.drawable.slogo_with_padding);
+        conf.setTitle(TITLE);
+        conf.setLayout(R.layout.more_fragment);
+        return conf;
     }
 
     @Override
@@ -41,6 +47,7 @@ public class RecommendedMoreFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         mArtistList = new RecommendedArtistList();
 
         mRecommendedGrid = (GridView) view.findViewById(R.id.grid);

@@ -3,6 +3,7 @@ package com.techpark.lastfmclient.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -36,7 +37,6 @@ import java.util.List;
 public abstract class BaseNavDrawerActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
     private ServiceHelper mServiceHelper;
 
     private ListView mDrawerList;
@@ -45,6 +45,8 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
     private CharSequence mTitle;
 
     protected NavDrawerConfiguration navConf;
+    protected Drawable mActionBarDrawable;
+    protected ActionBarDrawerToggle mDrawerToggle;
 
     protected abstract NavDrawerConfiguration getNavDrawerConfiguration();
 
@@ -92,8 +94,12 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
 
 //        mDrawerLayout.setDrawerShadow(navConf.getDrawerShadow(), GravityCompat.START);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mActionBarDrawable = getResources().getDrawable(R.drawable.ab_background);
+        mActionBarDrawable.setAlpha(255); // may it be visible
+        getActionBar().setBackgroundDrawable(mActionBarDrawable);
 
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -102,19 +108,19 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
                 navConf.getDrawerCloseDesc()
         ) {
             public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
+//                getActionBar().setTitle(mTitle);
                 invalidateOptionsMenu();
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
+//                getActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                fadeActionBar(slideOffset);
+//                fadeActionBar(slideOffset);
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -123,7 +129,10 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
 
     }
 
-    protected abstract void fadeActionBar(float slideOffset);
+    protected void setUpEnabled(boolean enabled) {
+        mDrawerToggle.setDrawerIndicatorEnabled(!enabled);
+    }
+
 
     private Loader createUserLoader(String username) {
         Bundle b = new Bundle();
@@ -273,6 +282,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
             navConf.getBaseAdapter().notifyDataSetChanged();
         }
     }
+
 }
 
 

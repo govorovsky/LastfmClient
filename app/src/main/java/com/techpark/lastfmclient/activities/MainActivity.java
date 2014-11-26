@@ -2,6 +2,7 @@ package com.techpark.lastfmclient.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import com.techpark.lastfmclient.R;
@@ -12,6 +13,7 @@ import com.techpark.lastfmclient.adapters.NavMenuItem;
 import com.techpark.lastfmclient.adapters.NavMenuSection;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.fragments.MainListFragment;
+import com.techpark.lastfmclient.fragments.UserProfileFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +22,7 @@ import java.util.List;
 /**
  * Created by andrew on 28.10.14.
  */
-public class MainActivity extends BaseNavDrawerActivity {
+public class MainActivity extends BaseNavDrawerActivity implements FragmentManager.OnBackStackChangedListener, FragmentDispatcher {
 
 
     private static final String TAG_NAME = "MainActivity";
@@ -29,21 +31,33 @@ public class MainActivity extends BaseNavDrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         if (savedInstanceState == null) {
-            setFragment(new MainListFragment(), TAG_NAME);
+            setFragment(new MainListFragment(), TAG_NAME, false);
         }
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
+        shouldDisplayHomeUp();
     }
 
-    @Override
-    protected void fadeActionBar(float slideOffset) {
-       /* TODO */
+
+    private void shouldDisplayHomeUp() {
+        boolean isStackEmpty = getSupportFragmentManager().getBackStackEntryCount() > 0;
+        setUpEnabled(isStackEmpty);
+        if (!isStackEmpty)
+            mDrawerToggle.setHomeAsUpIndicator(R.drawable.back_with_padding);
+//        getActionBar().setDisplayHomeAsUpEnabled(isStackEmpty);
     }
 
 
-    private <T extends Fragment> boolean setFragment(T fragment, String tag) {
+    public <T extends Fragment> boolean setFragment(T fragment, String tag, boolean addToBs) {
         curr = fragment;
         if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, tag).commit();
+            if (addToBs)
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, tag).addToBackStack(null).commit();
+            else
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, tag).commit();
             return true;
         }
         return false;
@@ -67,7 +81,8 @@ public class MainActivity extends BaseNavDrawerActivity {
     protected void onNavItemSelected(int id) {
         /* TODO fragments logic here */
         switch (id) {
-            case 101:
+            case NavDrawerConstants.PROFILE:
+                setFragment(new UserProfileFragment(), "test", true);
                 /* fragment creation */
                 break;
 
@@ -93,4 +108,27 @@ public class MainActivity extends BaseNavDrawerActivity {
                 NavMenuItem.getInstance(NavDrawerConstants.LOG_OUT, "Log out")
         ));
     }
+
+    @Override
+    public void onBackStackChanged() {
+        shouldDisplayHomeUp();
+    }
+
+    @Override
+    public boolean onNavigateUp() {
+        getSupportFragmentManager().popBackStack();
+        return true;
+    }
+
+    @Override
+    public void setLogo(int resId) {
+        getActionBar().setLogo(getResources().getDrawable(resId));
+    }
+
+    @Override
+    public void setActionBarFade(int alpha) {
+        mActionBarDrawable.setAlpha(alpha);
+    }
+
+
 }

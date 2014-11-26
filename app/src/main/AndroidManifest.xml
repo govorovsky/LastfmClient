@@ -32,7 +32,6 @@
 
 
             </activity>
-        
         <provider
             android:exported="false"
             android:authorities="com.techpark.lastfmclient"

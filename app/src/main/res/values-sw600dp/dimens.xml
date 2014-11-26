@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="similar_band_size">60dp</dimen>
+    <dimen name="first_similar_margin" >50dp</dimen>
+
+</resources>

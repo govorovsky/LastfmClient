@@ -5,13 +5,21 @@
     android:layout_width="fill_parent"
     android:layout_height="160dp"
     android:background="#262626">
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <ImageView
+    <com.techpark.lastfmclient.views.SquareImageView
         android:id="@+id/poster"
         android:layout_width="match_parent"
         android:layout_height="160dp"
+        android:src="@drawable/kar"
         android:scaleType="centerCrop" />
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gradient_header"/>
+</FrameLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"

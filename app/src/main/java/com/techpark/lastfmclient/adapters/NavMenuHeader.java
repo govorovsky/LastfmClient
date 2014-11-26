@@ -68,7 +68,7 @@ public class NavMenuHeader implements NavDrawerItem {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override
