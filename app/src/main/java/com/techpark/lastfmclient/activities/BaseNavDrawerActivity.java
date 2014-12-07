@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.util.Log;
@@ -30,7 +29,6 @@ import com.techpark.lastfmclient.adapters.NavMenuHeader;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.db.UsersTable;
-import com.techpark.lastfmclient.fragments.FragmentConf;
 import com.techpark.lastfmclient.services.ServiceHelper;
 
 import java.util.List;
@@ -80,7 +78,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
             logOut();
         }
 
-        mServiceHelper = new ServiceHelper(getApplicationContext());
+        mServiceHelper = new ServiceHelper(this);
         mServiceHelper.getUser(user);
 
 //        requestWindowFeature(Window.FEATURE_NO_TITLE); // remove title bar
@@ -284,6 +282,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
         @Override
         public void onDrawerClosed(View view) {
 //                getActionBar().setTitle(mTitle);
+            alphaStart = -1;
             invalidateOptionsMenu();
         }
 
@@ -304,8 +303,9 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
         @Override
         public void onDrawerSlide(View drawerView, float slideOffset) {
             super.onDrawerSlide(drawerView, slideOffset);
-            mActionBarDrawable.setAlpha(((int) Math.max(alphaStart, 255f * slideOffset)));
-            if (slideOffset <= 0.000001f) alphaStart = -1;
+            if (alphaStart >= 0)
+                mActionBarDrawable.setAlpha(((int) Math.max(alphaStart, Math.min(255f, 255f * (slideOffset + alphaStart / 255f))))); // TODO need more smooth!
+//            Log.e("ALPHA START=", "" + alphaStart);
         }
     }
 

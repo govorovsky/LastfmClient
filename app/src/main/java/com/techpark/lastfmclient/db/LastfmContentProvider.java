@@ -23,10 +23,10 @@ public class LastfmContentProvider extends ContentProvider {
     private class DBEntity {
         final static int USER = 1;
         final static int USER_INFO = 2;
-        final static int TRACK_INFO = 3;
         final static int ARTIST = 4;
         final static int RECOMMENDED = 5;
         final static int RECOMMENDED_INFO = 6;
+        final static int TRACK_RECENT = 7;
     }
 
     public LastfmContentProvider() {
@@ -35,6 +35,8 @@ public class LastfmContentProvider extends ContentProvider {
         /* for example "/user/name" will return full user info for name */
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, UsersTable.TABLE_NAME + "/", DBEntity.USER);
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, UsersTable.TABLE_NAME + "/*", DBEntity.USER_INFO);
+
+        uriMatcher.addURI(DBLastfmHelper.AUTHORITY, RecentTracksTable.TABLE_NAME + "/", DBEntity.TRACK_RECENT);
 
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, ArtistsTable.TABLE_NAME + "/", DBEntity.ARTIST);
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, RecommendedArtistsTable.TABLE_NAME + "/", DBEntity.RECOMMENDED);
@@ -55,6 +57,8 @@ public class LastfmContentProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {
             case DBEntity.USER_INFO:
                 return queryUser(uri, projection, selection, selArgs);
+            case DBEntity.TRACK_RECENT:
+                return queryRecentTracks(uri, projection, selection, selArgs);
             case DBEntity.ARTIST:
                 return queryArtist(uri, projection, selection, selArgs);
             case DBEntity.RECOMMENDED: //TODO: limit as param?
@@ -68,6 +72,13 @@ public class LastfmContentProvider extends ContentProvider {
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
     }
+
+    private Cursor queryRecentTracks(Uri uri, String[] projection, String selection, String[] selArgs) {
+        Cursor c = readDb.query(RecentTracksTable.TABLE_NAME, projection, null, null, null, null, null);
+        c.setNotificationUri(getContext().getContentResolver(), uri);
+        return c;
+    }
+
 
     private Cursor queryArtist(Uri uri, String[] projection, String selection, String[] selArgs) {
         Cursor c = readDb.query(ArtistsTable.TABLE_NAME, projection, ArtistsTable.COLUMN_NAME + "=?",
@@ -119,6 +130,8 @@ public class LastfmContentProvider extends ContentProvider {
     public int delete(Uri uri, String s, String[] strings) {
         switch (uriMatcher.match(uri)) {
             case DBEntity.RECOMMENDED:
+                return writeDb.delete(uri.getLastPathSegment(), s, strings);
+            case DBEntity.TRACK_RECENT:
                 return writeDb.delete(uri.getLastPathSegment(), s, strings);
         }
         return 0;
@@ -195,6 +208,21 @@ public class LastfmContentProvider extends ContentProvider {
         return null;
     }
 
+    private Uri insertRecentTrack(ContentValues contentValues, boolean isBatch) {
+        String trackName = contentValues.getAsString(RecentTracksTable.COLUMN_NAME);
+
+        long rowId = writeDb.insert(RecentTracksTable.TABLE_NAME, null, contentValues);
+
+        if (rowId > 0) {
+            Uri newUri = Uri.withAppendedPath(RecentTracksTable.CONTENT_URI, trackName);
+            if (!isBatch) {
+                getContext().getContentResolver().notifyChange(newUri, null);
+            }
+            return newUri;
+        }
+        return null;
+    }
+
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
         switch (uriMatcher.match(uri)) {
@@ -212,6 +240,15 @@ public class LastfmContentProvider extends ContentProvider {
                     @Override
                     public void insert(ContentValues cv) {
                         updateOrInsertArtist(cv, true);
+                    }
+                });
+
+            case DBEntity.TRACK_RECENT:
+                Log.v("Bulk insert", "tracks");
+                return bulkInsertEntity(uri, values, new BulkEntity() {
+                    @Override
+                    public void insert(ContentValues cv) {
+                        insertRecentTrack(cv, true);
                     }
                 });
         }
@@ -232,6 +269,7 @@ public class LastfmContentProvider extends ContentProvider {
             writeDb.endTransaction();
         }
         getContext().getContentResolver().notifyChange(uri, null);
+        Log.d("ContentProvider", values.length + " ");
         return values.length;
     }
 }

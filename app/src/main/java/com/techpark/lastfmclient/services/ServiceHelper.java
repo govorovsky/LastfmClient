@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.techpark.lastfmclient.db.RecentTracksTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
+import com.techpark.lastfmclient.providers.RecentTracksProvider;
 import com.techpark.lastfmclient.providers.RecommendedProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
 
@@ -38,10 +40,25 @@ public class ServiceHelper {
         mContext.startService(intent);
     }
 
+    public void getRecentTracks(String username, int limit) {
+        Intent intent = new Intent(mContext, ServiceProcessor.class);
+        intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.RECENT_TRACKS_PROVIDER);
+        intent.putExtra(ServiceProcessor.METHOD, RecommendedProvider.Actions.GET);
+
+        Bundle extras = new Bundle();
+        extras.putString(RecentTracksProvider.BUNDLE_USERNAME, username);
+        extras.putInt(RecentTracksProvider.BUNDLE_LIMIT, limit);
+        intent.putExtras(extras);
+
+        mContext.startService(intent);
+    }
+
+
     public void freeDataBase() {
         ContentResolver resolver = mContext.getContentResolver();
 //        resolver.delete(UsersTable.CONTENT_URI, null, null);
 //        resolver.delete(ArtistsTable.CONTENT_URI, null, null);
         resolver.delete(RecommendedArtistsTable.CONTENT_URI, null, null);
+        resolver.delete(RecentTracksTable.CONTENT_URI, null, null);
     }
 }

@@ -4,6 +4,7 @@
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonStyle</item>
         <item name="android:actionBarStyle">@style/MyActionBar</item>
     </style>
 
@@ -11,6 +12,9 @@
     <style name="LoginTheme" parent="android:Theme.Holo.NoActionBar">
     </style>
 
+    <style name="MyActionButtonStyle" parent="android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_menu_overflow</item>
+    </style>
 
     <style name="MoreButtonTheme" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/button_more</item>

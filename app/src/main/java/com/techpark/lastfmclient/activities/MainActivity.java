@@ -77,12 +77,27 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
         return configuration;
     }
 
+
+    public Fragment getVisibleFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        List<Fragment> fragments = fm.getFragments();
+        for (Fragment f : fragments) {
+            if (f != null && f.isVisible()) {
+                return f;
+            }
+        }
+        return null;
+    }
+
     @Override
     protected void onNavItemSelected(int id) {
         /* TODO fragments logic here */
         switch (id) {
             case NavDrawerConstants.PROFILE:
-                setFragment(new UserProfileFragment(), "test", true);
+                NavMenuHeader header = (NavMenuHeader) navConf.getNavItems().get(0);
+                User u = new User(header.getName(), header.getFullName(), header.getAvatar(), "", -1, "", header.getPlays(), header.getSince());
+                u.setMostPlayedArtist(header.getPoster());
+                setFragment(UserProfileFragment.getInstance(u), "test", true);
                 /* fragment creation */
                 break;
 

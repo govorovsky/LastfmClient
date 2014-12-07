@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.techpark.lastfmclient.providers.IProvider;
+import com.techpark.lastfmclient.providers.RecentTracksProvider;
 import com.techpark.lastfmclient.providers.RecommendedProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
 
@@ -45,7 +46,7 @@ public class ServiceProcessor extends Service {
             case Providers.USERS_PROVIDER:
                 return new UsersProvider(this);
             case Providers.RECENT_TRACKS_PROVIDER:
-                return null; /* TODO */
+                return new RecentTracksProvider(this); /* TODO */
             case Providers.RECOMMENDED_PROVIDER:
                 return new RecommendedProvider(this);
         }

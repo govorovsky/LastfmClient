@@ -2,10 +2,12 @@ package com.techpark.lastfmclient.api.user;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
+
 /**
  * Created by andrew on 30.10.14.
  */
-public class User {
+public class User implements Serializable {
 
 
     private String name;

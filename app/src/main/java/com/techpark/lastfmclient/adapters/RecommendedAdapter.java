@@ -82,7 +82,7 @@ public class RecommendedAdapter extends BaseAdapter {
 
         if (asecond != null) {
             image_artist_path = asecond.getImage(Artist.ImageSize.LARGE);
-            if (!image_artist_path.equals(""))
+            if (image_artist_path!=null && !image_artist_path.equals(""))
                 Picasso.with(mContext).load(image_artist_path).into(holder.similar_second);
         } else {
             holder.similar_second.setVisibility(View.GONE);
