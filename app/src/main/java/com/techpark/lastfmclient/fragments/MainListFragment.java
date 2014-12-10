@@ -1,6 +1,5 @@
 package com.techpark.lastfmclient.fragments;
 
-import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,32 +18,45 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.techpark.lastfmclient.R;
+import com.techpark.lastfmclient.adapters.EventsAdapter;
+import com.techpark.lastfmclient.adapters.EventsList;
 import com.techpark.lastfmclient.adapters.RecommendedAdapter;
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
+import com.techpark.lastfmclient.adapters.ReleasesAdapter;
+import com.techpark.lastfmclient.adapters.ReleasesList;
+import com.techpark.lastfmclient.api.event.EventHelpers;
 import com.techpark.lastfmclient.api.user.UserHelpers;
+import com.techpark.lastfmclient.db.NewReleasesTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
+import com.techpark.lastfmclient.db.UpcomingEventsTable;
 import com.techpark.lastfmclient.services.ServiceHelper;
+import com.techpark.lastfmclient.views.ExpandedGridView;
 
 
 public class MainListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private RecommendedArtistList mArtistList = null;
+    private ReleasesList mReleasesList = null;
+    private EventsList mUpcomingEventsList = null;
 
-    private ServiceHelper mServiceHelper;
-    private Activity mActivity;
+    private class LoadersNum {
+        final static int RECOMMENDED = 0;
+        final static int NEW_RELEASES = 1;
+        final static int UPCOMING_EVENTS = 2;
+    }
+
+    //TODO: in styles
+    private class DisplayParams {
+        final static int GRID_NUM_ITEMS = 4;
+        final static int GRID_EVENTS_COLUMNS = 1; //default 2
+    }
 
     private RelativeLayout recommendedLayout;
     private RelativeLayout releasesLayout;
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        this.mActivity = activity;
-    }
+    private RelativeLayout eventsLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.main_list_fragment, container, false);
-        return view;
+        return inflater.inflate(R.layout.main_list_fragment, container, false);
     }
 
     @Override
@@ -57,12 +69,29 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
         releasesLayout = (RelativeLayout) view.findViewById(R.id.releases);
         ((TextView)releasesLayout.findViewById(R.id.label)).setText("New Releases");
 
-        mArtistList = new RecommendedArtistList();
-        GridView grid = (GridView) recommendedLayout.findViewById(R.id.grid);
-        grid.setAdapter(new RecommendedAdapter(getActivity(), mArtistList));
+        eventsLayout = (RelativeLayout) view.findViewById(R.id.events);
+        ((TextView)eventsLayout.findViewById(R.id.label)).setText("Upcoming Events");
 
-        mServiceHelper = new ServiceHelper(getActivity());
-        mServiceHelper.getRecommendedArtists();
+        mArtistList = new RecommendedArtistList();
+        ExpandedGridView grid_recommended = (ExpandedGridView) recommendedLayout.findViewById(R.id.grid);
+        grid_recommended.setExpanded(true);
+        grid_recommended.setAdapter(new RecommendedAdapter(getActivity(), mArtistList));
+
+        mReleasesList = new ReleasesList();
+        ExpandedGridView grid_releases = (ExpandedGridView) releasesLayout.findViewById(R.id.grid);
+        grid_releases.setExpanded(true);
+        grid_releases.setAdapter(new ReleasesAdapter(getActivity(), mReleasesList));
+
+        mUpcomingEventsList = new EventsList();
+        ExpandedGridView grid_events = (ExpandedGridView) eventsLayout.findViewById(R.id.grid);
+        grid_events.setNumColumns(DisplayParams.GRID_EVENTS_COLUMNS);
+        grid_events.setAdapter(new EventsAdapter(getActivity(), mUpcomingEventsList));
+
+        ServiceHelper helper = new ServiceHelper(getActivity());
+        helper.getRecommendedArtists();
+        //TODO: get artists =\
+        helper.getNewReleases();
+        helper.getUpcomingEvents();
 
         Button more_recommended = (Button) recommendedLayout.findViewById(R.id.button_more);
         more_recommended.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +100,7 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
                 getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction()
+                        .addToBackStack(null)
                         .replace(R.id.content_frame, new RecommendedMoreFragment())
                         .commit();
             }
@@ -80,48 +110,120 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onResume() {
         super.onResume();
-        // to prevent loader callbacks called twice, we need to call initLoader after onStart()
-        // see http://stackoverflow.com/questions/11293441/android-loadercallbacks-onloadfinished-called-twice
-        getLoaderManager().initLoader(1, null, this);
+        getLoaderManager().initLoader(LoadersNum.RECOMMENDED, null, this);
+        getLoaderManager().initLoader(LoadersNum.NEW_RELEASES, null, this);
+        getLoaderManager().initLoader(LoadersNum.UPCOMING_EVENTS, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(getActivity(),
-                RecommendedArtistsTable.CONTENT_URI,
-                null,
-                null,
-                null,
-                null);
+        switch(i) {
+            case LoadersNum.RECOMMENDED:
+                return new CursorLoader(getActivity(),
+                        RecommendedArtistsTable.CONTENT_URI,
+                        null, null, null, null
+                );
+            case LoadersNum.NEW_RELEASES:
+                return new CursorLoader(getActivity(),
+                        NewReleasesTable.CONTENT_URI,
+                        null, null, null, null
+                );
+            case LoadersNum.UPCOMING_EVENTS:
+                return new CursorLoader(getActivity(),
+                        UpcomingEventsTable.CONTENT_URI,
+                        null, null, null, null
+                );
+            default:
+                return null;
+        }
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-       if (cursor == null) {
+        Log.d("onLoadFinished Cursor", "" + cursorLoader.getId());
+
+        if (cursor == null) {
             Toast.makeText(getActivity(), "Network is broken...", Toast.LENGTH_LONG).show();
             Log.e("onLoadFinished", "Network error");
             return;
         }
 
-       if (cursor.getCount() == 0) {
-           recommendedLayout.findViewById(R.id.grid).setVisibility(View.GONE);
-           TextView messageView = (TextView) recommendedLayout.findViewById(R.id.db_message);
-           messageView.setVisibility(View.VISIBLE);
-           messageView.setText("No recommendations");
-           Log.e("onLoadFinished", "Empty cursor");
-           return;
-       }
+        switch(cursorLoader.getId()) {
+            case LoadersNum.RECOMMENDED:
+                recommendedLoadFinished(cursor);
+                break;
+            case LoadersNum.NEW_RELEASES:
+                newreleasesLoadFinished(cursor);
+                break;
+            case LoadersNum.UPCOMING_EVENTS:
+                upcomingeventsLoadFinished(cursor);
+            default:
+                break;
+        }
+    }
 
-       recommendedLayout.findViewById(R.id.db_message).setVisibility(View.GONE);
-       recommendedLayout.findViewById(R.id.grid).setVisibility(View.VISIBLE);
+    private void upcomingeventsLoadFinished(Cursor cursor) {
+        if (cursor.getCount() == 0) {
+            eventsLayout.findViewById(R.id.grid).setVisibility(View.GONE);
+            TextView messageView = (TextView) eventsLayout.findViewById(R.id.db_message);
+            messageView.setVisibility(View.VISIBLE);
+            messageView.setText("No upcoming events");
+            return;
+        }
 
-       RecommendedAdapter adapter = (RecommendedAdapter)
-               ((GridView) recommendedLayout.findViewById(R.id.grid)).getAdapter();
+        eventsLayout.findViewById(R.id.db_message).setVisibility(View.GONE);
+        eventsLayout.findViewById(R.id.grid).setVisibility(View.VISIBLE);
 
-       RecommendedArtistList list = UserHelpers.getRecommendedArtistsFromCursor(cursor, 4);
-       mArtistList.getArtists().clear();
-       mArtistList.getArtists().addAll(list.getArtists());
-       adapter.notifyDataSetChanged();
+        EventsAdapter adapter = (EventsAdapter)
+                ((GridView) eventsLayout.findViewById(R.id.grid)).getAdapter();
+
+        EventsList list = EventHelpers.getUpcomingEventsFromCursor(cursor, DisplayParams.GRID_NUM_ITEMS);
+        Log.d("upcomingEventsLoadFinished", "" + list.getEvents().size());
+        mUpcomingEventsList.getEvents().clear();
+        mUpcomingEventsList.getEvents().addAll(list.getEvents());
+        adapter.notifyDataSetChanged();
+    }
+
+    private void newreleasesLoadFinished(Cursor cursor) {
+        if (cursor.getCount() == 0) {
+            releasesLayout.findViewById(R.id.grid).setVisibility(View.GONE);
+            TextView messageView = (TextView) releasesLayout.findViewById(R.id.db_message);
+            messageView.setVisibility(View.VISIBLE);
+            messageView.setText("No new releases");
+            return;
+        }
+
+        releasesLayout.findViewById(R.id.db_message).setVisibility(View.GONE);
+        releasesLayout.findViewById(R.id.grid).setVisibility(View.VISIBLE);
+
+        ReleasesAdapter adapter = (ReleasesAdapter)
+                ((GridView) releasesLayout.findViewById(R.id.grid)).getAdapter();
+
+        ReleasesList list = UserHelpers.getNewReleasesFromCursor(cursor, DisplayParams.GRID_NUM_ITEMS);
+        mReleasesList.getReleases().clear();
+        mReleasesList.getReleases().addAll(list.getReleases());
+        adapter.notifyDataSetChanged();
+    }
+
+    private void recommendedLoadFinished(Cursor cursor) {
+        if (cursor.getCount() == 0) {
+            recommendedLayout.findViewById(R.id.grid).setVisibility(View.GONE);
+            TextView messageView = (TextView) recommendedLayout.findViewById(R.id.db_message);
+            messageView.setVisibility(View.VISIBLE);
+            messageView.setText("No recommendations");
+            return;
+        }
+
+        recommendedLayout.findViewById(R.id.db_message).setVisibility(View.GONE);
+        recommendedLayout.findViewById(R.id.grid).setVisibility(View.VISIBLE);
+
+        RecommendedAdapter adapter = (RecommendedAdapter)
+                ((GridView) recommendedLayout.findViewById(R.id.grid)).getAdapter();
+
+        RecommendedArtistList list = UserHelpers.getRecommendedArtistsFromCursor(cursor, DisplayParams.GRID_NUM_ITEMS);
+        mArtistList.getArtists().clear();
+        mArtistList.getArtists().addAll(list.getArtists());
+        adapter.notifyDataSetChanged();
     }
 
     @Override

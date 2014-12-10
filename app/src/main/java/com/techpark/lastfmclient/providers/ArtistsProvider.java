@@ -30,6 +30,6 @@ public class ArtistsProvider implements IProvider {
 
     private void getArtist(String artist) {
         ContentResolver resolver = mContext.getContentResolver();
-
+        //TODO
     }
 }

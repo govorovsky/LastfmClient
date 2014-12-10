@@ -76,7 +76,7 @@ public class RecommendedProvider implements IProvider {
         aV = artistsValues.toArray(aV);
 
         resolver.bulkInsert(ArtistsTable.CONTENT_URI, aV);
-        resolver.bulkInsert(RecommendedArtistsTable.CONTENT_URI, rV);
+        resolver.bulkInsert(RecommendedArtistsTable.CONTENT_URI_ID_RECOMMENDED, rV);
     }
 
     public RecommendedProvider(Context context) {

@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.techpark.lastfmclient.providers.EventsProvider;
 import com.techpark.lastfmclient.providers.IProvider;
 import com.techpark.lastfmclient.providers.RecommendedProvider;
+import com.techpark.lastfmclient.providers.ReleaseProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
 
 import java.util.Arrays;
@@ -33,11 +35,12 @@ public class ServiceProcessor extends Service {
     private final HashMap<String, ServiceTask> mTasks = new HashMap<>();
 
 
-    /* Identifier for each supported provider. */
     public static class Providers {
         public static final int USERS_PROVIDER = 1;
         public static final int RECENT_TRACKS_PROVIDER = 2;
         public static final int RECOMMENDED_PROVIDER = 3;
+        public static final int NEW_RELEASES_PROVIDER = 4;
+        public static final int UPCOMING_EVENTS_PROVIDER = 5;
     }
 
     private IProvider getProvider(int providerId) {
@@ -48,6 +51,10 @@ public class ServiceProcessor extends Service {
                 return null; /* TODO */
             case Providers.RECOMMENDED_PROVIDER:
                 return new RecommendedProvider(this);
+            case Providers.NEW_RELEASES_PROVIDER:
+                return new ReleaseProvider(this);
+            case Providers.UPCOMING_EVENTS_PROVIDER:
+                return new EventsProvider(this);
         }
         return null;
     }

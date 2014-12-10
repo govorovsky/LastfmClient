@@ -11,6 +11,7 @@ import android.util.Log;
 /**
  * Created by Andrew Gov on 03.11.14.
  */
+//TODO: ContenProvider
 public class LastfmContentProvider extends ContentProvider {
 
     private DBLastfmHelper dbLastfmHelper;
@@ -23,23 +24,21 @@ public class LastfmContentProvider extends ContentProvider {
     private class DBEntity {
         final static int USER = 1;
         final static int USER_INFO = 2;
-        final static int TRACK_INFO = 3;
         final static int ARTIST = 4;
         final static int RECOMMENDED = 5;
-        final static int RECOMMENDED_INFO = 6;
+        final static int UPCOMING_EVENTS = 6;
+        final static int NEW_RELEASES = 7;
     }
 
     public LastfmContentProvider() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
-        /* for example "/user/name" will return full user info for name */
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, UsersTable.TABLE_NAME + "/", DBEntity.USER);
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, UsersTable.TABLE_NAME + "/*", DBEntity.USER_INFO);
-
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, ArtistsTable.TABLE_NAME + "/", DBEntity.ARTIST);
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, RecommendedArtistsTable.TABLE_NAME + "/", DBEntity.RECOMMENDED);
-        uriMatcher.addURI(DBLastfmHelper.AUTHORITY, RecommendedArtistsTable.TABLE_NAME + "/*", DBEntity.RECOMMENDED_INFO);
-
+        uriMatcher.addURI(DBLastfmHelper.AUTHORITY, UpcomingEventsTable.TABLE_NAME + "/", DBEntity.UPCOMING_EVENTS);
+        uriMatcher.addURI(DBLastfmHelper.AUTHORITY, NewReleasesTable.TABLE_NAME + "/", DBEntity.NEW_RELEASES);
     }
 
     @Override
@@ -52,13 +51,18 @@ public class LastfmContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selArgs, String sortOrder) {
+        Log.d("query", uri.toString());
         switch (uriMatcher.match(uri)) {
             case DBEntity.USER_INFO:
                 return queryUser(uri, projection, selection, selArgs);
             case DBEntity.ARTIST:
                 return queryArtist(uri, projection, selection, selArgs);
-            case DBEntity.RECOMMENDED: //TODO: limit as param?
+            case DBEntity.RECOMMENDED:
                 return queryRecommended(uri, projection, selection, selArgs);
+            case DBEntity.UPCOMING_EVENTS:
+                return queryUpcomingEvents(uri, projection, selection, selArgs);
+            case DBEntity.NEW_RELEASES:
+                return queryNewReleases(uri, projection, selection, selArgs);
         }
         return null;
     }
@@ -76,22 +80,42 @@ public class LastfmContentProvider extends ContentProvider {
         return c;
     }
 
-    //TODO
+    //TODO: limit
     private Cursor queryRecommended(Uri uri, String[] projection, String selection, String[] selArgs) {
-        //Cursor rec = readDb.query(RecommendedArtistsTable.TABLE_NAME, projection, RecommendedArtistsTable.COLUMN_NAME + "=?",
-        //        new String[]{uri.getLastPathSegment()}, null, null, null);
-        //Cursor art = readDb.query(ArtistsTable.TABLE_NAME, null, null, null, null, null, null);
-
         String query = "select " +
                 "r.name, r.similar_first, r.similar_second, " +
-                "a.image_small, a.image_medium, a.image_large, a.image_extralarge, a.image_mega, " +
-                "s1.image_small, s1.image_medium, s1.image_large, s1.image_extralarge, s1.image_mega, " +
-                "s2.image_small, s2.image_medium, s2.image_large, s2.image_extralarge, s2.image_mega " +
-                "from recommended r join artist a on r.name = a.name " +
-                "join artist s1 on r.similar_first = s1.name " +
-                "join artist s2 on r.similar_second = s2.name";
+                "a.image_mega, s1.image_large, s2.image_large " +
+                "from recommended r left join artist a on r.name = a.name " +
+                "left join artist s1 on r.similar_first = s1.name " +
+                "left join artist s2 on r.similar_second = s2.name";
 
         Cursor c = readDb.rawQuery(query, null); //TODO: selection
+        c.setNotificationUri(getContext().getContentResolver(), uri);
+        return c;
+    }
+
+    //TODO: limit
+    private Cursor queryUpcomingEvents(Uri uri, String[] projection, String selection, String[] selArgs) {
+        String query = "select " +
+                "e.title, e.venue_name, e.venue_location, e.date, e.image_extralarge, " +
+                "e.attendance, e.artist1, e.artist2, e.artist3, " +
+                "a1.image_large, a2.image_large, a3.image_large " +
+                "from upcoming_events e left join artist a1 on e.artist1 = a1.name " +
+                "left join artist a2 on e.artist2 = a2.name " +
+                "left join artist a3 on e.artist3 = a3.name";
+
+        Cursor c = readDb.rawQuery(query, null);
+        c.setNotificationUri(getContext().getContentResolver(), uri);
+        return c;
+    }
+
+    private Cursor queryNewReleases(Uri uri, String[] projection, String selection, String[] selArgs) {
+        String query = "select " +
+                "r.name, r.url, r.artist, r.date, " +
+                "r.image_extralarge, a.name, a.image_large, " +
+                "from new_releases r left join artist a on r.artist = a.name";
+
+        Cursor c = readDb.rawQuery(query, null);
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
     }
@@ -110,6 +134,10 @@ public class LastfmContentProvider extends ContentProvider {
                 return updateOrInsertArtist(contentValues, false);
             case DBEntity.RECOMMENDED:
                 return updateOrInsertRecommended(contentValues, false);
+            case DBEntity.NEW_RELEASES:
+                return updateOrInsertRelease(contentValues, false);
+            case DBEntity.UPCOMING_EVENTS:
+                return updateOrInsertEvent(contentValues, false);
             default:
                 return null;
         }
@@ -117,8 +145,13 @@ public class LastfmContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String s, String[] strings) {
+        //TODO: need matcher?
         switch (uriMatcher.match(uri)) {
             case DBEntity.RECOMMENDED:
+                return writeDb.delete(uri.getLastPathSegment(), s, strings);
+            case DBEntity.NEW_RELEASES:
+                return writeDb.delete(uri.getLastPathSegment(), s, strings);
+            case DBEntity.UPCOMING_EVENTS:
                 return writeDb.delete(uri.getLastPathSegment(), s, strings);
         }
         return 0;
@@ -144,7 +177,6 @@ public class LastfmContentProvider extends ContentProvider {
             return newUri;
         }
         return null;
-
     }
 
     private Uri updateOrInsertArtist(ContentValues contentValues, boolean isBatch) {
@@ -181,7 +213,6 @@ public class LastfmContentProvider extends ContentProvider {
             rowId = writeDb.insert(RecommendedArtistsTable.TABLE_NAME, null, contentValues);
         }
 
-
         if (rowId > 0) {
             Uri newUri = Uri.withAppendedPath(RecommendedArtistsTable.CONTENT_URI_ID_RECOMMENDED, artistName);
             if (!isBatch) {
@@ -189,9 +220,54 @@ public class LastfmContentProvider extends ContentProvider {
             }
             return newUri;
         }
+        return null;
+    }
 
-        Log.e("INSERT ERROR", "id=" + rowId + "name=" + artistName);
+    private Uri updateOrInsertRelease(ContentValues contentValues, boolean isBatch) {
+        String releaseName = contentValues.getAsString(NewReleasesTable.COLUMN_NAME);
 
+        long rowId = writeDb.update(
+                NewReleasesTable.TABLE_NAME,
+                contentValues,
+                NewReleasesTable.COLUMN_NAME + "=?",
+                new String[]{releaseName}
+        );
+
+        if (rowId == 0) {
+            rowId = writeDb.insert(NewReleasesTable.TABLE_NAME, null, contentValues);
+        }
+
+        if (rowId > 0) {
+            Uri newUri = Uri.withAppendedPath(NewReleasesTable.CONTENT_URI_ID_RELEASE, releaseName);
+            if (!isBatch) {
+                getContext().getContentResolver().notifyChange(newUri, null);
+            }
+            return newUri;
+        }
+        return null;
+    }
+
+    private Uri updateOrInsertEvent(ContentValues contentValues, boolean isBatch) {
+        String title = contentValues.getAsString(UpcomingEventsTable.COLUMN_TITLE);
+
+        long rowId = writeDb.update(
+                UpcomingEventsTable.TABLE_NAME,
+                contentValues,
+                UpcomingEventsTable.COLUMN_TITLE + "=?",
+                new String[]{title}
+        );
+
+        if (rowId == 0) {
+            rowId = writeDb.insert(UpcomingEventsTable.TABLE_NAME, null, contentValues);
+        }
+
+        if (rowId > 0) {
+            Uri newUri = Uri.withAppendedPath(UpcomingEventsTable.CONTENT_URI_ID_EVENT, title);
+            if (!isBatch) {
+                getContext().getContentResolver().notifyChange(newUri, null);
+            }
+            return newUri;
+        }
         return null;
     }
 
@@ -199,7 +275,6 @@ public class LastfmContentProvider extends ContentProvider {
     public int bulkInsert(Uri uri, ContentValues[] values) {
         switch (uriMatcher.match(uri)) {
             case DBEntity.RECOMMENDED:
-                Log.v("Bulk insert", "recommended");
                 return bulkInsertEntity(uri, values, new BulkEntity() {
                     @Override
                     public void insert(ContentValues cv) {
@@ -207,11 +282,24 @@ public class LastfmContentProvider extends ContentProvider {
                     }
                 });
             case DBEntity.ARTIST:
-                Log.v("Bulk insert", "artists");
                 return bulkInsertEntity(uri, values, new BulkEntity() {
                     @Override
                     public void insert(ContentValues cv) {
                         updateOrInsertArtist(cv, true);
+                    }
+                });
+            case DBEntity.NEW_RELEASES:
+                return bulkInsertEntity(uri, values, new BulkEntity() {
+                    @Override
+                    public void insert(ContentValues cv) {
+                        updateOrInsertRelease(cv, true);
+                    }
+                });
+            case DBEntity.UPCOMING_EVENTS:
+                return bulkInsertEntity(uri, values, new BulkEntity() {
+                    @Override
+                    public void insert(ContentValues cv) {
+                        updateOrInsertEvent(cv, true);
                     }
                 });
         }

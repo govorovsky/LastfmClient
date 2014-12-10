@@ -20,7 +20,7 @@ public class MusicListLoader extends AsyncTaskLoader<RecommendedArtistList> {
 
     public MusicListLoader(Context context, int page) {
         super(context);
-        Log.d("Cretae MusicListLoder", "" + page);
+        Log.d("Create MusicListLoder", "" + page);
         this.mPage = page;
     }
 

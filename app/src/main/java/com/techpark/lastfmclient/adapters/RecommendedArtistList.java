@@ -4,6 +4,7 @@ import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.artist.RecommendedArtist;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by max on 30/10/14.
@@ -20,8 +21,12 @@ public class RecommendedArtistList {
             super(a.getArtistName(), a.getUrl(), a.getImages());
         }
 
-        public RecommendedArtistWrapper(String artist, String url, ArrayList<String> images) {
+        public RecommendedArtistWrapper(String artist, String url, HashMap<String, String> images) {
             super(artist, url, images);
+        }
+
+        public RecommendedArtistWrapper(String artist, String url) {
+            super(artist, url);
         }
 
         public void setSimilarArtists(Artist similar_first, Artist similar_second) {

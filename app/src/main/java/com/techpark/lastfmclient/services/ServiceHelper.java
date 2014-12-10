@@ -4,9 +4,15 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.techpark.lastfmclient.db.ArtistsTable;
+import com.techpark.lastfmclient.db.NewReleasesTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
+import com.techpark.lastfmclient.db.UsersTable;
+import com.techpark.lastfmclient.providers.EventsProvider;
 import com.techpark.lastfmclient.providers.RecommendedProvider;
+import com.techpark.lastfmclient.providers.ReleaseProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
 
 /**
@@ -38,10 +44,27 @@ public class ServiceHelper {
         mContext.startService(intent);
     }
 
+    public void getNewReleases() {
+        Intent intent = new Intent(mContext, ServiceProcessor.class);
+        intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.NEW_RELEASES_PROVIDER);
+        intent.putExtra(ServiceProcessor.METHOD, ReleaseProvider.Actions.GET);
+
+        mContext.startService(intent);
+    }
+
+    public void getUpcomingEvents() {
+        Intent intent = new Intent(mContext, ServiceProcessor.class);
+        intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.UPCOMING_EVENTS_PROVIDER);
+        intent.putExtra(ServiceProcessor.METHOD, EventsProvider.Actions.UPCOMING);
+
+        mContext.startService(intent);
+    }
+
     public void freeDataBase() {
         ContentResolver resolver = mContext.getContentResolver();
-//        resolver.delete(UsersTable.CONTENT_URI, null, null);
-//        resolver.delete(ArtistsTable.CONTENT_URI, null, null);
+        resolver.delete(UsersTable.CONTENT_URI, null, null);
+        resolver.delete(ArtistsTable.CONTENT_URI, null, null);
         resolver.delete(RecommendedArtistsTable.CONTENT_URI, null, null);
+        resolver.delete(NewReleasesTable.CONTENT_URI, null, null);
     }
 }

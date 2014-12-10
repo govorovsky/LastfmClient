@@ -13,4 +13,9 @@ public class ApiParamNames {
     public static final String API_LIMIT = "limit";
     public static final String API_PAGE = "page";
     public static final String API_USER = "user";
+
+    public static final String API_RELEASES_SRC = "userecs";
+
+    public static final String API_EVENTS_LATITUDE = "latitude";
+    public static final String API_EVENTS_LONGITUDE = "longtitude";
 }

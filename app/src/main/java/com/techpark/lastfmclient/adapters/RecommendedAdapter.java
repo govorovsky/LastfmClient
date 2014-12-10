@@ -77,12 +77,13 @@ public class RecommendedAdapter extends BaseAdapter {
 
         holder.similar_band.setText(similar_label.toString());
         image_artist_path = afirst.getImage(Artist.ImageSize.LARGE);
-        if (!image_artist_path.equals(""))
+        if (image_artist_path != null && !image_artist_path.equals(""))
             Picasso.with(mContext).load(image_artist_path).into(holder.similar_first);
 
         if (asecond != null) {
+            holder.similar_second.setVisibility(View.VISIBLE);
             image_artist_path = asecond.getImage(Artist.ImageSize.LARGE);
-            if (!image_artist_path.equals(""))
+            if (image_artist_path != null && !image_artist_path.equals(""))
                 Picasso.with(mContext).load(image_artist_path).into(holder.similar_second);
         } else {
             holder.similar_second.setVisibility(View.GONE);
@@ -104,8 +105,8 @@ public class RecommendedAdapter extends BaseAdapter {
             this.image = (ImageView) v.findViewById(R.id.band_icon);
             this.band = (TextView) v.findViewById(R.id.band_name);
             this.similar_band = (TextView) v.findViewById(R.id.band_similar);
-            this.similar_first = (CircleImageView) v.findViewById(R.id.band_similar_first);
-            this.similar_second = (CircleImageView) v.findViewById(R.id.band_similar_second);
+            this.similar_first = (CircleImageView) v.findViewById(R.id.band_similar_second);
+            this.similar_second = (CircleImageView) v.findViewById(R.id.band_similar_first);
 
             this.similar_band.setOnClickListener(this);
         }

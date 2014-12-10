@@ -1,20 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <include
-        android:id="@+id/recommended"
-        layout="@layout/music_layout" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
 
-    <include
-        android:id="@+id/releases"
-        layout="@layout/music_layout" />
+            <include
+                android:id="@+id/recommended"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/music_layout" />
 
-    <include
-        android:id="@+id/events"
-        layout="@layout/music_layout" />
+            <include
+                android:id="@+id/releases"
+                layout="@layout/music_layout" />
+
+            <include
+                android:id="@+id/events"
+                layout="@layout/music_layout" />
+
+        </LinearLayout>
+    </ScrollView>
 
 
 </LinearLayout>

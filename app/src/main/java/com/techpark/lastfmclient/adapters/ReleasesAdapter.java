@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.api.artist.Artist;
+import com.techpark.lastfmclient.api.release.Release;
 
 import java.util.ArrayList;
 
@@ -22,12 +23,13 @@ public class ReleasesAdapter extends BaseAdapter {
     private ReleasesList mReleasesList;
     private LayoutInflater layoutInflater;
 
-    public ReleasesAdapter(Context c) {
+    public ReleasesAdapter(Context c, ReleasesList list) {
         this.layoutInflater = LayoutInflater.from(c);
         this.mContext = c;
+        this.mReleasesList = list;
     }
 
-    public void setArtists(ReleasesList releases) {
+    public void setReleases(ReleasesList releases) {
         this.mReleasesList = releases;
     }
 
@@ -35,8 +37,7 @@ public class ReleasesAdapter extends BaseAdapter {
     public int getCount() {
         if (mReleasesList == null)
             return 0;
-    //    return mReleasesList.getReleases().size();
-        return 0;
+        return mReleasesList.getReleases().size();
     }
 
     @Override
@@ -51,50 +52,43 @@ public class ReleasesAdapter extends BaseAdapter {
 
     @Override
     public View getView(int pos, View convertView, ViewGroup parent) {
-/*
-        MusicHolder holder = null;
+        ReleaseHolder holder = null;
 
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.release_item, parent, false);
-            holder = new MusicHolder();
-            holder.image = (ImageView) convertView.findViewById(R.id.band_icon);
-            holder.band = (TextView) convertView.findViewById(R.id.band_name);
-            holder.similar_band = (TextView) convertView.findViewById(R.id.band_similar);
-            holder.similar_first = (CircleImageView) convertView.findViewById(R.id.band_similar_first);
-            holder.similar_second = (CircleImageView) convertView.findViewById(R.id.band_similar_second);
+            holder = new ReleaseHolder();
+            holder.image = (ImageView) convertView.findViewById(R.id.release_icon);
+            holder.artist = (TextView) convertView.findViewById(R.id.release_band);
+            holder.release_name = (TextView) convertView.findViewById(R.id.release_name);
+            holder.artist_image = (CircleImageView) convertView.findViewById(R.id.release_band_icon);
             convertView.setTag(holder);
         }
 
         if (holder == null) {
-            holder = (MusicHolder) convertView.getTag();
+            holder = (ReleaseHolder) convertView.getTag();
         }
 
-        holder.band.setText(mArtistList.getArtists().get(pos).getArtistName());
+        ReleasesList.ReleaseWrapper r = mReleasesList.getReleases().get(pos);
+
+        holder.artist.setText(r.getArtist().getArtistName());
+        String[] date = r.getDate().split(" ");
+        holder.release_name.setText(r.getReleaseName() + date[0]);
 
         Picasso.with(mContext).load(
-                mArtistList.getArtists().get(pos).getImage(Artist.IMAGE_MEGA)
+                r.getImage(Release.ImageSize.EXTRALARGE)
         ).into(holder.image);
 
-        Artist afirst = mArtistList.getArtists().get(pos).getSimilarFirst();
-        Artist asecond = mArtistList.getArtists().get(pos).getSimilarSecond();
-
-        holder.similar_band.setText("Similar to " + afirst.getArtistName() + " and " + asecond.getArtistName());
         Picasso.with(mContext).load(
-                afirst.getImage(Artist.IMAGE_LARGE)
-        ).into(holder.similar_first);
+                r.getArtist().getImage(Artist.ImageSize.LARGE)
+        ).into(holder.artist_image);
 
-        Picasso.with(mContext).load(
-                asecond.getImage(Artist.IMAGE_LARGE)
-        ).into(holder.similar_second);
-*/
         return convertView;
     }
 
-    private class MusicHolder {
+    private class ReleaseHolder {
         ImageView image;
-        TextView band;
-        TextView similar_band;
-        CircleImageView similar_first;
-        CircleImageView similar_second;
+        TextView release_name;
+        TextView artist;
+        CircleImageView artist_image;
     }
 }

@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Andrew Gov on 14.11.14.
@@ -30,10 +31,11 @@ public class ArtistHelpers {
 
     public static Artist getArtistFromJSON(JSONObject json) throws JSONException {
         JSONArray images = json.getJSONArray("image");
-        ArrayList<String> imgs = new ArrayList<>();
+        HashMap<String, String> imgs = new HashMap<>();
 
         for (int i = 0; i < images.length(); ++i)
-            imgs.add(
+            imgs.put(
+                    Artist.ImageSizes.get(i),
                     images.getJSONObject(i).getString("#text")
             );
 

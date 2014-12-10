@@ -11,7 +11,7 @@ import android.util.Log;
 public class DBLastfmHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "lastfm.db";
-    private static final int DB_VER = 1;
+    private static final int DB_VER = 2;
     public static final String AUTHORITY = "com.techpark.lastfmclient";
     public DBLastfmHelper(Context context) {
         super(context, DB_NAME, null, DB_VER);
@@ -23,6 +23,8 @@ public class DBLastfmHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + UsersTable.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ArtistsTable.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + RecommendedArtistsTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + NewReleasesTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + UpcomingEventsTable.TABLE_NAME);
         onCreate(db);
     }
 
@@ -32,6 +34,8 @@ public class DBLastfmHelper extends SQLiteOpenHelper {
         db.execSQL(UsersTable.SQL_CREATE_USER_TABLE);
         db.execSQL(ArtistsTable.SQL_CREATE_ARTIST_TABLE);
         db.execSQL(RecommendedArtistsTable.SQL_CREATE_RECOMMENDED_TABLE);
+        db.execSQL(NewReleasesTable.SQL_CREATE_NEW_RELEASES_TABLE);
+        db.execSQL(UpcomingEventsTable.SQL_CREATE_UPCOMING_EVENTS);
     }
 
     @Override
@@ -40,6 +44,8 @@ public class DBLastfmHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + UsersTable.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + ArtistsTable.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + RecommendedArtistsTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + NewReleasesTable.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + UpcomingEventsTable.TABLE_NAME);
         onCreate(db);
     }
 }

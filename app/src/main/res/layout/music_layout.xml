@@ -36,7 +36,7 @@
         android:paddingTop="20dp"
         android:paddingBottom="20dp"/>
 
-    <GridView
+    <com.techpark.lastfmclient.views.ExpandedGridView
         android:id="@+id/grid"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"

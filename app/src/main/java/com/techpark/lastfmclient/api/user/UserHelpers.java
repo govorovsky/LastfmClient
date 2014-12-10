@@ -7,8 +7,11 @@ import android.database.Cursor;
 import android.util.Log;
 
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
+import com.techpark.lastfmclient.adapters.ReleasesList;
 import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.artist.RecommendedArtist;
+import com.techpark.lastfmclient.api.release.Release;
+import com.techpark.lastfmclient.db.NewReleasesTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
 import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.api.artist.ArtistHelpers;
@@ -54,7 +57,6 @@ public class UserHelpers {
                 playcnt = 0;
             }
             String registered = user.getJSONObject("registered").getString("#text");
-            Log.d(LOG_TAG, name + " " + realname + " " + urlAvatar + " " + country + " " + age + " " + sex + " " + playcnt + " " + registered);
 
             return new User(name, realname, urlAvatar, country, age, sex, playcnt, registered);
 
@@ -77,7 +79,6 @@ public class UserHelpers {
             String registered = c.getString(8);
             String cover = c.getString(9);
 
-            Log.d(LOG_TAG, name + " " + realname + " " + urlAvatar + " " + country + " " + age + " " + sex + " " + playcnt + " " + registered + " " + cover);
             User u = new User(name, realname, urlAvatar, country, age, sex, playcnt, registered);
             u.setMostPlayedArtist(cover);
             return u;
@@ -106,6 +107,20 @@ public class UserHelpers {
         content.put(RecommendedArtistsTable.COLUMN_SIMILAR_FIRST, rartist.getSimilarFirst());
         if (rartist.getSimilarSecond() != null)
             content.put(RecommendedArtistsTable.COLUMN_SIMILAR_SECOND, rartist.getSimilarSecond());
+
+        return content;
+    }
+
+    public static ContentValues getContentValues(ReleasesList.ReleaseWrapper release) {
+        ContentValues content = new ContentValues(Release.RECOMMENDED_SIZE);
+        content.put(NewReleasesTable.COLUMN_ARTIST, release.getArtistName());
+        content.put(NewReleasesTable.COLUMN_NAME, release.getReleaseName());
+        content.put(NewReleasesTable.COLUMN_URL, release.getUrl());
+        content.put(NewReleasesTable.COLUMN_RELEASE_DATE, release.getDate());
+        content.put(NewReleasesTable.COLUMN_IMAGE_SMALL, release.getImage(Release.ImageSize.SMALL));
+        content.put(NewReleasesTable.COLUMN_IMAGE_MEDIUM, release.getImage(Release.ImageSize.MEDIUM));
+        content.put(NewReleasesTable.COLUMN_IMAGE_LARGE, release.getImage(Release.ImageSize.LARGE));
+        content.put(NewReleasesTable.COLUMN_IMAGE_EXTRALARGE, release.getImage(Release.ImageSize.EXTRALARGE));
 
         return content;
     }
@@ -176,31 +191,19 @@ public class UserHelpers {
 
         cursor.moveToLast();
         for (int i = 0; i < limit && cursor.move(0); ++i) {
-            ArrayList<String> images = new ArrayList<>();
-            images.addAll(Arrays.asList(
-                cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)
-            ));
-
             RecommendedArtistList.RecommendedArtistWrapper r = new RecommendedArtistList.RecommendedArtistWrapper(
                     cursor.getString(0),
-                    cursor.getString(0),
-                    images
+                    null
             );
+            r.getImages().put(Artist.ImageSize.MEGA, cursor.getString(3));
 
-            ArrayList<String> images_s1 = new ArrayList<>();
-            images_s1.addAll(Arrays.asList(
-                cursor.getString(8), cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12)
-            ));
+            Artist s1 = new Artist(cursor.getString(1), null);
+            s1.getImages().put(Artist.ImageSize.LARGE, cursor.getString(4));
 
-            ArrayList<String> images_s2 = new ArrayList<>();
-            images_s2.addAll(Arrays.asList(
-                cursor.getString(13), cursor.getString(14), cursor.getString(15), cursor.getString(16), cursor.getString(17)
-            ));
+            Artist s2 = new Artist(cursor.getString(2), null);
+            s2.getImages().put(Artist.ImageSize.LARGE, cursor.getString(5));
 
-            r.setSimilarArtists(
-                    new Artist(cursor.getString(1), "url", images_s1),
-                    new Artist(cursor.getString(2), "url", images_s2)
-            );
+            r.setSimilarArtists(s1, s2);
 
             list.addArtist(r);
             cursor.moveToPrevious();

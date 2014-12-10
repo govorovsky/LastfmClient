@@ -46,8 +46,17 @@ public class RecommendedMoreFragment extends Fragment
         ((TextView) view.findViewById(R.id.label))
                 .setText("Recommended Artists");
 
-        ((Button) view.findViewById(R.id.button_more))
-                .setText("BACK");
+        Button backButton = (Button) view.findViewById(R.id.button_more);
+        backButton.setText("BACK");
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity()
+                        .getSupportFragmentManager()
+                        .popBackStack();
+            }
+        });
 
         getActivity().getLoaderManager().initLoader(2, null, this);
     }
