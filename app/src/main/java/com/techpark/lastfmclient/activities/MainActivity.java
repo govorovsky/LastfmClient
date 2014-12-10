@@ -153,5 +153,10 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
         mActionBarDrawable.setAlpha(alpha);
     }
 
+    @Override
+    public int getActionBarFade() {
+        return mActionBarDrawable.getAlpha();
+    }
+
 
 }

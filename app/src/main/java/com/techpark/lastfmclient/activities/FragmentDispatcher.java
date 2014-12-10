@@ -15,4 +15,6 @@ public interface FragmentDispatcher {
 
     void setActionBarFade(int alpha);
 
+    int getActionBarFade();
+
 }

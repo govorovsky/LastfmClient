@@ -38,12 +38,21 @@ public abstract class BaseFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (savedInstanceState != null) {
+            fragmentDispatcher.setActionBarFade(savedInstanceState.getInt("fade"));
+        } else {
+            fragmentDispatcher.setActionBarFade(conf.getActionBarFade());
+        }
+
         fragmentDispatcher.setTitle(conf.getTitle());
-        fragmentDispatcher.setActionBarFade(conf.getActionBarFade());
         fragmentDispatcher.setLogo(conf.getLogo());
     }
 
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("fade", fragmentDispatcher.getActionBarFade());
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onAttach(Activity activity) {

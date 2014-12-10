@@ -28,10 +28,11 @@ public class StretchedGridView extends GridLayout {
             @Override
             public void add(View view) {
                 GridLayout.LayoutParams params = new LayoutParams();
-                params.width = width / 2;
+                params.width = (int) (width / 2 - padding / 2 + 1);
                 if (i % 2 == 0) // TODO !! consider using compat GridLayout
-                    params.rightMargin = (int) padding;
+                params.rightMargin = (int) padding;
                 params.bottomMargin = (int) padding;
+//                params.setMargins(10,10,10,10);
                 view.setLayoutParams(params);
                 layout.addView(view);
                 i++;
