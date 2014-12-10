@@ -39,7 +39,6 @@ public class LibraryHelpers {
 
     public static ApiResponse<LibraryArtistsList> getArtistsListFromJson(String json) {
         try {
-            Log.e("JSON=", json);
             JSONObject resp = new JSONObject(json);
             JSONObject artists = resp.getJSONObject("artists");
             JSONObject attr;
@@ -65,7 +64,6 @@ public class LibraryHelpers {
             }
             al.setTotalPages(totalPages);
             al.setTotalArtists(totalArtists);
-            Log.d("library artists", " " + al);
             return new ApiResponse<>(al);
         } catch (JSONException e) {
             e.printStackTrace();

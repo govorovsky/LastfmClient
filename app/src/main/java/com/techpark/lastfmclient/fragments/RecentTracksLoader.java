@@ -2,7 +2,6 @@ package com.techpark.lastfmclient.fragments;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
@@ -46,11 +45,6 @@ public class RecentTracksLoader extends AsyncTaskLoader<ApiResponse<RecentTracks
             c.close();
             return new ApiResponse<>(l, type);
         } else if (type == ApiResponse.Type.API) {
-            try {
-                Thread.currentThread().sleep(1500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             ApiQuery query = new UserGetRecentTracks(username, 4, page);
             query.prepare();
             try {

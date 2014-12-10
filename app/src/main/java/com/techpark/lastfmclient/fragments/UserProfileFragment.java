@@ -22,9 +22,7 @@ import com.techpark.lastfmclient.adapters.LibraryArtistsAdapter;
 import com.techpark.lastfmclient.adapters.LibraryArtistsList;
 import com.techpark.lastfmclient.adapters.RecentTracksAdapter;
 import com.techpark.lastfmclient.adapters.RecentTracksList;
-import com.techpark.lastfmclient.api.library.LibArtist;
 import com.techpark.lastfmclient.api.library.LibraryHelpers;
-import com.techpark.lastfmclient.api.track.TrackHelpers;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.db.LibraryTable;
@@ -35,7 +33,6 @@ import com.techpark.lastfmclient.views.NotifyingScrollView;
 import com.techpark.lastfmclient.views.StretchedGridView;
 import com.techpark.lastfmclient.views.StretchedListView;
 
-import java.util.Arrays;
 
 
 /**
@@ -125,14 +122,11 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.e("ON DESTORY", "DS");
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        Log.e("VIEW CREATED", "DSDSD");
 
         mServiceHelper = new ServiceHelper(getActivity());
         mServiceHelper.getRecentTracks(mUsername, 4);
@@ -228,7 +222,6 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
         switch (loader.getId()) {
             case TRACKS_LOADER:
                 RecentTracksList l = UserHelpers.getRecentTracksFromCursor(data);
-                Log.d(TAG, "Recent tracks size : " + l.size());
                 if (!l.isEmpty()) {
                     recentTracks.clear();
                     recentTracks.addAll(l);

@@ -43,9 +43,6 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
     private String username;
     private boolean isPaused = false;
 
-    {
-        Log.e("INIT!!!", "INITTT");
-    }
 
     private int currentPage = 2;
     private int prevItemCount = 4;
@@ -118,13 +115,8 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
     @Override
     public void onResume() {
         super.onResume();
-
-        Log.e("LOADER STATE", " " + (getLoaderManager().getLoader(0) == null));
-
         if (list.isEmpty()) {
-            Log.e("EMPTY LIST, RESTARTING", "FDFDFD");
             getLoaderManager().restartLoader(0, new Bundle(), this);
-
         }
     }
 
@@ -194,13 +186,13 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
         Bundle args = new Bundle();
         args.putInt(ApiParamNames.API_PAGE, currentPage);
         getLoaderManager().restartLoader(0, args, this);
-        Log.e("LOADING PAGE", currentPage + " ");
+//        Log.e("LOADING PAGE", currentPage + " ");
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        Log.e("LOADING=", " " + isLoading);
+//        Log.e("LOADING=", " " + isLoading);
 
         if (totalItemCount < prevItemCount)
             return;
@@ -213,10 +205,10 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
 
         if (!isLoading && (firstVisibleItem + visibleItemCount == totalItemCount)) {
             isLoading = true;
-            Log.e("FIRST VISIBLE INDEX", firstVisibleItem + " ");
-            Log.e("VISIBLE CNT", visibleItemCount + " ");
-            Log.e("TOTAL", totalItemCount + " ");
-            Log.e("prev item", prevItemCount + " ");
+//            Log.e("FIRST VISIBLE INDEX", firstVisibleItem + " ");
+//            Log.e("VISIBLE CNT", visibleItemCount + " ");
+//            Log.e("TOTAL", totalItemCount + " ");
+//            Log.e("prev item", prevItemCount + " ");
             loadMore();
         }
     }

@@ -7,4 +7,5 @@
     <dimen name="user_profile_logo">216dp</dimen>
     <dimen name="user_profile_avatar">64dp</dimen>
     <dimen name="user_profile_playtext_margin">30dp</dimen>
+    <dimen name="track_width">130dp</dimen>
 </resources>
