@@ -1,6 +1,8 @@
 package com.techpark.lastfmclient.api;
 
 
+import com.techpark.lastfmclient.adapters.RecentTracksList;
+
 /**
  * Created by Andrew Gov on 14.11.14.
  */
@@ -10,9 +12,15 @@ public class ApiResponse<T> {
     private String error; /* TODO enum status */
     private Type type;
 
+    public ApiResponse(T data, Type type) {
+        this.error = "";
+        this.data = data;
+        this.type = type;
+    }
+
 
     public enum Type {
-        CACHE, REFRESH
+        CACHE, API
     }
 
     public Type getType() {

@@ -11,21 +11,31 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.techpark.lastfmclient.R;
+import com.techpark.lastfmclient.adapters.LibraryArtistsAdapter;
+import com.techpark.lastfmclient.adapters.LibraryArtistsList;
 import com.techpark.lastfmclient.adapters.RecentTracksAdapter;
 import com.techpark.lastfmclient.adapters.RecentTracksList;
+import com.techpark.lastfmclient.api.library.LibArtist;
+import com.techpark.lastfmclient.api.library.LibraryHelpers;
+import com.techpark.lastfmclient.api.track.TrackHelpers;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.api.user.UserHelpers;
+import com.techpark.lastfmclient.db.LibraryTable;
 import com.techpark.lastfmclient.db.RecentTracksTable;
 import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.services.ServiceHelper;
 import com.techpark.lastfmclient.views.NotifyingScrollView;
+import com.techpark.lastfmclient.views.StretchedGridView;
 import com.techpark.lastfmclient.views.StretchedListView;
+
+import java.util.Arrays;
 
 
 /**
@@ -42,17 +52,23 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
 
     private static final int USER_LOADER = 0;
     private static final int TRACKS_LOADER = 1;
+    private static final int LIBRARY_LOADER = 2;
 
 
     private ServiceHelper mServiceHelper;
 
+    private StretchedListView recentTracksView;
     private RecentTracksList recentTracks = new RecentTracksList();
     private RecentTracksAdapter recentTracksAdapter;
+
+    private StretchedGridView artistsView;
+    private LibraryArtistsList libArtists = new LibraryArtistsList();
+    private LibraryArtistsAdapter artistsAdapter;
+
 
     private String mUsername;
     private User mUser;
 
-    private StretchedListView listView;
     private NotifyingScrollView notifyingScrollView;
 
 
@@ -107,20 +123,40 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.e("ON DESTORY", "DS");
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Log.e("VIEW CREATED", "DSDSD");
 
         mServiceHelper = new ServiceHelper(getActivity());
         mServiceHelper.getRecentTracks(mUsername, 4);
+        mServiceHelper.getLibraryArtists(mUsername, 4);
 
-        listView = (StretchedListView) view.findViewById(R.id.recent_tracks);
+        recentTracksView = (StretchedListView) view.findViewById(R.id.recent_tracks);
+        artistsView = (StretchedGridView) view.findViewById(R.id.artists_grid);
 
         recentTracksAdapter = new RecentTracksAdapter(getActivity(), R.layout.recenttrack_item, recentTracks);
-        listView.setAdapter(recentTracksAdapter);
+        recentTracksView.setAdapter(recentTracksAdapter);
+
+        artistsAdapter = new LibraryArtistsAdapter(getActivity(), R.layout.lib_artist, libArtists);
+        artistsView.setAdapter(artistsAdapter);
 
         notifyingScrollView = (NotifyingScrollView) view.findViewById(R.id.scroll);
         notifyingScrollView.setListener(this);
+
+        Button moreTracks = (Button) view.findViewById(R.id.button_more_tracks);
+        moreTracks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentDispatcher.setFragment(RecentTracksMoreFragment.getInstance(mUsername), "more_t", true);
+            }
+        });
 
         if (mUser != null) { // ok we already have info for this user, display it
             updateHeader(view);
@@ -143,6 +179,7 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     public void onResume() {
         super.onResume();
         getLoaderManager().initLoader(TRACKS_LOADER, null, this);
+        getLoaderManager().initLoader(LIBRARY_LOADER, null, this);
     }
 
     private void updateHeader(View view) {
@@ -172,6 +209,8 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
         switch (id) {
             case TRACKS_LOADER:
                 return new CursorLoader(getActivity(), RecentTracksTable.CONTENT_URI, null, null, null, null);
+            case LIBRARY_LOADER:
+                return new CursorLoader(getActivity(), LibraryTable.CONTENT_URI, null, null, null, null);
 
             case USER_LOADER:
                 return new CursorLoader(getActivity(),
@@ -186,12 +225,24 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "Loader onFinished");
-        RecentTracksList l = UserHelpers.getRecentTracksFromCursor(data);
-        Log.d(TAG, "Recent tracks size : " + l.size());
-        if (!l.isEmpty()) {
-            recentTracks.clear();
-            recentTracks.addAll(l);
-            recentTracksAdapter.notifyDataSetChanged();
+        switch (loader.getId()) {
+            case TRACKS_LOADER:
+                RecentTracksList l = UserHelpers.getRecentTracksFromCursor(data);
+                Log.d(TAG, "Recent tracks size : " + l.size());
+                if (!l.isEmpty()) {
+                    recentTracks.clear();
+                    recentTracks.addAll(l);
+                    recentTracksAdapter.notifyDataSetChanged();
+                }
+                break;
+            case LIBRARY_LOADER:
+                LibraryArtistsList libArt = LibraryHelpers.getArtistsListFromCursor(data);
+                if (!libArt.isEmpty()) {
+                    libArtists.clear();
+                    libArtists.addAll(libArt);
+                    artistsAdapter.notifyDataSetChanged();
+                }
+                break;
 
         }
 

@@ -13,6 +13,7 @@ import com.techpark.lastfmclient.adapters.NavMenuItem;
 import com.techpark.lastfmclient.adapters.NavMenuSection;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.fragments.MainListFragment;
+import com.techpark.lastfmclient.fragments.RecommendedMoreFragment;
 import com.techpark.lastfmclient.fragments.UserProfileFragment;
 
 import java.util.ArrayList;
@@ -53,7 +54,8 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
 
     public <T extends Fragment> boolean setFragment(T fragment, String tag, boolean addToBs) {
         curr = fragment;
-        if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(tag);
+        if (prev == null || !prev.isVisible()) {
             if (addToBs)
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, tag).addToBackStack(null).commit();
             else
@@ -98,12 +100,16 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
                 User u = new User(header.getName(), header.getFullName(), header.getAvatar(), "", -1, "", header.getPlays(), header.getSince());
                 u.setMostPlayedArtist(header.getPoster());
                 setFragment(UserProfileFragment.getInstance(u), "test", true);
-                /* fragment creation */
                 break;
 
             case NavDrawerConstants.LOG_OUT:
                 logOut();
                 break;
+
+            case NavDrawerConstants.RECOMMENDED_MUSIC:
+                setFragment(new RecommendedMoreFragment(), "rmore", true);
+                break;
+
         }
     }
 
@@ -111,8 +117,8 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
     private List<NavDrawerItem> createMenu() {
         return new ArrayList<>(Arrays.asList(
                 NavMenuHeader.getInstance(NavDrawerConstants.PROFILE, User.EMPTY_USER),
-                NavMenuSection.getInstance(100, "RECOMMENDATIONS"),
-                NavMenuItem.getInstance(101, "Music"),
+                NavMenuSection.getInstance(1, "RECOMMENDATIONS"),
+                NavMenuItem.getInstance(NavDrawerConstants.RECOMMENDED_MUSIC, "Music"),
                 NavMenuItem.getInstance(102, "Albums"),
                 NavMenuItem.getInstance(103, "New Releases"),
                 NavMenuSection.getInstance(105, "Events"),

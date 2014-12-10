@@ -20,7 +20,12 @@ public class TrackHelpers {
             String name = json.getString("name");
             String album = json.getJSONObject("album").getString("#text");
             String image = ((JSONObject) json.getJSONArray("image").get(3)).getString("#text");
-            String date = json.getJSONObject("date").getString("#text");
+            String date;
+            try {
+                date = json.getJSONObject("date").getString("#text");
+            } catch (JSONException e) {
+                date = "Now playing";
+            }
 
             return new RecentTrack.Builder(artist, name, date).setAlbum(album).setImg(image).build();
 

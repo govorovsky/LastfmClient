@@ -15,6 +15,7 @@
     <TextView
         android:id="@+id/track_name"
         android:layout_width="wrap_content"
+        android:maxLength="45"
         android:textSize="16sp"
         android:textColor="#333333"
         android:layout_marginTop="8dp"

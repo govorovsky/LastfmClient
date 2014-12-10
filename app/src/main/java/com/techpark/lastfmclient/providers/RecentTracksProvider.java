@@ -8,13 +8,18 @@ import android.util.Log;
 import com.techpark.lastfmclient.adapters.RecentTracksList;
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.api.ApiResponse;
+import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.artist.ArtistGetInfo;
+import com.techpark.lastfmclient.api.artist.ArtistHelpers;
 import com.techpark.lastfmclient.api.track.RecentTrack;
 import com.techpark.lastfmclient.api.track.TrackHelpers;
 import com.techpark.lastfmclient.api.user.UserGetRecentTracks;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.db.RecentTracksTable;
 import com.techpark.lastfmclient.network.NetworkUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -61,11 +66,21 @@ public class RecentTracksProvider implements IProvider {
             if (list != null && apiResponse.getError().isEmpty()) { // if error occurs, we dont cache anything
                 HashMap<String, String> artistImgs = new HashMap<>();
                 ApiQuery queryArtist;
+                if (list.size() > limit) {
+                    list.remove(list.size() - 1);
+                } // we get nowplaying track...
+
                 for (RecentTrack track : list) {
                     String artist = track.getArtist();
-//                queryArtist = new ArtistGetInfo()
-
+                    queryArtist = new ArtistGetInfo(artist);
+                    queryArtist.prepare();
+                    String response = NetworkUtils.httpRequest(queryArtist);
+                    Artist a = ArtistHelpers.getArtistFromJSON(new JSONObject(response).getJSONObject("artist"));
+                    artistImgs.put(a.getArtistName(), a.getImage(Artist.ImageSize.EXTRALARGE));
+                    track.setImg(a.getImage(Artist.ImageSize.EXTRALARGE));
                 }
+
+
                 ContentValues[] contentValues = new ContentValues[list.size()];
                 for (int i = 0; i < list.size(); i++) {
                     contentValues[i] = TrackHelpers.getRecentTrackContentValues(list.get(i));
@@ -82,6 +97,8 @@ public class RecentTracksProvider implements IProvider {
             }
         } catch (IOException e) {
             Log.e("Excepiotion", e.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

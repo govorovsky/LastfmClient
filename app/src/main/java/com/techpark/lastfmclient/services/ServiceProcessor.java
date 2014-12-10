@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.techpark.lastfmclient.providers.IProvider;
+import com.techpark.lastfmclient.providers.LibraryArtistsProvider;
 import com.techpark.lastfmclient.providers.RecentTracksProvider;
 import com.techpark.lastfmclient.providers.RecommendedProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
@@ -39,6 +40,7 @@ public class ServiceProcessor extends Service {
         public static final int USERS_PROVIDER = 1;
         public static final int RECENT_TRACKS_PROVIDER = 2;
         public static final int RECOMMENDED_PROVIDER = 3;
+        public static final int LIBRARY_PROVIDER = 47;
     }
 
     private IProvider getProvider(int providerId) {
@@ -49,6 +51,9 @@ public class ServiceProcessor extends Service {
                 return new RecentTracksProvider(this); /* TODO */
             case Providers.RECOMMENDED_PROVIDER:
                 return new RecommendedProvider(this);
+            case Providers.LIBRARY_PROVIDER:
+                Log.e("LIB PROVIDER!!", "DSDS");
+                return new LibraryArtistsProvider(this);
         }
         return null;
     }

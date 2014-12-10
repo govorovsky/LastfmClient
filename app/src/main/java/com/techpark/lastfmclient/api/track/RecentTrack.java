@@ -1,14 +1,16 @@
 package com.techpark.lastfmclient.api.track;
 
+import java.io.Serializable;
+
 /**
  * Created by Andrew Govorovsky on 03.12.14.
  */
-public class RecentTrack {
+public class RecentTrack implements Serializable {
     private final String artist;
     private final String name;
     private final String album;
-    private final String img;
     private final String date;
+    private String img;
 
 
     public static class Builder {
@@ -82,6 +84,10 @@ public class RecentTrack {
 
     public String getDate() {
         return date;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
 }
