@@ -18,9 +18,8 @@ import java.io.IOException;
 /**
  * Created by Andrew Govorovsky on 08.12.14.
  */
-public class RecentTracksLoader extends AsyncTaskLoader<ApiResponse<RecentTracksList>> {
+public class RecentTracksLoader extends BaseLoader<RecentTracksList> {
 
-    private ApiResponse<RecentTracksList> mData;
     private ApiResponse.Type type;
     private int page;
     private String username;
@@ -37,8 +36,7 @@ public class RecentTracksLoader extends AsyncTaskLoader<ApiResponse<RecentTracks
     }
 
     @Override
-    public ApiResponse<RecentTracksList> loadInBackground() {
-
+    protected ApiResponse<RecentTracksList> load() {
         if (type == ApiResponse.Type.CACHE) {
             Cursor c = getContext().getContentResolver().query(RecentTracksTable.CONTENT_URI, null, null, null, null);
             RecentTracksList l = UserHelpers.getRecentTracksFromCursor(c);
@@ -60,35 +58,5 @@ public class RecentTracksLoader extends AsyncTaskLoader<ApiResponse<RecentTracks
             }
         }
         return null;
-    }
-
-    @Override
-    protected void onStartLoading() {
-        Log.e("ON START LOADING", "DDS");
-        if (mData == null) {
-            forceLoad();
-        } else {
-            deliverResult(mData);
-        }
-    }
-
-    @Override
-    public void deliverResult(ApiResponse<RecentTracksList> apiResponse) {
-        mData = apiResponse;
-        if (isStarted()) {
-            super.deliverResult(apiResponse);
-        }
-    }
-
-    @Override
-    protected void onStopLoading() {
-        Log.e("ON STOP LOADING", "DDS");
-        cancelLoad();
-    }
-
-    @Override
-    protected void onReset() {
-        onStopLoading();
-        mData = null;
     }
 }

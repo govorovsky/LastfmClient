@@ -60,7 +60,6 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         username = getArguments().getString(BUNDLE_USERNAME);
-
         if (savedInstanceState != null) {
             list.addAll((Collection<RecentTrack>) savedInstanceState.getSerializable("list"));
             currentPage = savedInstanceState.getInt("page");
@@ -142,7 +141,7 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
 
     @Override
     public void onLoadFinished(Loader<ApiResponse<RecentTracksList>> loader, ApiResponse<RecentTracksList> data) {
-        Log.e("TRIGGERED!", "!!!");
+//        Log.e("TRIGGERED!", "!!!");
         if (isPaused && !isLoading) { // to prevent unnecessary onLoadFinished triggering after onPause
             isPaused = false;
             return;
