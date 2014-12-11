@@ -34,7 +34,6 @@ import com.techpark.lastfmclient.views.StretchedGridView;
 import com.techpark.lastfmclient.views.StretchedListView;
 
 
-
 /**
  * Created by Andrew Govorovsky on 24.11.14.
  */
@@ -152,7 +151,7 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
             }
         });
 
-        if (mUser != null) { // ok we already have info for this user, display it
+        if (mUser != null && mUser != User.EMPTY_USER) { // ok we already have info for this user, display it
             updateHeader(view);
             updateLabels(view);
         } else { // or download it

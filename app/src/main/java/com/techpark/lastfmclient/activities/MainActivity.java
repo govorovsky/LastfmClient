@@ -1,5 +1,7 @@
 package com.techpark.lastfmclient.activities;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -97,8 +99,11 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
         switch (id) {
             case NavDrawerConstants.PROFILE:
                 NavMenuHeader header = (NavMenuHeader) navConf.getNavItems().get(0);
-                User u = new User(header.getName(), header.getFullName(), header.getAvatar(), "", -1, "", header.getPlays(), header.getSince());
-                u.setMostPlayedArtist(header.getPoster());
+                User u = User.EMPTY_USER;
+                if (!header.getName().isEmpty()) {
+                    u = new User(header.getName(), header.getFullName(), header.getAvatar(), "", -1, "", header.getPlays(), header.getSince());
+                    u.setMostPlayedArtist(header.getPoster());
+                }
                 setFragment(UserProfileFragment.getInstance(u), "test", true);
                 break;
 
@@ -153,6 +158,7 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
         mActionBarDrawable.setAlpha(alpha);
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public int getActionBarFade() {
         return mActionBarDrawable.getAlpha();
