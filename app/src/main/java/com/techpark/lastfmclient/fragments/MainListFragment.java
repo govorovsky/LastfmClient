@@ -2,15 +2,11 @@ package com.techpark.lastfmclient.fragments;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
@@ -25,6 +21,7 @@ import com.techpark.lastfmclient.adapters.RecommendedArtistList;
 import com.techpark.lastfmclient.adapters.ReleasesAdapter;
 import com.techpark.lastfmclient.adapters.ReleasesList;
 import com.techpark.lastfmclient.api.event.EventHelpers;
+import com.techpark.lastfmclient.api.release.ReleaseHelpers;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.db.NewReleasesTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
@@ -33,7 +30,7 @@ import com.techpark.lastfmclient.services.ServiceHelper;
 import com.techpark.lastfmclient.views.ExpandedGridView;
 
 
-public class MainListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainListFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private RecommendedArtistList mArtistList = null;
     private ReleasesList mReleasesList = null;
     private EventsList mUpcomingEventsList = null;
@@ -55,8 +52,13 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
     private RelativeLayout eventsLayout;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.main_list_fragment, container, false);
+    protected FragmentConf getFragmentConf() {
+        FragmentConf conf = new FragmentConf();
+        conf.setActionBarFade(FragmentConf.ActionBarState.VISIBLE);
+        conf.setLogo(R.drawable.logo_with_padding);
+        conf.setTitle("");
+        conf.setLayout(R.layout.main_list_fragment);
+        return conf;
     }
 
     @Override
@@ -64,10 +66,10 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
         super.onViewCreated(view, savedInstanceState);
 
         recommendedLayout = (RelativeLayout) view.findViewById(R.id.recommended);
-        ((TextView)recommendedLayout.findViewById(R.id.label)).setText("Recommended Music");
+        ((TextView) recommendedLayout.findViewById(R.id.label)).setText("Recommended Music");
 
         releasesLayout = (RelativeLayout) view.findViewById(R.id.releases);
-        ((TextView)releasesLayout.findViewById(R.id.label)).setText("New Releases");
+        ((TextView) releasesLayout.findViewById(R.id.label)).setText("New Releases");
 
         eventsLayout = (RelativeLayout) view.findViewById(R.id.events);
         ((TextView)eventsLayout.findViewById(R.id.label)).setText("Upcoming Events");
@@ -89,20 +91,17 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
 
         ServiceHelper helper = new ServiceHelper(getActivity());
         helper.getRecommendedArtists();
-        //TODO: get artists =\
         helper.getNewReleases();
         helper.getUpcomingEvents();
 
+        /* TODO add caching here, because user navigates through fragments and  we don't need to
+            download data every time we instantiate main fragment.
+         */
         Button more_recommended = (Button) recommendedLayout.findViewById(R.id.button_more);
         more_recommended.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getActivity()
-                        .getSupportFragmentManager()
-                        .beginTransaction()
-                        .addToBackStack(null)
-                        .replace(R.id.content_frame, new RecommendedMoreFragment())
-                        .commit();
+               fragmentDispatcher.setFragment(new RecommendedMoreFragment(), RecommendedMoreFragment.TAG, true);
             }
         });
     }
@@ -140,8 +139,6 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.d("onLoadFinished Cursor", "" + cursorLoader.getId());
-
         if (cursor == null) {
             Toast.makeText(getActivity(), "Network is broken...", Toast.LENGTH_LONG).show();
             Log.e("onLoadFinished", "Network error");
@@ -199,7 +196,7 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
         ReleasesAdapter adapter = (ReleasesAdapter)
                 ((GridView) releasesLayout.findViewById(R.id.grid)).getAdapter();
 
-        ReleasesList list = UserHelpers.getNewReleasesFromCursor(cursor, DisplayParams.GRID_NUM_ITEMS);
+        ReleasesList list = ReleaseHelpers.getNewReleasesFromCursor(cursor, DisplayParams.GRID_NUM_ITEMS);
         mReleasesList.getReleases().clear();
         mReleasesList.getReleases().addAll(list.getReleases());
         adapter.notifyDataSetChanged();
@@ -211,6 +208,7 @@ public class MainListFragment extends Fragment implements LoaderManager.LoaderCa
             TextView messageView = (TextView) recommendedLayout.findViewById(R.id.db_message);
             messageView.setVisibility(View.VISIBLE);
             messageView.setText("No recommendations");
+            Log.e("onLoadFinished", "Empty cursor");
             return;
         }
 

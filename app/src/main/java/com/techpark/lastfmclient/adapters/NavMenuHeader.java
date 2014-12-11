@@ -13,6 +13,7 @@ public class NavMenuHeader implements NavDrawerItem {
     private String fullname;
     private String poster;
     private String avatar;
+    private String name;
 
     public static NavDrawerItem getInstance(int id, User user) {
         NavMenuHeader s = new NavMenuHeader();
@@ -21,6 +22,7 @@ public class NavMenuHeader implements NavDrawerItem {
         s.since = user.getRegistered();
         s.fullname = user.getFullname();
         s.avatar = user.getAvatar();
+        s.name = user.getName();
         s.poster = user.getMostPlayedArtist();
         return s;
     }
@@ -68,7 +70,7 @@ public class NavMenuHeader implements NavDrawerItem {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override
@@ -95,5 +97,9 @@ public class NavMenuHeader implements NavDrawerItem {
 
     public void setPoster(String poster) {
         this.poster = poster;
+    }
+
+    public String getName() {
+        return name;
     }
 }

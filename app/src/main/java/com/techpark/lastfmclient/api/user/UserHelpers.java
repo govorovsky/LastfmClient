@@ -4,14 +4,17 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.util.Log;
 
+import com.techpark.lastfmclient.adapters.RecentTracksList;
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
 import com.techpark.lastfmclient.adapters.ReleasesList;
 import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.artist.RecommendedArtist;
 import com.techpark.lastfmclient.api.release.Release;
 import com.techpark.lastfmclient.db.NewReleasesTable;
+import com.techpark.lastfmclient.api.ApiResponse;
+import com.techpark.lastfmclient.api.track.RecentTrack;
+import com.techpark.lastfmclient.api.track.TrackHelpers;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
 import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.api.artist.ArtistHelpers;
@@ -209,6 +212,49 @@ public class UserHelpers {
             cursor.moveToPrevious();
         }
 
+        return list;
+    }
+
+    public static ApiResponse<RecentTracksList> getRecentTracksFromJson(String json) {
+        try {
+            RecentTracksList list = new RecentTracksList();
+            ApiResponse<RecentTracksList> apiResponse;
+            JSONObject jsonObj = new JSONObject(json);
+            JSONObject recenttracks = jsonObj.getJSONObject("recenttracks");
+            JSONObject attr;
+            try {
+                attr = recenttracks.getJSONObject("@attr");
+            } catch (JSONException e) {
+                apiResponse = new ApiResponse<>(null, "No tracks yet");
+                return apiResponse;
+            }
+            JSONArray tracks = recenttracks.getJSONArray("track");
+
+            for (int i = 0; i < tracks.length(); i++) {
+                list.add(TrackHelpers.getRecentTrackFromJson((JSONObject) tracks.get(i)));
+            }
+
+            list.setTotalPages(attr.getInt("totalPages"));
+            return new ApiResponse<>(list);
+
+        } catch (JSONException e) {
+            return new ApiResponse<>(null, "Network error");
+        }
+
+    }
+
+    public static RecentTracksList getRecentTracksFromCursor(Cursor cursor) {
+        RecentTracksList list = new RecentTracksList();
+        if (cursor.moveToFirst()) {
+            do {
+                String name = cursor.getString(1);
+                String artist = cursor.getString(2);
+                String album = cursor.getString(3);
+                String img = cursor.getString(4);
+                String date = cursor.getString(5);
+                list.add(new RecentTrack.Builder(artist, name, date).setAlbum(album).setImg(img).build());
+            } while (cursor.moveToNext());
+        }
         return list;
     }
 }

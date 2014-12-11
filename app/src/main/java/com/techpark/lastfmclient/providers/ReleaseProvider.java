@@ -49,7 +49,7 @@ public class ReleaseProvider implements IProvider {
         String response = NetworkUtils.httpRequest(query);
 
         ReleasesList list = ReleaseHelpers.getNewReleasesFromJSON(response);
-        
+
         return list;
     }
 

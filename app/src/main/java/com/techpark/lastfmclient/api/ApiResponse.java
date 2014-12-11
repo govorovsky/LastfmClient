@@ -1,6 +1,7 @@
 package com.techpark.lastfmclient.api;
 
-import com.techpark.lastfmclient.api.auth.AuthHelpers;
+
+import com.techpark.lastfmclient.adapters.RecentTracksList;
 
 /**
  * Created by Andrew Gov on 14.11.14.
@@ -9,6 +10,26 @@ public class ApiResponse<T> {
 
     private T data;
     private String error; /* TODO enum status */
+    private Type type;
+
+    public ApiResponse(T data, Type type) {
+        this.error = "";
+        this.data = data;
+        this.type = type;
+    }
+
+
+    public enum Type {
+        CACHE, API
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
 
     public ApiResponse(T data) {
         this(data, "");

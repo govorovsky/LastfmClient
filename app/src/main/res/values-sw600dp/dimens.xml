@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="similar_band_size">60dp</dimen>
+    <dimen name="first_similar_margin" >50dp</dimen>
+    <dimen name="user_profile_logo">340dp</dimen>
+    <dimen name="user_profile_avatar">84dp</dimen>
+    <dimen name="user_profile_playtext_margin">45dp</dimen>
+    <dimen name="track_width">200dp</dimen>
+
+</resources>

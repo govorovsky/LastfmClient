@@ -1,9 +1,12 @@
 package com.techpark.lastfmclient.activities;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -36,7 +39,6 @@ import java.util.List;
 public abstract class BaseNavDrawerActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mDrawerToggle;
     private ServiceHelper mServiceHelper;
 
     private ListView mDrawerList;
@@ -45,6 +47,8 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
     private CharSequence mTitle;
 
     protected NavDrawerConfiguration navConf;
+    protected Drawable mActionBarDrawable;
+    protected MyActionBarDrawerToggle mDrawerToggle;
 
     protected abstract NavDrawerConfiguration getNavDrawerConfiguration();
 
@@ -74,7 +78,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
             logOut();
         }
 
-        mServiceHelper = new ServiceHelper(getApplicationContext());
+        mServiceHelper = new ServiceHelper(this);
         mServiceHelper.getUser(user);
 
 //        requestWindowFeature(Window.FEATURE_NO_TITLE); // remove title bar
@@ -92,38 +96,26 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
 
 //        mDrawerLayout.setDrawerShadow(navConf.getDrawerShadow(), GravityCompat.START);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,
-                mDrawerLayout,
-                navConf.getDrawerOpenDesc(),
-                navConf.getDrawerCloseDesc()
-        ) {
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-                invalidateOptionsMenu();
-            }
+        mActionBarDrawable = getResources().getDrawable(R.drawable.ab_background);
+        mActionBarDrawable.setAlpha(255); // may it be visible
+        getActionBar().setBackgroundDrawable(mActionBarDrawable);
 
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu();
-            }
 
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
-                fadeActionBar(slideOffset);
-            }
-        };
+        mDrawerToggle = new MyActionBarDrawerToggle();
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         createUserLoader(user);
 
     }
 
-    protected abstract void fadeActionBar(float slideOffset);
+
+    protected void setUpEnabled(boolean enabled) {
+        mDrawerToggle.setDrawerIndicatorEnabled(!enabled);
+    }
+
 
     private Loader createUserLoader(String username) {
         Bundle b = new Bundle();
@@ -158,6 +150,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+
     }
 
     @Override
@@ -204,6 +197,7 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
         }
     }
 
+
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
@@ -214,6 +208,11 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
     }
 
     public void selectItem(int position) {
+
+        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+            mDrawerLayout.closeDrawer(mDrawerList);
+        }
+
         NavDrawerItem selectedItem = navConf.getNavItems().get(position);
 
         onNavItemSelected(selectedItem.getId());
@@ -223,9 +222,6 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
             setTitle(selectedItem.getLabel());
         }
 
-        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-            mDrawerLayout.closeDrawer(mDrawerList);
-        }
     }
 
     @Override
@@ -273,6 +269,50 @@ public abstract class BaseNavDrawerActivity extends FragmentActivity implements 
             navConf.getBaseAdapter().notifyDataSetChanged();
         }
     }
-}
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    class MyActionBarDrawerToggle extends ActionBarDrawerToggle {
+
+        int alphaStart = -1;
+
+        public MyActionBarDrawerToggle() {
+            super(BaseNavDrawerActivity.this, BaseNavDrawerActivity.this.mDrawerLayout, BaseNavDrawerActivity.this.navConf.getDrawerOpenDesc(), BaseNavDrawerActivity.this.navConf.getDrawerCloseDesc());
+        }
+
+        @Override
+        public void onDrawerClosed(View view) {
+//                getActionBar().setTitle(mTitle);
+            alphaStart = -1;
+            invalidateOptionsMenu();
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+//                getActionBar().setTitle(mDrawerTitle);
+            invalidateOptionsMenu();
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            super.onDrawerStateChanged(newState);
+            if (alphaStart == -1) {
+                alphaStart = mActionBarDrawable.getAlpha(); // get initial alpha
+            }
+        }
+
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+            super.onDrawerSlide(drawerView, slideOffset);
+            if (alphaStart >= 0)
+                mActionBarDrawable.setAlpha(((int) Math.max(alphaStart, Math.min(255f, 255f * (slideOffset + alphaStart / 255f))))); // TODO need more smooth!
+//            Log.e("ALPHA START=", "" + alphaStart);
+        }
+    }
+
+    void closeDrawer() {
+        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            mDrawerLayout.closeDrawer(Gravity.LEFT);
+        }
+    }
+}
 

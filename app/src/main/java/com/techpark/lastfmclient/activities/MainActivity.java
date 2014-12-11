@@ -2,6 +2,8 @@ package com.techpark.lastfmclient.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.adapters.DrawerAdapter;
@@ -11,6 +13,8 @@ import com.techpark.lastfmclient.adapters.NavMenuItem;
 import com.techpark.lastfmclient.adapters.NavMenuSection;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.fragments.MainListFragment;
+import com.techpark.lastfmclient.fragments.RecommendedMoreFragment;
+import com.techpark.lastfmclient.fragments.UserProfileFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +23,7 @@ import java.util.List;
 /**
  * Created by andrew on 28.10.14.
  */
-public class MainActivity extends BaseNavDrawerActivity {
+public class MainActivity extends BaseNavDrawerActivity implements FragmentManager.OnBackStackChangedListener, FragmentDispatcher {
 
 
     private static final String TAG_NAME = "MainActivity";
@@ -28,19 +32,34 @@ public class MainActivity extends BaseNavDrawerActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setFragment(new MainListFragment(), TAG_NAME);
+
+
+        if (savedInstanceState == null) {
+            setFragment(new MainListFragment(), TAG_NAME, false);
+        }
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
+        shouldDisplayHomeUp();
     }
 
-    @Override
-    protected void fadeActionBar(float slideOffset) {
-       /* TODO */
+
+    private void shouldDisplayHomeUp() {
+        boolean isStackEmpty = getSupportFragmentManager().getBackStackEntryCount() > 0;
+        setUpEnabled(isStackEmpty);
+        if (!isStackEmpty)
+            mDrawerToggle.setHomeAsUpIndicator(R.drawable.back_with_padding);
+//        getActionBar().setDisplayHomeAsUpEnabled(isStackEmpty);
     }
 
 
-    private <T extends Fragment> boolean setFragment(T fragment, String tag) {
+    public <T extends Fragment> boolean setFragment(T fragment, String tag, boolean addToBs) {
         curr = fragment;
-        if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, tag).commit();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(tag);
+        if (prev == null || !prev.isVisible()) {
+            if (addToBs)
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, tag).addToBackStack(null).commit();
+            else
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, tag).commit();
             return true;
         }
         return false;
@@ -60,17 +79,37 @@ public class MainActivity extends BaseNavDrawerActivity {
         return configuration;
     }
 
+
+    public Fragment getVisibleFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        List<Fragment> fragments = fm.getFragments();
+        for (Fragment f : fragments) {
+            if (f != null && f.isVisible()) {
+                return f;
+            }
+        }
+        return null;
+    }
+
     @Override
     protected void onNavItemSelected(int id) {
         /* TODO fragments logic here */
         switch (id) {
-            case 101:
-                /* fragment creation */
+            case NavDrawerConstants.PROFILE:
+                NavMenuHeader header = (NavMenuHeader) navConf.getNavItems().get(0);
+                User u = new User(header.getName(), header.getFullName(), header.getAvatar(), "", -1, "", header.getPlays(), header.getSince());
+                u.setMostPlayedArtist(header.getPoster());
+                setFragment(UserProfileFragment.getInstance(u), "test", true);
                 break;
 
             case NavDrawerConstants.LOG_OUT:
                 logOut();
                 break;
+
+            case NavDrawerConstants.RECOMMENDED_MUSIC:
+                setFragment(new RecommendedMoreFragment(), "rmore", true);
+                break;
+
         }
     }
 
@@ -78,8 +117,8 @@ public class MainActivity extends BaseNavDrawerActivity {
     private List<NavDrawerItem> createMenu() {
         return new ArrayList<>(Arrays.asList(
                 NavMenuHeader.getInstance(NavDrawerConstants.PROFILE, User.EMPTY_USER),
-                NavMenuSection.getInstance(100, "RECOMMENDATIONS"),
-                NavMenuItem.getInstance(101, "Music"),
+                NavMenuSection.getInstance(1, "RECOMMENDATIONS"),
+                NavMenuItem.getInstance(NavDrawerConstants.RECOMMENDED_MUSIC, "Music"),
                 NavMenuItem.getInstance(102, "Albums"),
                 NavMenuItem.getInstance(103, "New Releases"),
                 NavMenuSection.getInstance(105, "Events"),
@@ -90,4 +129,34 @@ public class MainActivity extends BaseNavDrawerActivity {
                 NavMenuItem.getInstance(NavDrawerConstants.LOG_OUT, "Log out")
         ));
     }
+
+    @Override
+    public void onBackStackChanged() {
+        shouldDisplayHomeUp();
+    }
+
+    @Override
+    public boolean onNavigateUp() {
+        closeDrawer();
+        getSupportFragmentManager().popBackStack();
+        return true;
+    }
+
+    @Override
+    public void setLogo(int resId) {
+        getActionBar().setLogo(getResources().getDrawable(resId));
+    }
+
+    @Override
+    public void setActionBarFade(int alpha) {
+        mDrawerToggle.alphaStart = alpha; // kostil'
+        mActionBarDrawable.setAlpha(alpha);
+    }
+
+    @Override
+    public int getActionBarFade() {
+        return mActionBarDrawable.getAlpha();
+    }
+
+
 }

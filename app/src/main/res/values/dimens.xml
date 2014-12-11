@@ -2,4 +2,10 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="similar_band_size">40dp</dimen>
+    <dimen name="first_similar_margin" >30dp</dimen>
+    <dimen name="user_profile_logo">216dp</dimen>
+    <dimen name="user_profile_avatar">64dp</dimen>
+    <dimen name="user_profile_playtext_margin">30dp</dimen>
+    <dimen name="track_width">130dp</dimen>
 </resources>

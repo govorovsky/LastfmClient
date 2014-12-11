@@ -12,7 +12,7 @@ public class NavMenuSection implements NavDrawerItem {
     private NavMenuSection() {
     }
 
-    public static NavMenuSection getInstance(int id, String label) {
+    public static NavDrawerItem getInstance(int id, String label) {
         NavMenuSection s = new NavMenuSection();
         s.id = id;
         s.setLabel(label);

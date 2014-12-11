@@ -5,6 +5,7 @@ import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.release.Release;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ReleasesList {
     private ArrayList<ReleaseWrapper> releases = new ArrayList<>();
@@ -12,7 +13,7 @@ public class ReleasesList {
     public static class ReleaseWrapper extends Release {
         private Artist artistObject;
 
-        public ReleaseWrapper(String name, String artist, String url, String date, ArrayList<String> images) {
+        public ReleaseWrapper(String name, String artist, String url, String date, HashMap<String,String> images) {
             super(name, artist, url, date, images);
         }
 

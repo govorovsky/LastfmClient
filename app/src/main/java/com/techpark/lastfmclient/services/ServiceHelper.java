@@ -4,13 +4,16 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.techpark.lastfmclient.db.ArtistsTable;
 import com.techpark.lastfmclient.db.NewReleasesTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
 import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.providers.EventsProvider;
+import com.techpark.lastfmclient.db.LibraryTable;
+import com.techpark.lastfmclient.db.RecentTracksTable;
+import com.techpark.lastfmclient.providers.LibraryArtistsProvider;
+import com.techpark.lastfmclient.providers.RecentTracksProvider;
 import com.techpark.lastfmclient.providers.RecommendedProvider;
 import com.techpark.lastfmclient.providers.ReleaseProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
@@ -56,6 +59,17 @@ public class ServiceHelper {
         Intent intent = new Intent(mContext, ServiceProcessor.class);
         intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.UPCOMING_EVENTS_PROVIDER);
         intent.putExtra(ServiceProcessor.METHOD, EventsProvider.Actions.UPCOMING);
+    }
+
+    public void getRecentTracks(String username, int limit) {
+        Intent intent = new Intent(mContext, ServiceProcessor.class);
+        intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.RECENT_TRACKS_PROVIDER);
+        intent.putExtra(ServiceProcessor.METHOD, RecommendedProvider.Actions.GET);
+
+        Bundle extras = new Bundle();
+        extras.putString(RecentTracksProvider.BUNDLE_USERNAME, username);
+        extras.putInt(RecentTracksProvider.BUNDLE_LIMIT, limit);
+        intent.putExtras(extras);
 
         mContext.startService(intent);
     }
@@ -66,5 +80,20 @@ public class ServiceHelper {
         resolver.delete(ArtistsTable.CONTENT_URI, null, null);
         resolver.delete(RecommendedArtistsTable.CONTENT_URI, null, null);
         resolver.delete(NewReleasesTable.CONTENT_URI, null, null);
+        resolver.delete(LibraryTable.CONTENT_URI, null, null);
+        resolver.delete(RecentTracksTable.CONTENT_URI, null, null);
+    }
+
+    public void getLibraryArtists(String username, int limit) {
+        Intent intent = new Intent(mContext, ServiceProcessor.class);
+        intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.LIBRARY_PROVIDER);
+        intent.putExtra(ServiceProcessor.METHOD, LibraryArtistsProvider.Actions.GET);
+
+        Bundle extras = new Bundle();
+        extras.putString(LibraryArtistsProvider.BUNDLE_USERNAME, username);
+        extras.putInt(LibraryArtistsProvider.BUNDLE_LIMIT, limit);
+        intent.putExtras(extras);
+
+        mContext.startService(intent);
     }
 }

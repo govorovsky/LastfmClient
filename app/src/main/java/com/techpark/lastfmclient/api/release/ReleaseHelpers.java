@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by max on 11/12/14.
@@ -29,10 +30,10 @@ public class ReleaseHelpers {
                 JSONObject attrs = album.getJSONObject("@attr");
                 JSONArray json_images = album.getJSONArray("image");
 
-                ArrayList<String> images = new ArrayList<>();
+                HashMap<String, String> images = new HashMap<>();
                 for (int j = 0; j< json_images.length(); ++j) {
                     JSONObject o = json_images.getJSONObject(j);
-                    images.add(o.getString("#text"));
+                    images.put(Release.ImageSizes.get(j), o.getString("#text"));
                 }
 
                 return new ReleasesList.ReleaseWrapper(
@@ -67,19 +68,14 @@ public class ReleaseHelpers {
         cursor.moveToLast();
         for (int i = 0; i < limit && cursor.move(0); ++i) {
             Artist artist = new Artist(
-                    cursor.getString(8), cursor.getString(9)
+                    cursor.getString(5), null
             );
-            artist.getImages().put(Artist.ImageSize.SMALL, cursor.getString(10));
-
-            //TODO - rm arraylists
-            ArrayList<String> images_release = new ArrayList<>();
-            images_release.addAll(Arrays.asList(
-                    cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7)
-            ));
+            artist.getImages().put(Artist.ImageSize.LARGE, cursor.getString(6));
 
             ReleasesList.ReleaseWrapper r = new ReleasesList.ReleaseWrapper(
-                    cursor.getString(0), artist.getArtistName(), cursor.getString(1), cursor.getString(2), images_release
+                    cursor.getString(0), artist.getArtistName(), cursor.getString(1), cursor.getString(2), new HashMap<String, String>()
             );
+            r.getImages().put(Release.ImageSize.EXTRALARGE, cursor.getString(4));
 
             r.setArtist(artist);
 

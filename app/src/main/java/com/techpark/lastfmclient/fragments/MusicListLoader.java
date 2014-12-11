@@ -1,10 +1,9 @@
 package com.techpark.lastfmclient.fragments;
 
-import android.app.DownloadManager;
-import android.content.AsyncTaskLoader;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
@@ -17,6 +16,7 @@ import com.techpark.lastfmclient.providers.RecommendedProvider;
  */
 public class MusicListLoader extends AsyncTaskLoader<RecommendedArtistList> {
     private int mPage = 1;
+    private RecommendedArtistList mData;
 
     public MusicListLoader(Context context, int page) {
         super(context);
@@ -28,8 +28,10 @@ public class MusicListLoader extends AsyncTaskLoader<RecommendedArtistList> {
     public RecommendedArtistList loadInBackground() {
         if (this.mPage == 1) {
             ContentResolver resolver = getContext().getContentResolver();
-            Cursor dbdata = resolver.query(RecommendedArtistsTable.CONTENT_URI_ID_RECOMMENDED, null, null, null, null);
-            return UserHelpers.getRecommendedArtistsFromCursor(dbdata, -1);
+            Cursor cursor = resolver.query(RecommendedArtistsTable.CONTENT_URI_ID_RECOMMENDED, null, null, null, null);
+            RecommendedArtistList artistList = UserHelpers.getRecommendedArtistsFromCursor(cursor, -1);
+            cursor.close();
+            return artistList;
         }
 
         Log.d("MusicListLoader loadInBackground", "" + mPage);
@@ -48,11 +50,16 @@ public class MusicListLoader extends AsyncTaskLoader<RecommendedArtistList> {
 
     @Override
     public void onStartLoading() {
-        forceLoad();
+        if (mData == null) {
+            forceLoad();
+        } else {
+            deliverResult(mData);
+        }
     }
 
     @Override
     public void deliverResult(RecommendedArtistList list) {
+        mData = list;
         if (isReset()) {
             /* void */
         }
@@ -65,11 +72,6 @@ public class MusicListLoader extends AsyncTaskLoader<RecommendedArtistList> {
     @Override
     protected void onStopLoading() {
         cancelLoad();
-    }
-
-    @Override
-    public void onCanceled(RecommendedArtistList list) {
-        super.onCanceled(list);
     }
 
     @Override
