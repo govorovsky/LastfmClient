@@ -72,7 +72,7 @@ public class ReleasesAdapter extends BaseAdapter {
 
         holder.artist.setText(r.getArtist().getArtistName());
         String[] date = r.getDate().split(" ");
-        holder.release_name.setText(r.getReleaseName() + date[0]);
+        holder.release_name.setText(r.getReleaseName() + " " + date[3]);
 
         Picasso.with(mContext).load(
                 r.getImage(Release.ImageSize.EXTRALARGE)

@@ -9,8 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -68,12 +66,12 @@ public class ReleaseHelpers {
         cursor.moveToLast();
         for (int i = 0; i < limit && cursor.move(0); ++i) {
             Artist artist = new Artist(
-                    cursor.getString(5), null
+                    cursor.getString(2), null
             );
-            artist.getImages().put(Artist.ImageSize.LARGE, cursor.getString(6));
+            artist.getImages().put(Artist.ImageSize.LARGE, cursor.getString(5));
 
             ReleasesList.ReleaseWrapper r = new ReleasesList.ReleaseWrapper(
-                    cursor.getString(0), artist.getArtistName(), cursor.getString(1), cursor.getString(2), new HashMap<String, String>()
+                    cursor.getString(0), artist.getArtistName(), cursor.getString(1), cursor.getString(3), new HashMap<String, String>()
             );
             r.getImages().put(Release.ImageSize.EXTRALARGE, cursor.getString(4));
 

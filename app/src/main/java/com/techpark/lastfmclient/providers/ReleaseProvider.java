@@ -3,12 +3,15 @@ package com.techpark.lastfmclient.providers;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.techpark.lastfmclient.adapters.ReleasesList;
 import com.techpark.lastfmclient.api.ApiQuery;
+import com.techpark.lastfmclient.api.artist.ArtistGetInfo;
+import com.techpark.lastfmclient.api.artist.ArtistHelpers;
 import com.techpark.lastfmclient.api.release.ReleaseHelpers;
 import com.techpark.lastfmclient.api.user.UserGetNewReleases;
 import com.techpark.lastfmclient.api.user.UserHelpers;
@@ -49,6 +52,9 @@ public class ReleaseProvider implements IProvider {
         String response = NetworkUtils.httpRequest(query);
 
         ReleasesList list = ReleaseHelpers.getNewReleasesFromJSON(response);
+        ArtistsProvider p = new ArtistsProvider(mContext);
+        for (ReleasesList.ReleaseWrapper r : list.getReleases())
+            p.getArtist(r.getArtistName());
 
         return list;
     }
@@ -66,9 +72,17 @@ public class ReleaseProvider implements IProvider {
         }
 
         ContentResolver resolver = mContext.getContentResolver();
-        //TODO: httprequest on server
         ContentValues[] rV = new ContentValues[releasesValues.size()];
         rV = releasesValues.toArray(rV);
         resolver.bulkInsert(NewReleasesTable.CONTENT_URI_ID_RELEASE, rV);
+    }
+
+    public ReleasesList getReleasesDB(int page, int num) {
+        ContentResolver resolver = mContext.getContentResolver();
+        Cursor c = resolver.query(NewReleasesTable.CONTENT_URI_ID_RELEASE, null, null,
+                new String[]{"" + page*num, "" + num}, null);
+        if (c == null)
+            return null;
+        return ReleaseHelpers.getNewReleasesFromCursor(c, -1);
     }
 }

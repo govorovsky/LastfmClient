@@ -20,7 +20,6 @@ public class LastfmContentProvider extends ContentProvider {
     private SQLiteDatabase readDb;
     private SQLiteDatabase writeDb;
 
-    // all entities here
     private class DBEntity {
         final static int USER = 1;
         final static int USER_INFO = 2;
@@ -55,7 +54,6 @@ public class LastfmContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selArgs, String sortOrder) {
-        Log.d("query", uri.toString());
         switch (uriMatcher.match(uri)) {
             case DBEntity.USER_INFO:
                 return queryUser(uri, projection, selection, selArgs);
@@ -130,10 +128,11 @@ public class LastfmContentProvider extends ContentProvider {
         return c;
     }
 
+    //TODO: limit
     private Cursor queryNewReleases(Uri uri, String[] projection, String selection, String[] selArgs) {
         String query = "select " +
                 "r.name, r.url, r.artist, r.date, " +
-                "r.image_extralarge, a.name, a.image_large " +
+                "r.image_extralarge, a.image_large " +
                 "from new_releases r left join artist a on r.artist = a.name";
 
         Cursor c = readDb.rawQuery(query, null);

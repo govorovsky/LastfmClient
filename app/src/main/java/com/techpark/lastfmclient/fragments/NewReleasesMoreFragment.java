@@ -1,8 +1,10 @@
 package com.techpark.lastfmclient.fragments;
 
-import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
+import android.content.Context;
 import android.support.v4.content.Loader;
+import android.os.Bundle;
+import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
@@ -11,22 +13,22 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.techpark.lastfmclient.R;
-import com.techpark.lastfmclient.adapters.RecommendedAdapter;
-import com.techpark.lastfmclient.adapters.RecommendedArtistList;
+import com.techpark.lastfmclient.adapters.ReleasesAdapter;
+import com.techpark.lastfmclient.adapters.ReleasesList;
 import com.techpark.lastfmclient.api.ApiParamNames;
+import com.techpark.lastfmclient.providers.ReleaseProvider;
 
 /**
- * Created by max on 22/11/14.
+ * Created by max on 11/12/14.
  */
-public class RecommendedMoreFragment extends BaseFragment
-        implements LoaderManager.LoaderCallbacks<RecommendedArtistList>,
-        AbsListView.OnScrollListener {
-    private RecommendedArtistList mArtistList = null;
-    private GridView mRecommendedGrid = null;
+public class NewReleasesMoreFragment extends BaseFragment
+        implements LoaderManager.LoaderCallbacks<ReleasesList>, AbsListView.OnScrollListener {
 
-    public static final String TITLE = "Recommended Music";
+    private ReleasesList mReleasesList = null;
+    private GridView mReleasesGrid = null;
 
-    public static final String TAG = RecommendedMoreFragment.class.getSimpleName();
+    public static final String TITLE = "New Releases";
+    public static final String TAG = NewReleasesMoreFragment.class.getSimpleName();
 
     @Override
     protected FragmentConf getFragmentConf() {
@@ -47,76 +49,77 @@ public class RecommendedMoreFragment extends BaseFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mArtistList = new RecommendedArtistList();
+        mReleasesList = new ReleasesList();
 
-        mRecommendedGrid = (GridView) view.findViewById(R.id.grid);
-        mRecommendedGrid.setAdapter(new RecommendedAdapter(getActivity(), mArtistList));
-        mRecommendedGrid.setOnScrollListener(this);
+        mReleasesGrid = (GridView) view.findViewById(R.id.grid);
+        mReleasesGrid.setAdapter(new ReleasesAdapter(getActivity(), mReleasesList));
+        mReleasesGrid.setOnScrollListener(this);
 
         ((TextView) view.findViewById(R.id.label))
-                .setText("Recommended Artists");
+            .setText("New Releases");
 
         Button backButton = (Button) view.findViewById(R.id.button_more);
         backButton.setText("BACK");
 
         backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity()
+                @Override
+                public void onClick(View view) {
+                    getActivity()
                         .getSupportFragmentManager()
                         .popBackStack();
-            }
+                }
         });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (mArtistList.getArtists().isEmpty()) {
+        if (mReleasesList.getReleases().isEmpty()) {
             getLoaderManager().restartLoader(0, null, this);
         }
     }
 
     @Override
-    public Loader<RecommendedArtistList> onCreateLoader(int i, Bundle bundle) {
-        int page = 1;
+    public Loader<ReleasesList> onCreateLoader(int i, Bundle bundle) {
+        int page = 0;
         if (bundle != null)
             page = bundle.getInt(ApiParamNames.API_PAGE);
 
-        return new MusicListLoader(getActivity(), page);
+        return new ReleaseLoader(getActivity(), page);
     }
 
     @Override
-    public void onLoadFinished(Loader<RecommendedArtistList> recommendedArtistListLoader, RecommendedArtistList recommendedArtistList) {
-        if (recommendedArtistList == null) {
-            Log.d("recommendedArtist is", "NULL");
+    public void onLoadFinished(Loader<ReleasesList> recommendedArtistListLoader, ReleasesList releasesList) {
+        if (releasesList == null) {
+            Log.d("releaseList is", "NULL");
             return;
         }
 
-        RecommendedAdapter adapter = (RecommendedAdapter) mRecommendedGrid.getAdapter();
-        mArtistList.getArtists().addAll(recommendedArtistList.getArtists());
-
+        ReleasesAdapter adapter = (ReleasesAdapter) mReleasesGrid.getAdapter();
+        mReleasesList.getReleases().addAll(releasesList.getReleases());
         adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onLoaderReset(Loader<RecommendedArtistList> recommendedArtistListLoader) {
+    public void onLoaderReset(Loader<ReleasesList> recommendedArtistListLoader) {
         /* void */
     }
 
     private void loadMore() {
         Bundle bundle = new Bundle();
         bundle.putInt(ApiParamNames.API_PAGE, this.currentPage);
+        if (currentPage > 0)
+            return;
         getLoaderManager().restartLoader(0, bundle, this);
     }
 
-    private int currentPage = 2;
+    private int currentPage = 0;
     private int prevItemCount = 10;
     private boolean isLoading = false;
 
     @Override
     public void onScrollStateChanged(AbsListView absListView, int scrollState) {
-        Log.d("onScrollStateChanged", "" + scrollState);
+        /* void */
     }
 
     @Override

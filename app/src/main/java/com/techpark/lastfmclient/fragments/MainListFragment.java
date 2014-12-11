@@ -71,8 +71,8 @@ public class MainListFragment extends BaseFragment implements LoaderManager.Load
         releasesLayout = (RelativeLayout) view.findViewById(R.id.releases);
         ((TextView) releasesLayout.findViewById(R.id.label)).setText("New Releases");
 
-        eventsLayout = (RelativeLayout) view.findViewById(R.id.events);
-        ((TextView)eventsLayout.findViewById(R.id.label)).setText("Upcoming Events");
+        //eventsLayout = (RelativeLayout) view.findViewById(R.id.events);
+        //((TextView)eventsLayout.findViewById(R.id.label)).setText("Upcoming Events");
 
         mArtistList = new RecommendedArtistList();
         ExpandedGridView grid_recommended = (ExpandedGridView) recommendedLayout.findViewById(R.id.grid);
@@ -84,15 +84,15 @@ public class MainListFragment extends BaseFragment implements LoaderManager.Load
         grid_releases.setExpanded(true);
         grid_releases.setAdapter(new ReleasesAdapter(getActivity(), mReleasesList));
 
-        mUpcomingEventsList = new EventsList();
-        ExpandedGridView grid_events = (ExpandedGridView) eventsLayout.findViewById(R.id.grid);
-        grid_events.setNumColumns(DisplayParams.GRID_EVENTS_COLUMNS);
-        grid_events.setAdapter(new EventsAdapter(getActivity(), mUpcomingEventsList));
+        //mUpcomingEventsList = new EventsList();
+        //ExpandedGridView grid_events = (ExpandedGridView) eventsLayout.findViewById(R.id.grid);
+        //grid_events.setNumColumns(DisplayParams.GRID_EVENTS_COLUMNS);
+        //grid_events.setAdapter(new EventsAdapter(getActivity(), mUpcomingEventsList));
 
         ServiceHelper helper = new ServiceHelper(getActivity());
         helper.getRecommendedArtists();
         helper.getNewReleases();
-        helper.getUpcomingEvents();
+        //helper.getUpcomingEvents();
 
         /* TODO add caching here, because user navigates through fragments and  we don't need to
             download data every time we instantiate main fragment.
@@ -104,6 +104,15 @@ public class MainListFragment extends BaseFragment implements LoaderManager.Load
                fragmentDispatcher.setFragment(new RecommendedMoreFragment(), RecommendedMoreFragment.TAG, true);
             }
         });
+
+        Button more_releases = (Button) releasesLayout.findViewById(R.id.button_more);
+        more_releases.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fragmentDispatcher.setFragment(new NewReleasesMoreFragment(), NewReleasesMoreFragment.TAG, true);
+            }
+        });
+
     }
 
     @Override
@@ -111,7 +120,7 @@ public class MainListFragment extends BaseFragment implements LoaderManager.Load
         super.onResume();
         getLoaderManager().initLoader(LoadersNum.RECOMMENDED, null, this);
         getLoaderManager().initLoader(LoadersNum.NEW_RELEASES, null, this);
-        getLoaderManager().initLoader(LoadersNum.UPCOMING_EVENTS, null, this);
+        //getLoaderManager().initLoader(LoadersNum.UPCOMING_EVENTS, null, this);
     }
 
     @Override
@@ -128,10 +137,11 @@ public class MainListFragment extends BaseFragment implements LoaderManager.Load
                         null, null, null, null
                 );
             case LoadersNum.UPCOMING_EVENTS:
-                return new CursorLoader(getActivity(),
-                        UpcomingEventsTable.CONTENT_URI,
-                        null, null, null, null
-                );
+                return null;
+                //return new CursorLoader(getActivity(),
+                //        UpcomingEventsTable.CONTENT_URI,
+                //        null, null, null, null
+                //);
             default:
                 return null;
         }

@@ -22,10 +22,8 @@
 
             <include
                 android:id="@+id/releases"
-                layout="@layout/music_layout" />
-
-            <include
-                android:id="@+id/events"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 layout="@layout/music_layout" />
 
         </LinearLayout>
