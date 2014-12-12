@@ -32,7 +32,7 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
     private RecentTracksAdapter adapter;
     private RecentTracksList list = new RecentTracksList();
 
-    private int itemCount = 4;
+    private int itemCount = 4 + 1; // plus footer view!
 
     private View mProgress;
     private ProgressBar mProgressBar;
@@ -50,7 +50,7 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
             Bundle args = new Bundle();
             args.putInt(ApiParamNames.API_PAGE, currentPage);
             getLoaderManager().restartLoader(0, args, RecentTracksMoreFragment.this);
-//        Log.e("LOADING PAGE", currentPage + " ");
+//            Log.e("LOADING PAGE", currentPage + " ");
             mProgressBar.setVisibility(View.VISIBLE);
         }
     };
@@ -96,15 +96,15 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mProgress = LayoutInflater.from(getActivity()).inflate(R.layout.progress_footer, null);
         mListView = (ListView) view.findViewById(R.id.tracks_list);
         adapter = new RecentTracksAdapter(getActivity(), R.layout.recenttrack_item, list);
+        mListView.addFooterView(mProgress,null,false);
         mListView.setAdapter(adapter);
         mListView.setOnScrollListener(scrollListener);
-        mProgress = LayoutInflater.from(getActivity()).inflate(R.layout.progress_footer, null);
         mProgressBar = (ProgressBar) mProgress.findViewById(R.id.progress_bar);
         if (scrollListener.isLoading) mProgressBar.setVisibility(View.VISIBLE);
         mStatus = (TextView) mProgress.findViewById(R.id.status);
-        mListView.addFooterView(mProgress);
         mRetryButton = (Button) mProgress.findViewById(R.id.retry);
         mRetryButton.setOnClickListener(new View.OnClickListener() {
             @Override

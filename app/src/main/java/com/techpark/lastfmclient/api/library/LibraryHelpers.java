@@ -67,7 +67,7 @@ public class LibraryHelpers {
             return new ApiResponse<>(al);
         } catch (JSONException e) {
             e.printStackTrace();
-            return null;
+            return new ApiResponse<>(null, "Network error");
         }
 
     }
