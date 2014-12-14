@@ -13,6 +13,7 @@ import com.techpark.lastfmclient.providers.LibraryArtistsProvider;
 import com.techpark.lastfmclient.providers.RecentTracksProvider;
 import com.techpark.lastfmclient.providers.RecommendedProvider;
 import com.techpark.lastfmclient.providers.ReleaseProvider;
+import com.techpark.lastfmclient.providers.TrackProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
 
 import java.util.Arrays;
@@ -44,6 +45,7 @@ public class ServiceProcessor extends Service {
         public static final int NEW_RELEASES_PROVIDER = 4;
         public static final int UPCOMING_EVENTS_PROVIDER = 5;
         public static final int LIBRARY_PROVIDER = 47;
+        public static final int TRACK_PROVIDER = 474;
     }
 
     private IProvider getProvider(int providerId) {
@@ -51,7 +53,7 @@ public class ServiceProcessor extends Service {
             case Providers.USERS_PROVIDER:
                 return new UsersProvider(this);
             case Providers.RECENT_TRACKS_PROVIDER:
-                return new RecentTracksProvider(this); /* TODO */
+                return new RecentTracksProvider(this);
             case Providers.RECOMMENDED_PROVIDER:
                 return new RecommendedProvider(this);
             case Providers.NEW_RELEASES_PROVIDER:
@@ -59,8 +61,9 @@ public class ServiceProcessor extends Service {
             case Providers.UPCOMING_EVENTS_PROVIDER:
                 return new EventsProvider(this);
             case Providers.LIBRARY_PROVIDER:
-                Log.e("LIB PROVIDER!!", "DSDS");
                 return new LibraryArtistsProvider(this);
+            case Providers.TRACK_PROVIDER:
+                return new TrackProvider(this);
         }
         return null;
     }

@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -143,13 +144,22 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
         notifyingScrollView = (NotifyingScrollView) view.findViewById(R.id.scroll);
         notifyingScrollView.setListener(this);
 
-        Button moreTracks = (Button) view.findViewById(R.id.button_more_tracks);
+        RelativeLayout moreTracks = (RelativeLayout) view.findViewById(R.id.label_tracks);
         moreTracks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragmentDispatcher.setFragment(RecentTracksMoreFragment.getInstance(mUsername), "more_t", true);
             }
         });
+
+        RelativeLayout moreLib = (RelativeLayout) view.findViewById(R.id.label_library);
+        moreLib.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentDispatcher.setFragment(LibraryMoreFragment.getInstance(mUsername), "more_l", true);
+            }
+        });
+
 
         if (mUser != null && mUser != User.EMPTY_USER) { // ok we already have info for this user, display it
             updateHeader(view);
@@ -160,7 +170,7 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     }
 
     private void updateLabels(View view) {
-        TextView label_lib = (TextView) view.findViewById(R.id.label_library);
+        TextView label_lib = (TextView) view.findViewById(R.id.label_library_text);
         String firstName = mUser.getFullname().split(" ")[0];
         if (!firstName.isEmpty()) {
             label_lib.setText(firstName + "'s Library");
@@ -235,9 +245,7 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
                     artistsAdapter.notifyDataSetChanged();
                 }
                 break;
-
         }
-
     }
 
     @Override

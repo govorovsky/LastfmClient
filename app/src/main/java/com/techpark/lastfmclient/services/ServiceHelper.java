@@ -16,6 +16,7 @@ import com.techpark.lastfmclient.providers.LibraryArtistsProvider;
 import com.techpark.lastfmclient.providers.RecentTracksProvider;
 import com.techpark.lastfmclient.providers.RecommendedProvider;
 import com.techpark.lastfmclient.providers.ReleaseProvider;
+import com.techpark.lastfmclient.providers.TrackProvider;
 import com.techpark.lastfmclient.providers.UsersProvider;
 
 /**
@@ -64,11 +65,25 @@ public class ServiceHelper {
     public void getRecentTracks(String username, int limit) {
         Intent intent = new Intent(mContext, ServiceProcessor.class);
         intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.RECENT_TRACKS_PROVIDER);
-        intent.putExtra(ServiceProcessor.METHOD, RecommendedProvider.Actions.GET);
+        intent.putExtra(ServiceProcessor.METHOD, RecentTracksProvider.Actions.GET);
 
         Bundle extras = new Bundle();
         extras.putString(RecentTracksProvider.BUNDLE_USERNAME, username);
         extras.putInt(RecentTracksProvider.BUNDLE_LIMIT, limit);
+        intent.putExtras(extras);
+
+        mContext.startService(intent);
+    }
+
+    public void getTrack(String track, String artist, String username) {
+        Intent intent = new Intent(mContext, ServiceProcessor.class);
+        intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.TRACK_PROVIDER);
+        intent.putExtra(ServiceProcessor.METHOD, TrackProvider.Actions.GET);
+
+        Bundle extras = new Bundle();
+        extras.putString(TrackProvider.BUNDLE_USERNAME, username);
+        extras.putString(TrackProvider.BUNDLE_TRACK_ARTIST, artist);
+        extras.putString(TrackProvider.BUNDLE_TRACK_NAME, track);
         intent.putExtras(extras);
 
         mContext.startService(intent);

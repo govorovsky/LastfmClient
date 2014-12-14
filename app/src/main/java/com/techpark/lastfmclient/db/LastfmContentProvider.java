@@ -28,11 +28,16 @@ public class LastfmContentProvider extends ContentProvider {
         final static int UPCOMING_EVENTS = 6;
         final static int NEW_RELEASES = 7;
         final static int TRACK_RECENT = 8;
+        final static int TRACK = 890;
+        final static int TRACK_INFO = 891;
         final static int LIBRARY = 73;
     }
 
     public LastfmContentProvider() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+        uriMatcher.addURI(DBLastfmHelper.AUTHORITY, TrackTable.TABLE_NAME + "/", DBEntity.TRACK);
+        uriMatcher.addURI(DBLastfmHelper.AUTHORITY, TrackTable.TABLE_NAME + "/*/*", DBEntity.TRACK_INFO);
 
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, UsersTable.TABLE_NAME + "/", DBEntity.USER);
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, UsersTable.TABLE_NAME + "/*", DBEntity.USER_INFO);
