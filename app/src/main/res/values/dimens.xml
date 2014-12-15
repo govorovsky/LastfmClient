@@ -8,4 +8,6 @@
     <dimen name="user_profile_avatar">64dp</dimen>
     <dimen name="user_profile_playtext_margin">30dp</dimen>
     <dimen name="track_width">130dp</dimen>
+    <dimen name="tag_height">24dp</dimen>
+    <dimen name="tags_margin">25dp</dimen>
 </resources>

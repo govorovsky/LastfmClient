@@ -8,6 +8,7 @@ import com.techpark.lastfmclient.api.ApiResponse;
 import com.techpark.lastfmclient.api.track.Track;
 import com.techpark.lastfmclient.api.track.TrackGetInfo;
 import com.techpark.lastfmclient.api.track.TrackHelpers;
+import com.techpark.lastfmclient.db.TrackTable;
 import com.techpark.lastfmclient.network.NetworkUtils;
 
 import java.io.IOException;
@@ -53,8 +54,15 @@ public class TrackProvider implements IProvider {
             ApiResponse<Track> apiResponse = TrackHelpers.getTrackFromJson(resp);
             if (apiResponse.getError().isEmpty()) {
 
-            }
+                Track t = apiResponse.getData();
+                if (t.getAlbumImg().isEmpty()) { // try to find artist image
+                    String img = ArtistsProvider.getArtistImgNet(t.getArtist());
+                    t.setArtistImg(img);
+                }
 
+                mContext.getContentResolver().insert(TrackTable.CONTENT_URI, TrackHelpers.getTrackContentValues(apiResponse.getData()));
+                mContext.getContentResolver().notifyChange(TrackTable.CONTENT_URI, null);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -8,6 +8,7 @@ import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -99,9 +100,17 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
         mProgress = LayoutInflater.from(getActivity()).inflate(R.layout.progress_footer, null);
         mListView = (ListView) view.findViewById(R.id.tracks_list);
         adapter = new RecentTracksAdapter(getActivity(), R.layout.recenttrack_item, list);
-        mListView.addFooterView(mProgress,null,false);
+        mListView.addFooterView(mProgress, null, false);
         mListView.setAdapter(adapter);
         mListView.setOnScrollListener(scrollListener);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.e("CLICLEDD", "   ");
+                RecentTrack t = adapter.getItem(position);
+                fragmentDispatcher.setFragment(TrackFragment.getInstance(t.getArtist(), t.getName(), username), "track", true);
+            }
+        });
         mProgressBar = (ProgressBar) mProgress.findViewById(R.id.progress_bar);
         if (scrollListener.isLoading) mProgressBar.setVisibility(View.VISIBLE);
         mStatus = (TextView) mProgress.findViewById(R.id.status);

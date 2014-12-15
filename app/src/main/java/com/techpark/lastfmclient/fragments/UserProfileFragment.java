@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -24,12 +24,12 @@ import com.techpark.lastfmclient.adapters.LibraryArtistsList;
 import com.techpark.lastfmclient.adapters.RecentTracksAdapter;
 import com.techpark.lastfmclient.adapters.RecentTracksList;
 import com.techpark.lastfmclient.api.library.LibraryHelpers;
+import com.techpark.lastfmclient.api.track.RecentTrack;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.api.user.UserHelpers;
 import com.techpark.lastfmclient.db.LibraryTable;
 import com.techpark.lastfmclient.db.RecentTracksTable;
 import com.techpark.lastfmclient.db.UsersTable;
-import com.techpark.lastfmclient.services.ServiceHelper;
 import com.techpark.lastfmclient.views.NotifyingScrollView;
 import com.techpark.lastfmclient.views.StretchedGridView;
 import com.techpark.lastfmclient.views.StretchedListView;
@@ -51,9 +51,6 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     private static final int TRACKS_LOADER = 1;
     private static final int LIBRARY_LOADER = 2;
 
-
-    private ServiceHelper mServiceHelper;
-
     private StretchedListView recentTracksView;
     private RecentTracksList recentTracks = new RecentTracksList();
     private RecentTracksAdapter recentTracksAdapter;
@@ -67,6 +64,7 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     private User mUser;
 
     private NotifyingScrollView notifyingScrollView;
+    private int newAlpha = -1;
 
 
     @Override
@@ -128,15 +126,21 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mServiceHelper = new ServiceHelper(getActivity());
-        mServiceHelper.getRecentTracks(mUsername, 4);
-        mServiceHelper.getLibraryArtists(mUsername, 4);
+        serviceHelper.getRecentTracks(mUsername, 4);
+        serviceHelper.getLibraryArtists(mUsername, 4);
 
         recentTracksView = (StretchedListView) view.findViewById(R.id.recent_tracks);
         artistsView = (StretchedGridView) view.findViewById(R.id.artists_grid);
 
         recentTracksAdapter = new RecentTracksAdapter(getActivity(), R.layout.recenttrack_item, recentTracks);
         recentTracksView.setAdapter(recentTracksAdapter);
+        recentTracksView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                RecentTrack t = recentTracksAdapter.getItem(position);
+                fragmentDispatcher.setFragment(TrackFragment.getInstance(t.getArtist(), t.getName(), mUsername), "track", true);
+            }
+        });
 
         artistsAdapter = new LibraryArtistsAdapter(getActivity(), R.layout.lib_artist, libArtists);
         artistsView.setAdapter(artistsAdapter);
@@ -181,6 +185,7 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     @Override
     public void onResume() {
         super.onResume();
+        if (newAlpha != -1) fragmentDispatcher.setActionBarFade(newAlpha);
         getLoaderManager().initLoader(TRACKS_LOADER, null, this);
         getLoaderManager().initLoader(LIBRARY_LOADER, null, this);
     }
@@ -257,7 +262,7 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     public void onScrollChanged(ScrollView from, int l, int r, int oldl, int oldt) {
         final int headerHeight = getActivity().findViewById(R.id.header).getHeight() - getActivity().getActionBar().getHeight();
         final float ratio = (float) Math.min(Math.max(r, 0), headerHeight) / headerHeight;
-        final int newAlpha = (int) (ratio * 255);
+        newAlpha = (int) (ratio * 255);
         fragmentDispatcher.setActionBarFade(newAlpha);
     }
 }

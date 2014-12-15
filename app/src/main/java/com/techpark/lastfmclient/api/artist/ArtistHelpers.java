@@ -1,7 +1,6 @@
 package com.techpark.lastfmclient.api.artist;
 
 import android.content.ContentValues;
-import android.util.Log;
 
 import com.techpark.lastfmclient.db.ArtistsTable;
 
@@ -9,7 +8,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -31,7 +29,7 @@ public class ArtistHelpers {
 
 
     public static Artist getArtistFromJSON(JSONObject json) throws JSONException {
-        Log.d("getArtistFromJSON", json.toString());
+//        Log.d("getArtistFromJSON", json.toString());
         JSONArray images = json.getJSONArray("image");
         HashMap<String, String> imgs = new HashMap<>();
 

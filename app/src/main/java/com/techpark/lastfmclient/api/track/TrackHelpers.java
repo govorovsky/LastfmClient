@@ -1,6 +1,7 @@
 package com.techpark.lastfmclient.api.track;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.techpark.lastfmclient.api.ApiResponse;
@@ -96,6 +97,28 @@ public class TrackHelpers {
 
     }
 
+
+    public static Track getTrackFromCursor(Cursor c) {
+        Track track = new Track();
+        if (c.moveToFirst()) {
+            do {
+                track.setName(c.getString(c.getColumnIndex(TrackTable.COLUMN_NAME)));
+                track.setArtist(c.getString(c.getColumnIndex(TrackTable.COLUMN_ARTIST)));
+                track.setArtistImg(c.getString(c.getColumnIndex(TrackTable.COLUMN_ARTIST_IMG)));
+                track.setAlbum(c.getString(c.getColumnIndex(TrackTable.COLUMN_ALBUM)));
+                track.setAlbumImg(c.getString(c.getColumnIndex(TrackTable.COLUMN_ALBUM_IMG)));
+                track.setTags(c.getString(c.getColumnIndex(TrackTable.COLUMN_TAGS)));
+                track.setLoved(c.getShort(c.getColumnIndex(TrackTable.COLUMN_USERLOVED)) != 0);
+                track.setDuration(c.getInt(c.getColumnIndex(TrackTable.COLUMN_DURATION)));
+                track.setPlayCnt(c.getInt(c.getColumnIndex(TrackTable.COLUMN_PLAYCNT)));
+                track.setContent(c.getString(c.getColumnIndex(TrackTable.COLUMN_CONTENT)));
+                track.setSummary(c.getString(c.getColumnIndex(TrackTable.COLUMN_SUMMARY)));
+            } while (c.moveToNext());
+            return track;
+        }
+        return null;
+    }
+
     public static ContentValues getRecentTrackContentValues(RecentTrack track) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(RecentTracksTable.COLUMN_NAME, track.getName());
@@ -119,6 +142,7 @@ public class TrackHelpers {
         contentValues.put(TrackTable.COLUMN_SUMMARY, track.getSummary());
         contentValues.put(TrackTable.COLUMN_CONTENT, track.getContent());
         contentValues.put(TrackTable.COLUMN_PLAYCNT, track.getPlayCnt());
+        contentValues.put(TrackTable.COLUMN_DURATION, track.getDuration());
         return contentValues;
     }
 

@@ -33,7 +33,7 @@ public class ArtistsProvider implements IProvider {
 
     @Override
     public void execMethod(int methodId, Bundle extraData) {
-        switch(methodId) {
+        switch (methodId) {
             case Actions.GET:
                 String artist = extraData.getString("artist");
                 getArtist(artist);
@@ -59,6 +59,18 @@ public class ArtistsProvider implements IProvider {
             resolver.insert(ArtistsTable.CONTENT_URI, artistValues);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    static String getArtistImgNet(String artistName) throws IOException {
+        ApiQuery queryArtist = new ArtistGetInfo(artistName);
+        queryArtist.prepare();
+        String response = NetworkUtils.httpRequest(queryArtist);
+        try {
+            Artist a = ArtistHelpers.getArtistFromJSON(new JSONObject(response).getJSONObject("artist"));
+            return a.getImage(Artist.ImageSize.EXTRALARGE);
+        } catch (JSONException e) {
+            return "";
         }
     }
 }

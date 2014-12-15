@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    android:id="@+id/tag_name"
+    android:layout_height="@dimen/tag_height"
+    android:layout_width="wrap_content"
+    android:background="@drawable/tag_shape"
+    android:text="ROCK METAL"
+    android:layout_marginRight="8dp"
+    android:textColor="@color/white"
+    android:gravity="center"
+    android:paddingLeft="8dp"
+    android:textStyle="bold"
+    android:fontFamily="sans-serif"
+    android:textSize="14sp"
+    android:layout_marginStart="12dp"
+    android:paddingRight="8dp"
+    xmlns:android="http://schemas.android.com/apk/res/android" />

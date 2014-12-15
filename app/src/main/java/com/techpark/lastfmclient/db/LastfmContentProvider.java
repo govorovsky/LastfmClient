@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
+
+import java.util.List;
+
 /**
  * Created by Andrew Gov on 03.11.14.
  */
@@ -74,8 +77,21 @@ public class LastfmContentProvider extends ContentProvider {
                 return queryUpcomingEvents(uri, projection, selection, selArgs);
             case DBEntity.NEW_RELEASES:
                 return queryNewReleases(uri, projection, selection, selArgs);
+            case DBEntity.TRACK_INFO:
+                return queryTrack(uri, projection, selection, selArgs);
         }
         return null;
+    }
+
+    private Cursor queryTrack(Uri uri, String[] projection, String selection, String[] selArgs) {
+        /* uri : /artist/track */
+        List<String> segments = uri.getPathSegments();
+        String track = segments.get(segments.size() - 1);
+        String artist = segments.get(segments.size() - 2);
+        Cursor c = readDb.query(TrackTable.TABLE_NAME, projection,
+                TrackTable.COLUMN_NAME + " =? AND " + TrackTable.COLUMN_ARTIST + " =?", new String[]{track,artist}, null, null, null);
+        c.setNotificationUri(getContext().getContentResolver(), uri);
+        return c;
     }
 
     private Cursor queryLibrary(Uri uri, String[] projection, String selection, String[] selArgs) {
@@ -163,9 +179,31 @@ public class LastfmContentProvider extends ContentProvider {
                 return updateOrInsertRelease(contentValues, false);
             case DBEntity.UPCOMING_EVENTS:
                 return updateOrInsertEvent(contentValues, false);
+            case DBEntity.TRACK:
+                return updateOrInsertTrack(contentValues);
             default:
                 return null;
         }
+    }
+
+    private Uri updateOrInsertTrack(ContentValues contentValues) {
+        String track = contentValues.getAsString(TrackTable.COLUMN_NAME);
+        String artist = contentValues.getAsString(TrackTable.COLUMN_ARTIST);
+
+        long rowId = writeDb.update(TrackTable.TABLE_NAME, contentValues,
+                TrackTable.COLUMN_NAME + "=? AND " + TrackTable.COLUMN_ARTIST + " = ? ", new String[]{track, artist});
+
+        if (rowId == 0) {
+            rowId = writeDb.insert(TrackTable.TABLE_NAME, null, contentValues);
+        }
+
+        if (rowId > 0) {
+            Uri newUri = Uri.parse(TrackTable.CONTENT_URI_ID_TRACK + artist + '/' + track);
+            Log.e("ADDED NEW URI=", newUri.toString());
+            getContext().getContentResolver().notifyChange(newUri, null);
+            return newUri;
+        }
+        return null;
     }
 
     @Override
