@@ -2,8 +2,6 @@ package com.techpark.lastfmclient.fragments;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 import com.techpark.lastfmclient.adapters.RecentTracksList;
 import com.techpark.lastfmclient.api.ApiQuery;
@@ -49,7 +47,7 @@ public class RecentTracksLoader extends BaseLoader<RecentTracksList> {
                 String resp = NetworkUtils.httpRequest(query);
                 ApiResponse<RecentTracksList> apiResp = UserHelpers.getRecentTracksFromJson(resp);
                 RecentTracksList list = apiResp.getData();
-                if (list.size() > 4) {
+                if (list != null && list.size() > 4) {
                     list.remove(0);
                 }
                 return apiResp;

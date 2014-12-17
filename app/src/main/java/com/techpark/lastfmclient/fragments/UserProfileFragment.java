@@ -185,7 +185,6 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     @Override
     public void onResume() {
         super.onResume();
-        if (newAlpha != -1) fragmentDispatcher.setActionBarFade(newAlpha);
         getLoaderManager().initLoader(TRACKS_LOADER, null, this);
         getLoaderManager().initLoader(LIBRARY_LOADER, null, this);
     }
@@ -260,9 +259,6 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
 
     @Override
     public void onScrollChanged(ScrollView from, int l, int r, int oldl, int oldt) {
-        final int headerHeight = getActivity().findViewById(R.id.header).getHeight() - getActivity().getActionBar().getHeight();
-        final float ratio = (float) Math.min(Math.max(r, 0), headerHeight) / headerHeight;
-        newAlpha = (int) (ratio * 255);
-        fragmentDispatcher.setActionBarFade(newAlpha);
+        changeActionBarFabe(r);
     }
 }
