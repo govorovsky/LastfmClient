@@ -139,7 +139,7 @@ public class LastfmContentProvider extends ContentProvider {
         String query = "select " +
                 "e.title, e.venue_name, e.venue_location, e.date, e.image_extralarge, " +
                 "e.attendance, e.artist1, e.artist2, e.artist3, " +
-                "a1.image_large, a2.image_large, a3.image_large " +
+                "a1.image_large, a1.image_mega, a2.image_large, a3.image_large " +
                 "from upcoming_events e left join artist a1 on e.artist1 = a1.name " +
                 "left join artist a2 on e.artist2 = a2.name " +
                 "left join artist a3 on e.artist3 = a3.name";
@@ -311,6 +311,7 @@ public class LastfmContentProvider extends ContentProvider {
 
     private Uri updateOrInsertEvent(ContentValues contentValues, boolean isBatch) {
         String title = contentValues.getAsString(UpcomingEventsTable.COLUMN_TITLE);
+        Log.d("updateOrInsertEvent", title);
 
         long rowId = writeDb.update(
                 UpcomingEventsTable.TABLE_NAME,
@@ -388,6 +389,7 @@ public class LastfmContentProvider extends ContentProvider {
                     }
                 });
             case DBEntity.UPCOMING_EVENTS:
+                Log.v("Bulk insert", "events");
                 return bulkInsertEntity(uri, values, new BulkEntity() {
                     @Override
                     public void insert(ContentValues cv) {

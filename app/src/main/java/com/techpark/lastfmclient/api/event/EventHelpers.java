@@ -27,7 +27,7 @@ public class EventHelpers {
         if (limit == -1)
             limit = cursor.getCount();
 
-        cursor.moveToLast();
+        cursor.moveToFirst();
         for (int i = 0; i < limit; ++i) {
             EventsList.EventWrapper e = new EventsList.EventWrapper(
                     cursor.getString(0), cursor.getString(1), cursor.getString(2),
@@ -36,12 +36,12 @@ public class EventHelpers {
             );
 
             e.getImages().put(Event.ImageSize.EXTRALARGE, cursor.getString(4));
-
             if (cursor.getString(6) != null) {
                 Artist a = new Artist(
                         cursor.getString(6), null
                 );
-                a.getImages().put(Artist.ImageSize.SMALL, cursor.getString(9));
+                a.getImages().put(Artist.ImageSize.LARGE, cursor.getString(9));
+                a.getImages().put(Artist.ImageSize.MEGA, cursor.getString(10));
                 e.addArtist(a);
             }
 
@@ -49,7 +49,7 @@ public class EventHelpers {
                 Artist a = new Artist(
                         cursor.getString(7), null
                 );
-                a.getImages().put(Artist.ImageSize.SMALL, cursor.getString(10));
+                a.getImages().put(Artist.ImageSize.LARGE, cursor.getString(11));
                 e.addArtist(a);
             }
 
@@ -57,11 +57,12 @@ public class EventHelpers {
                 Artist a = new Artist(
                         cursor.getString(8), null
                 );
-                a.getImages().put(Artist.ImageSize.SMALL, cursor.getString(11));
+                a.getImages().put(Artist.ImageSize.LARGE, cursor.getString(12));
                 e.addArtist(a);
             }
 
             list.addEvent(e);
+            cursor.moveToNext();
         }
 
         return list;
@@ -117,6 +118,10 @@ public class EventHelpers {
             JSONObject e = object.getJSONObject("events");
             list.addEvent(h.getEventJSON(e));
         }
+
+        JSONObject attrs = object.getJSONObject("@attr");
+        String totalPages = attrs.getString("totalPages");
+        list.setTotalPages(Integer.parseInt(totalPages));
 
         return list;
     }

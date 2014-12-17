@@ -1,23 +1,17 @@
 package com.techpark.lastfmclient.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import com.squareup.picasso.Picasso;
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.api.artist.Artist;
-import com.techpark.lastfmclient.api.event.Event;
-import com.techpark.lastfmclient.api.release.Release;
-
-import java.util.ArrayList;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by max on 27/11/14.
@@ -64,9 +58,13 @@ public class EventsAdapter extends BaseAdapter {
             holder.image = (ImageView) convertView.findViewById(R.id.event_icon);
             holder.month = (TextView) convertView.findViewById(R.id.event_month);
             holder.day = (TextView) convertView.findViewById(R.id.event_day);
-            holder.artists = (TextView) convertView.findViewById(R.id.event_name);
+            holder.title = (TextView) convertView.findViewById(R.id.event_name);
             holder.place = (TextView) convertView.findViewById(R.id.event_place);
-            holder.artists_images = null; //TODO
+            holder.attendance = (TextView) convertView.findViewById(R.id.event_attendance);
+            holder.artist1 = (CircleImageView) convertView.findViewById(R.id.event_band1_icon);
+            holder.artist2 = (CircleImageView) convertView.findViewById(R.id.event_band2_icon);
+            holder.artist3 = (CircleImageView) convertView.findViewById(R.id.event_band3_icon);
+
             convertView.setTag(holder);
         }
 
@@ -77,33 +75,52 @@ public class EventsAdapter extends BaseAdapter {
         EventsList.EventWrapper e = mEventsList.getEvents().get(pos);
 
         String[] date = e.getDate().split(" ");
-
-        if (holder.month == null)
-            Log.d("EventsAdapter", "NULL");
-
         holder.month.setText(date[2]);
         holder.day.setText(date[1]);
-        holder.place.setText(e.getVenueName() + "; " + e.getVenueLocation());
 
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < e.getArtists().size() - 1; ++i) {
-            Artist a = e.getArtist().get(i);
-            builder.append(a.getArtistName()).append(", ");
+        String[] places = e.getVenueLocation().split(";");
+        StringBuilder place = new StringBuilder().append(e.getVenueName());
+        for (String s : places)
+            place.append(", ").append(s);
+        holder.place.setText(place.toString());
 
-            //Picasso.with(mContext).load(
-            //        a.getImage(Artist.ImageSize.SMALL)
-            //).into(holder.artists_images.get(i));
+        holder.title.setText(e.getTitle());
+
+        if (e.getArtist().size() > 0) {
+            Artist a = e.getArtist().get(0);
+            holder.artist1.setVisibility(View.VISIBLE);
+            Picasso.with(mContext).load(
+                    a.getImage(Artist.ImageSize.LARGE)
+            ).into(holder.artist1);
+
+            Picasso.with(mContext).load(
+                    a.getImage(Artist.ImageSize.MEGA)
+            ).into(holder.image);
+        } else {
+            holder.artist1.setVisibility(View.GONE);
         }
-        builder.append(e.getArtist().get(e.getArtist().size() - 1).getArtistName());
-        holder.artists.setText(builder.toString());
 
-        //Picasso.with(mContext).load(
-        //        e.getArtist().get(e.getArtist().size() - 1).getImage(Artist.ImageSize.SMALL)
-        //).into(holder.artists_images.get(e.getArtist().size() - 1));
+        if (e.getArtist().size() > 1) {
+            Artist a = e.getArtist().get(1);
+            holder.artist2.setVisibility(View.VISIBLE);
+            Picasso.with(mContext).load(
+                    a.getImage(Artist.ImageSize.LARGE)
+            ).into(holder.artist2);
+        } else {
+            holder.artist2.setVisibility(View.GONE);
+        }
 
-        Picasso.with(mContext).load(
-                e.getImage(Event.ImageSize.EXTRALARGE)
-        ).into(holder.image);
+        if (e.getArtist().size() > 2) {
+            Artist a = e.getArtist().get(2);
+            holder.artist3.setVisibility(View.VISIBLE);
+            Picasso.with(mContext).load(
+                    a.getImage(Artist.ImageSize.LARGE)
+            ).into(holder.artist3);
+        } else {
+            holder.artist3.setVisibility(View.GONE);
+        }
+
+        holder.attendance.setText("" + e.getAttendance());
 
         return convertView;
     }
@@ -113,8 +130,12 @@ public class EventsAdapter extends BaseAdapter {
         TextView month;
         TextView day;
         TextView place;
-        TextView artists;
-        ArrayList<CircleImageView> artists_images = new ArrayList<>(3);
+        TextView title;
+        TextView attendance;
+
+        CircleImageView artist1;
+        CircleImageView artist2;
+        CircleImageView artist3;
     }
 
 }

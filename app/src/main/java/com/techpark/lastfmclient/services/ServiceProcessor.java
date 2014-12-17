@@ -49,6 +49,7 @@ public class ServiceProcessor extends Service {
     }
 
     private IProvider getProvider(int providerId) {
+        Log.d("ServiceProcessor getProvider", "" + providerId);
         switch (providerId) {
             case Providers.USERS_PROVIDER:
                 return new UsersProvider(this);
