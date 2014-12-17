@@ -4,9 +4,11 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.techpark.lastfmclient.adapters.EventsList;
 import com.techpark.lastfmclient.api.ApiQuery;
+import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.event.EventHelpers;
 import com.techpark.lastfmclient.api.user.UserGetEvents;
 import com.techpark.lastfmclient.api.user.UserGetRecommendedArtists;
@@ -51,10 +53,14 @@ public class EventsProvider implements IProvider {
 
     private void getUpcomingEvents() {
         ArrayList<ContentValues> eventsValues = new ArrayList<>();
+        ArtistsProvider aProvider = new ArtistsProvider(mContext);
 
         try {
             EventsList list = getEventsNet(0);
             for (EventsList.EventWrapper e : list.getEvents()) {
+                for (String a : e.getArtists()) {
+                    aProvider.getArtist(a);
+                }
                 eventsValues.add(UpcomingEventsTable.getEventContentValues(e));
             }
 

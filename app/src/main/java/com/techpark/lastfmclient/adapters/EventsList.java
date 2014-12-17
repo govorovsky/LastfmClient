@@ -12,6 +12,7 @@ import java.util.HashMap;
  */
 public class EventsList {
     private ArrayList<EventWrapper> events = new ArrayList<>();
+    private int totalPages = 0;
 
     public static class EventWrapper extends Event {
         private ArrayList<Artist> artistObjectArray;
@@ -37,4 +38,7 @@ public class EventsList {
     public void addEvent(EventWrapper r) {
         events.add(r);
     }
+    public int getTotalPages() { return this.totalPages; }
+
+    public void setTotalPages(int pages) { this.totalPages = pages; }
 }

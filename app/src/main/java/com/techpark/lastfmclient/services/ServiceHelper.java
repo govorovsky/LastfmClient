@@ -4,10 +4,12 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.techpark.lastfmclient.db.ArtistsTable;
 import com.techpark.lastfmclient.db.NewReleasesTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
+import com.techpark.lastfmclient.db.UpcomingEventsTable;
 import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.providers.EventsProvider;
 import com.techpark.lastfmclient.db.LibraryTable;
@@ -60,6 +62,8 @@ public class ServiceHelper {
         Intent intent = new Intent(mContext, ServiceProcessor.class);
         intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.UPCOMING_EVENTS_PROVIDER);
         intent.putExtra(ServiceProcessor.METHOD, EventsProvider.Actions.UPCOMING);
+
+        mContext.startService(intent);
     }
 
     public void getRecentTracks(String username, int limit) {
@@ -97,6 +101,7 @@ public class ServiceHelper {
         resolver.delete(NewReleasesTable.CONTENT_URI, null, null);
         resolver.delete(LibraryTable.CONTENT_URI, null, null);
         resolver.delete(RecentTracksTable.CONTENT_URI, null, null);
+        resolver.delete(UpcomingEventsTable.CONTENT_URI, null, null);
     }
 
     public void getLibraryArtists(String username, int limit) {
