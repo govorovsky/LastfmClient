@@ -10,8 +10,10 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -130,13 +132,30 @@ public class TrackFragment extends BaseFragment implements LoaderManager.LoaderC
     private void setTags(String tag) {
         if (!tag.isEmpty()) {
             mTags.removeAllViews();
+            int totalWidth = getActivity().getResources().getDisplayMetrics().widthPixels;
+            int currentWidth = 0;
             LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             String tags[] = tag.split(",");
+
+            TextView more = (TextView) vi.inflate(R.layout.tag_item, mTags, false);
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) more.getLayoutParams();
+            int margin = params.getMarginStart() + params.rightMargin;
+            more.measure(ViewGroup.LayoutParams.WRAP_CONTENT, 0);
+            more.setText("MORE TAGS");
+            totalWidth -= more.getMeasuredWidth() + margin;
+
             for (String t : tags) {
                 TextView v = (TextView) vi.inflate(R.layout.tag_item, mTags, false);
                 v.setText(t);
+                v.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), 0);
+                int mes = v.getMeasuredWidth() + margin;
+                currentWidth += mes;
+                if (currentWidth >= totalWidth) {
+                    break;
+                }
                 mTags.addView(v);
             }
+            mTags.addView(more);
         }
     }
 
@@ -190,61 +209,4 @@ public class TrackFragment extends BaseFragment implements LoaderManager.LoaderC
     public void onScrollChanged(ScrollView from, int l, int r, int oldl, int oldt) {
         changeActionBarFabe(r);
     }
-
-//    static int height;
-//
-//
-//
-//    public static void expand(final View v) {
-//        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        v.getLayoutParams().height = height;
-//        v.setVisibility(View.VISIBLE);
-//        Animation a = new Animation() {
-//            @Override
-//            protected void applyTransformation(float interpolatedTime, Transformation t) {
-//                v.getLayoutParams().height = interpolatedTime == 1
-//                        ? ViewGroup.LayoutParams.WRAP_CONTENT
-//                        : (int) ((targetHeight - height) * interpolatedTime + height);
-//                Log.e("COMPUTED=", v.getLayoutParams().height + " ==");
-//                v.requestLayout();
-//            }
-//
-//            @Override
-//            public boolean willChangeBounds() {
-//                return true;
-//            }
-//        };
-//
-//        // 1dp/ms
-//        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-//        v.startAnimation(a);
-//    }
-//
-//    public static void collapse(final View v) {
-//        final int initialHeight = v.getMeasuredHeight();
-//
-//        Animation a = new Animation() {
-//            @Override
-//            protected void applyTransformation(float interpolatedTime, Transformation t) {
-//                if (interpolatedTime == 1) {
-////                    v.setVisibility(View.GONE);
-//                } else {
-//                    v.getLayoutParams().height = initialHeight - (int) ((initialHeight -height)* interpolatedTime);
-//                    Log.e("Initial=", initialHeight+ " ==");
-//                    Log.e("COMPUTED=", v.getLayoutParams().height + " ==");
-//                    v.requestLayout();
-//                }
-//            }
-//
-//            @Override
-//            public boolean willChangeBounds() {
-//                return true;
-//            }
-//        };
-//
-//        // 1dp/ms
-//        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-//        v.startAnimation(a);
-//    }
-
 }

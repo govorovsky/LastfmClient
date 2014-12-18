@@ -21,7 +21,7 @@ public class ExpandableTextView extends TextView {
     private TextView mStateTextView;
 
 
-    enum State {IDLE, COLLAPSED, EXPANDED}
+    enum State {IDLE, COLLAPSED, EXPANDED, ANIMATION}
 
     private State mState = State.IDLE;
 

@@ -30,6 +30,8 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
 
     private static final String BUNDLE_USERNAME = "username";
 
+    public static final String TAG = RecentTracksMoreFragment.class.getSimpleName();
+
     private RecentTracksAdapter adapter;
     private RecentTracksList list = new RecentTracksList();
 

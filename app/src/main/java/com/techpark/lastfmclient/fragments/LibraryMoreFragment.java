@@ -6,6 +6,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.techpark.lastfmclient.R;
@@ -13,6 +14,8 @@ import com.techpark.lastfmclient.adapters.LibraryArtistsAdapter;
 import com.techpark.lastfmclient.adapters.LibraryArtistsList;
 import com.techpark.lastfmclient.api.ApiParamNames;
 import com.techpark.lastfmclient.api.ApiResponse;
+import com.techpark.lastfmclient.api.artist.Artist;
+import com.techpark.lastfmclient.api.library.LibArtist;
 
 /**
  * Created by Andrew Govorovsky on 12.12.14.
@@ -59,7 +62,14 @@ public class LibraryMoreFragment extends BaseFragment implements LoaderManager.L
         adapter = new LibraryArtistsAdapter(getActivity(), R.layout.lib_artist, artistsList);
         gridView.setAdapter(adapter);
         gridView.setOnScrollListener(scrollListener);
-
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                LibArtist a = adapter.getItem(position);
+                Artist ar = new Artist(a.getName(), a.getUrl());
+                fragmentDispatcher.setFragment(ArtistFragment.getInstance(ar), ArtistFragment.TAG, true);
+            }
+        });
     }
 
     @Override
@@ -89,7 +99,8 @@ public class LibraryMoreFragment extends BaseFragment implements LoaderManager.L
     }
 
     @Override
-    public void onLoadFinished(Loader<ApiResponse<LibraryArtistsList>> apiResponseLoader, ApiResponse<LibraryArtistsList> data) {
+    public void onLoadFinished
+            (Loader<ApiResponse<LibraryArtistsList>> apiResponseLoader, ApiResponse<LibraryArtistsList> data) {
 
         if (isPaused && !scrollListener.isLoading) { // to prevent unnecessary onLoadFinished triggering after onPause
             isPaused = false;

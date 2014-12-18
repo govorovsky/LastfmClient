@@ -69,7 +69,7 @@ public class LastfmContentProvider extends ContentProvider {
             case DBEntity.USER_INFO:
                 return queryUser(uri, projection, selection, selArgs);
             case DBEntity.TRACK_RECENT:
-                return queryRecentTracks(uri, projection, selection, selArgs,sortOrder);
+                return queryRecentTracks(uri, projection, selection, selArgs, sortOrder);
             case DBEntity.LIBRARY:
                 return queryLibrary(uri, projection, selection, selArgs);
             case DBEntity.ARTIST_INFO:
@@ -94,7 +94,7 @@ public class LastfmContentProvider extends ContentProvider {
         String track = segments.get(segments.size() - 1);
         String artist = segments.get(segments.size() - 2);
         Cursor c = readDb.query(TrackTable.TABLE_NAME, projection,
-                TrackTable.COLUMN_NAME + " =? AND " + TrackTable.COLUMN_ARTIST + " =?", new String[]{track,artist}, null, null, null);
+                TrackTable.COLUMN_NAME + " =? AND " + TrackTable.COLUMN_ARTIST + " =?", new String[]{track, artist}, null, null, null);
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
     }
@@ -112,7 +112,7 @@ public class LastfmContentProvider extends ContentProvider {
     }
 
     private Cursor queryRecentTracks(Uri uri, String[] projection, String selection, String[] selArgs, String sortOrder) {
-        Cursor c = readDb.query(RecentTracksTable.TABLE_NAME, projection, null, null, null, null, null,sortOrder);
+        Cursor c = readDb.query(RecentTracksTable.TABLE_NAME, projection, null, null, null, null, null, sortOrder);
         Log.e("LIMIT ACUQIRED=", " " + c.getCount());
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;

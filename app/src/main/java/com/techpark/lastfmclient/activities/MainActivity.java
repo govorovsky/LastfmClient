@@ -16,8 +16,10 @@ import com.techpark.lastfmclient.adapters.NavMenuSection;
 import com.techpark.lastfmclient.api.user.User;
 import com.techpark.lastfmclient.fragments.LibraryMoreFragment;
 import com.techpark.lastfmclient.fragments.MainListFragment;
+import com.techpark.lastfmclient.fragments.NewReleasesMoreFragment;
 import com.techpark.lastfmclient.fragments.RecentTracksMoreFragment;
 import com.techpark.lastfmclient.fragments.RecommendedMoreFragment;
+import com.techpark.lastfmclient.fragments.UpcomingEventsMoreFragment;
 import com.techpark.lastfmclient.fragments.UserProfileFragment;
 
 import java.util.ArrayList;
@@ -113,7 +115,13 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
                 break;
 
             case NavDrawerConstants.RECOMMENDED_MUSIC:
-                setFragment(new RecommendedMoreFragment(), "rmore", true);
+                setFragment(new RecommendedMoreFragment(), RecommendedMoreFragment.TAG, true);
+                break;
+            case NavDrawerConstants.UPCOMING_EVENTS:
+                setFragment(new UpcomingEventsMoreFragment(), UpcomingEventsMoreFragment.TAG, true);
+                break;
+            case NavDrawerConstants.NEW_RELEASES:
+                setFragment(new NewReleasesMoreFragment(), NewReleasesMoreFragment.TAG, true);
                 break;
 
             case NavDrawerConstants.RECENT_TRACKS:
@@ -132,12 +140,9 @@ public class MainActivity extends BaseNavDrawerActivity implements FragmentManag
                 NavMenuHeader.getInstance(NavDrawerConstants.PROFILE, User.EMPTY_USER),
                 NavMenuSection.getInstance(1, "RECOMMENDATIONS"),
                 NavMenuItem.getInstance(NavDrawerConstants.RECOMMENDED_MUSIC, "Music"),
-                NavMenuItem.getInstance(102, "Albums"),
-                NavMenuItem.getInstance(103, "New Releases"),
+                NavMenuItem.getInstance(NavDrawerConstants.NEW_RELEASES, "New Releases"),
                 NavMenuSection.getInstance(105, "Events"),
-                NavMenuItem.getInstance(104, "My Events"),
-                NavMenuItem.getInstance(106, "Your Recommendations"),
-                NavMenuItem.getInstance(107, "Events Near Me"),
+                NavMenuItem.getInstance(NavDrawerConstants.UPCOMING_EVENTS, "Upcoming Events"),
                 NavMenuSection.getInstance(108, "PROFILE"),
                 NavMenuItem.getInstance(NavDrawerConstants.RECENT_TRACKS, "Recent Tracks"),
                 NavMenuItem.getInstance(NavDrawerConstants.MY_LIBRARY, "My Library"),

@@ -23,6 +23,8 @@ import com.techpark.lastfmclient.adapters.LibraryArtistsAdapter;
 import com.techpark.lastfmclient.adapters.LibraryArtistsList;
 import com.techpark.lastfmclient.adapters.RecentTracksAdapter;
 import com.techpark.lastfmclient.adapters.RecentTracksList;
+import com.techpark.lastfmclient.api.artist.Artist;
+import com.techpark.lastfmclient.api.library.LibArtist;
 import com.techpark.lastfmclient.api.library.LibraryHelpers;
 import com.techpark.lastfmclient.api.track.RecentTrack;
 import com.techpark.lastfmclient.api.user.User;
@@ -143,6 +145,14 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
 
         artistsAdapter = new LibraryArtistsAdapter(getActivity(), R.layout.lib_artist, libArtists);
         artistsView.setAdapter(artistsAdapter);
+        artistsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                LibArtist a = artistsAdapter.getItem(position);
+                Artist ar = new Artist(a.getName(), a.getUrl());
+                fragmentDispatcher.setFragment(ArtistFragment.getInstance(ar), ArtistFragment.TAG, true);
+            }
+        });
 
         notifyingScrollView = (NotifyingScrollView) view.findViewById(R.id.scroll);
         notifyingScrollView.setListener(this);
