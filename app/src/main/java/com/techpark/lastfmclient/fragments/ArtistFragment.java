@@ -181,8 +181,8 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
             mTags.addView(v);
         }
 
-        if (!artist.getBioSummary().isEmpty()) {
-            mArtistBio.setText(Html.fromHtml(artist.getBioSummary()));
+        if (!artist.getBioContent().isEmpty()) {
+            mArtistBio.setText(Html.fromHtml(artist.getBioContent()));
             mArtistBio.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             mArtistBio.setText("No info about this artist. You can help us resolve this upset fact!");

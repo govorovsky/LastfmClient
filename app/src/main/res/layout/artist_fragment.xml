@@ -110,7 +110,7 @@
 
             <com.techpark.lastfmclient.views.ExpandableTextView
                 android:layout_width="match_parent"
-                android:layout_height="128dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/artist_biography"
                 android:layout_below="@id/label_artist_bio"
                 android:layout_marginTop="16dp"
