@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.techpark.lastfmclient.views.NotifyingScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="false">
+
+    <LinearLayout
+        android:id="@+id/artist_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="100dp"
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/user_profile_logo"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/header_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.techpark.lastfmclient.views.TopCropImageView
+                    android:id="@+id/image_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/user_profile_logo"
+                    android:scaleType="matrix" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:background="@drawable/gradient_ab" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/gradient_header" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/tags_margin"
+                android:orientation="horizontal"/>
+
+            <TextView
+                android:id="@+id/artist_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/tags"
+                android:layout_marginStart="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="#ffffff"
+                android:textSize="18sp" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/artist_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:clickable="true">
+
+            <TextView
+                android:id="@+id/label_artist_bio"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:text="@string/label_artist_biography"
+                android:textColor="@color/red"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/button_full_bio"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/button_more"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="FULL BIO"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="128dp"
+                android:id="@+id/artist_biography"
+                android:layout_below="@id/label_artist_bio"/>
+
+            <TextView
+                android:id="@+id/label_artist_similar"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:text="@string/label_artist_similar"
+                android:textColor="@color/red"
+                android:textSize="18sp"
+                android:layout_below="@id/artist_biography"/>
+
+            <Button
+                android:id="@+id/button_similar_artists"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/button_more"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="MORE"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:layout_below="@id/artist_biography"/>
+
+            <com.techpark.lastfmclient.views.StretchedGridView
+                android:id="@+id/similar_artists_grid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/label_artist_similar"
+                android:layout_marginTop="16dp"
+                android:columnCount="2"
+                android:rowCount="2" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</com.techpark.lastfmclient.views.NotifyingScrollView>

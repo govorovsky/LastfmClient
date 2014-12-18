@@ -15,4 +15,9 @@
     <string name="action_settings">Settings</string>
     <string name="recently_listened">Recently Listened Tracks</string>
     <string name="label_library">\'s Library</string>
+
+    <string name="label_artist_biography">Biography</string>
+    <string name="label_artist_similar">Similar Artist</string>
+
+
 </resources>

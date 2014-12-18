@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.techpark.lastfmclient.providers.ArtistsProvider;
 import com.techpark.lastfmclient.providers.EventsProvider;
 import com.techpark.lastfmclient.providers.IProvider;
 import com.techpark.lastfmclient.providers.LibraryArtistsProvider;
@@ -44,6 +45,7 @@ public class ServiceProcessor extends Service {
         public static final int RECOMMENDED_PROVIDER = 3;
         public static final int NEW_RELEASES_PROVIDER = 4;
         public static final int UPCOMING_EVENTS_PROVIDER = 5;
+        public static final int ARIST_PROVIDER = 6;
         public static final int LIBRARY_PROVIDER = 47;
         public static final int TRACK_PROVIDER = 474;
     }
@@ -61,6 +63,8 @@ public class ServiceProcessor extends Service {
                 return new ReleaseProvider(this);
             case Providers.UPCOMING_EVENTS_PROVIDER:
                 return new EventsProvider(this);
+            case Providers.ARIST_PROVIDER:
+                return new ArtistsProvider(this);
             case Providers.LIBRARY_PROVIDER:
                 return new LibraryArtistsProvider(this);
             case Providers.TRACK_PROVIDER:

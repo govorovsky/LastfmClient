@@ -3,6 +3,8 @@ package com.techpark.lastfmclient.providers;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.techpark.lastfmclient.api.ApiQuery;
@@ -10,21 +12,25 @@ import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.artist.ArtistGetInfo;
 import com.techpark.lastfmclient.api.artist.ArtistHelpers;
 import com.techpark.lastfmclient.db.ArtistsTable;
+import com.techpark.lastfmclient.db.LastfmContentProvider;
 import com.techpark.lastfmclient.network.NetworkUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by max on 16/11/14.
  */
 public class ArtistsProvider implements IProvider {
     private final Context mContext;
+    public final static String BUNDLE_ARTIST = "artist";
 
     public class Actions {
         public static final int GET = 1;
+        public static final int INFO = 2;
     }
 
     public ArtistsProvider(Context context) {
@@ -33,10 +39,16 @@ public class ArtistsProvider implements IProvider {
 
     @Override
     public void execMethod(int methodId, Bundle extraData) {
+        String artist = extraData.getString(BUNDLE_ARTIST);
+        if (artist == null || artist.isEmpty())
+            return;
+
         switch (methodId) {
             case Actions.GET:
-                String artist = extraData.getString("artist");
-                getArtist(artist);
+                getArtist(artist); // ?
+                break;
+            case Actions.INFO:
+                getArtistInfo(artist);
                 break;
         }
     }
@@ -46,20 +58,50 @@ public class ArtistsProvider implements IProvider {
         query.prepare();
         String response = NetworkUtils.httpRequest(query);
 
-        return ArtistHelpers.getArtistFromJSON(new JSONObject(response).getJSONObject("artist"));
+        return ArtistHelpers.getArtistInfoFromJSON(new JSONObject(response).getJSONObject("artist"));
+    }
+
+    public Artist getArtistFromDB(String artistName) {
+        LastfmContentProvider provider = new LastfmContentProvider();
+        Cursor c = provider.query(
+                Uri.withAppendedPath(Uri.parse(ArtistsTable.COLUMN_NAME), artistName), null, null, null, null
+        );
+        return ArtistHelpers.getArtistFromCursor(c);
     }
 
     public void getArtist(String artistName) {
-        ContentValues artistValues;
+        ContentValues artistsValues;
 
         try {
             Artist a = getArtistNet(artistName);
-            artistValues = ArtistHelpers.getContentValues(a);
+            artistsValues = ArtistsTable.getContentValues(a);
             ContentResolver resolver = mContext.getContentResolver();
-            resolver.insert(ArtistsTable.CONTENT_URI, artistValues);
+            resolver.insert(ArtistsTable.CONTENT_URI, artistsValues);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public void getArtistInfo(String artistName) {
+        ArrayList<ContentValues> artistsValues = new ArrayList<>();
+
+        try {
+            Artist a = getArtistNet(artistName);
+            artistsValues.add(ArtistsTable.getContentValues(a));
+
+            for (String s : a.getSimilars())
+                artistsValues.add(ArtistsTable.getContentValues(getArtistNet(s)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ContentResolver resolver = mContext.getContentResolver();
+
+        ContentValues[] aV = new ContentValues[artistsValues.size()];
+        aV = artistsValues.toArray(aV);
+
+        resolver.bulkInsert(ArtistsTable.CONTENT_URI, aV);
     }
 
     static String getArtistImgNet(String artistName) throws IOException {

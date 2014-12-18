@@ -55,11 +55,11 @@ public class RecommendedProvider implements IProvider {
 
             for (RecommendedArtistList.RecommendedArtistWrapper r : rlist.getArtists()) {
                 recommendationsValues.add(UserHelpers.getContentValues(r.castRecommendedArtist()));
-                artistsValues.add(ArtistHelpers.getContentValues(r));
-                artistsValues.add(ArtistHelpers.getContentValues(r.getSimilarFirst()));
+                artistsValues.add(ArtistsTable.getContentValues(r));
+                artistsValues.add(ArtistsTable.getContentValues(r.getSimilarFirst()));
 
                 if (r.getSimilarSecond() != null) {
-                    artistsValues.add(ArtistHelpers.getContentValues(r.getSimilarSecond()));
+                    artistsValues.add(ArtistsTable.getContentValues(r.getSimilarSecond()));
                 }
             }
 

@@ -18,7 +18,7 @@ import com.techpark.lastfmclient.services.ServiceHelper;
 public abstract class BaseFragment extends Fragment {
     protected abstract FragmentConf getFragmentConf();
 
-    protected FragmentDispatcher fragmentDispatcher;
+    public FragmentDispatcher fragmentDispatcher;
     protected ServiceHelper serviceHelper;
 
     private FragmentConf conf;

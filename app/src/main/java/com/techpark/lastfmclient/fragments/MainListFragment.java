@@ -7,6 +7,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.RelativeLayout;
@@ -20,6 +21,7 @@ import com.techpark.lastfmclient.adapters.RecommendedAdapter;
 import com.techpark.lastfmclient.adapters.RecommendedArtistList;
 import com.techpark.lastfmclient.adapters.ReleasesAdapter;
 import com.techpark.lastfmclient.adapters.ReleasesList;
+import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.event.EventHelpers;
 import com.techpark.lastfmclient.api.release.ReleaseHelpers;
 import com.techpark.lastfmclient.api.user.UserHelpers;
@@ -77,7 +79,15 @@ public class MainListFragment extends BaseFragment implements LoaderManager.Load
         mArtistList = new RecommendedArtistList();
         ExpandedGridView grid_recommended = (ExpandedGridView) recommendedLayout.findViewById(R.id.grid);
         grid_recommended.setExpanded(true);
-        grid_recommended.setAdapter(new RecommendedAdapter(getActivity(), mArtistList));
+        final RecommendedAdapter recommendedAdapter = new RecommendedAdapter(getActivity(), mArtistList);
+        grid_recommended.setAdapter(recommendedAdapter);
+        grid_recommended.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Artist a = (Artist) recommendedAdapter.getItem(position);
+                fragmentDispatcher.setFragment(ArtistFragment.getInstance(a), ArtistFragment.TAG, true);
+            }
+        });
 
         mReleasesList = new ReleasesList();
         ExpandedGridView grid_releases = (ExpandedGridView) releasesLayout.findViewById(R.id.grid);

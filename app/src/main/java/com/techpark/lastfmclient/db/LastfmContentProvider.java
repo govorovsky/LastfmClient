@@ -26,6 +26,7 @@ public class LastfmContentProvider extends ContentProvider {
     private class DBEntity {
         final static int USER = 1;
         final static int USER_INFO = 2;
+        final static int ARTIST_INFO = 3;
         final static int ARTIST = 4;
         final static int RECOMMENDED = 5;
         final static int UPCOMING_EVENTS = 6;
@@ -47,6 +48,7 @@ public class LastfmContentProvider extends ContentProvider {
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, RecentTracksTable.TABLE_NAME + "/", DBEntity.TRACK_RECENT);
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, LibraryTable.TABLE_NAME + "/", DBEntity.LIBRARY);
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, ArtistsTable.TABLE_NAME + "/", DBEntity.ARTIST);
+        uriMatcher.addURI(DBLastfmHelper.AUTHORITY, ArtistsTable.TABLE_NAME + "/*", DBEntity.ARTIST_INFO);
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, RecommendedArtistsTable.TABLE_NAME + "/", DBEntity.RECOMMENDED);
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, UpcomingEventsTable.TABLE_NAME + "/", DBEntity.UPCOMING_EVENTS);
         uriMatcher.addURI(DBLastfmHelper.AUTHORITY, NewReleasesTable.TABLE_NAME + "/", DBEntity.NEW_RELEASES);
@@ -69,6 +71,7 @@ public class LastfmContentProvider extends ContentProvider {
                 return queryRecentTracks(uri, projection, selection, selArgs);
             case DBEntity.LIBRARY:
                 return queryLibrary(uri, projection, selection, selArgs);
+            case DBEntity.ARTIST_INFO:
             case DBEntity.ARTIST:
                 return queryArtist(uri, projection, selection, selArgs);
             case DBEntity.RECOMMENDED:
