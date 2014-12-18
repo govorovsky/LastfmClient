@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -23,13 +24,14 @@ import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.api.track.Track;
 import com.techpark.lastfmclient.api.track.TrackHelpers;
 import com.techpark.lastfmclient.db.TrackTable;
-import com.techpark.lastfmclient.services.ServiceHelper;
+import com.techpark.lastfmclient.views.ExpandableTextView;
+import com.techpark.lastfmclient.views.NotifyingScrollView;
 import com.techpark.lastfmclient.views.TopCropImageView;
 
 /**
  * Created by Andrew Govorovsky on 15.12.14.
  */
-public class TrackFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TrackFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>, NotifyingScrollView.OnScrollChangedListener {
 
     private static final CharSequence TITLE = "Track Info";
 
@@ -43,9 +45,10 @@ public class TrackFragment extends BaseFragment implements LoaderManager.LoaderC
 
     private TextView mArtistName;
     private TextView mTrackName;
-    private TextView mWiki;
+    private ExpandableTextView mWiki;
     private ProgressBar mProgressBar;
     private RelativeLayout mHeader;
+    private RelativeLayout mLabelBio;
 
     private TopCropImageView mCover;
 
@@ -92,6 +95,7 @@ public class TrackFragment extends BaseFragment implements LoaderManager.LoaderC
 
         serviceHelper.getTrack(trackname, artistname, username);
 
+
         mHeader = (RelativeLayout) view.findViewById(R.id.header);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
@@ -103,11 +107,17 @@ public class TrackFragment extends BaseFragment implements LoaderManager.LoaderC
             mProgressBar.setVisibility(View.GONE);
         }
 
+        NotifyingScrollView notifyingScrollView = (NotifyingScrollView) view.findViewById(R.id.scroll);
+        notifyingScrollView.setListener(this);
+
         mTags = (LinearLayout) view.findViewById(R.id.tags);
         mArtistName = (TextView) view.findViewById(R.id.artist_name);
         mTrackName = (TextView) view.findViewById(R.id.track_name);
         mCover = (TopCropImageView) view.findViewById(R.id.image_header);
-        mWiki = (TextView) view.findViewById(R.id.wiki);
+        mWiki = (ExpandableTextView) view.findViewById(R.id.wiki);
+        mLabelBio = (RelativeLayout) view.findViewById(R.id.label_bio);
+        mWiki.setExpandHandler(mLabelBio);
+        mWiki.setStateTextView((TextView) view.findViewById(R.id.button_more_wiki));
     }
 
     @Override
@@ -146,14 +156,13 @@ public class TrackFragment extends BaseFragment implements LoaderManager.LoaderC
         }
         setTags(track.getTags());
 
-        if (!track.getSummary().isEmpty()) { /* TODO Create expandable textview */
-            mWiki.setText(Html.fromHtml(track.getSummary()));
+        if (!track.getContent().isEmpty()) { /* TODO Create expandable textview */
+            mWiki.setText(Html.fromHtml(track.getContent()));
             mWiki.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             mWiki.setText("No info yet.");
         }
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -176,5 +185,66 @@ public class TrackFragment extends BaseFragment implements LoaderManager.LoaderC
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
+    @Override
+    public void onScrollChanged(ScrollView from, int l, int r, int oldl, int oldt) {
+        changeActionBarFabe(r);
+    }
+
+//    static int height;
+//
+//
+//
+//    public static void expand(final View v) {
+//        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        v.getLayoutParams().height = height;
+//        v.setVisibility(View.VISIBLE);
+//        Animation a = new Animation() {
+//            @Override
+//            protected void applyTransformation(float interpolatedTime, Transformation t) {
+//                v.getLayoutParams().height = interpolatedTime == 1
+//                        ? ViewGroup.LayoutParams.WRAP_CONTENT
+//                        : (int) ((targetHeight - height) * interpolatedTime + height);
+//                Log.e("COMPUTED=", v.getLayoutParams().height + " ==");
+//                v.requestLayout();
+//            }
+//
+//            @Override
+//            public boolean willChangeBounds() {
+//                return true;
+//            }
+//        };
+//
+//        // 1dp/ms
+//        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+//        v.startAnimation(a);
+//    }
+//
+//    public static void collapse(final View v) {
+//        final int initialHeight = v.getMeasuredHeight();
+//
+//        Animation a = new Animation() {
+//            @Override
+//            protected void applyTransformation(float interpolatedTime, Transformation t) {
+//                if (interpolatedTime == 1) {
+////                    v.setVisibility(View.GONE);
+//                } else {
+//                    v.getLayoutParams().height = initialHeight - (int) ((initialHeight -height)* interpolatedTime);
+//                    Log.e("Initial=", initialHeight+ " ==");
+//                    Log.e("COMPUTED=", v.getLayoutParams().height + " ==");
+//                    v.requestLayout();
+//                }
+//            }
+//
+//            @Override
+//            public boolean willChangeBounds() {
+//                return true;
+//            }
+//        };
+//
+//        // 1dp/ms
+//        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+//        v.startAnimation(a);
+//    }
 
 }

@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.activities.FragmentDispatcher;
 import com.techpark.lastfmclient.services.ServiceHelper;
 
@@ -22,6 +24,9 @@ public abstract class BaseFragment extends Fragment {
     protected ServiceHelper serviceHelper;
 
     private FragmentConf conf;
+
+    int alpha, oldApha = -1;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,13 +49,14 @@ public abstract class BaseFragment extends Fragment {
             fragmentDispatcher.setActionBarFade(conf.getActionBarFade());
         }
 
+        alpha = fragmentDispatcher.getActionBarFade();
         fragmentDispatcher.setTitle(conf.getTitle());
         fragmentDispatcher.setLogo(conf.getLogo());
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putInt("fade", fragmentDispatcher.getActionBarFade());
+        outState.putInt("fade", alpha);
         super.onSaveInstanceState(outState);
     }
 
@@ -65,5 +71,18 @@ public abstract class BaseFragment extends Fragment {
         } else {
             throw new IllegalStateException("Parent activity must implement fragment dispatching");
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (oldApha != -1) fragmentDispatcher.setActionBarFade(oldApha);
+    }
+
+    protected void changeActionBarFabe(int scrollPos) {
+        final int headerHeight = getActivity().findViewById(R.id.header).getHeight() - getActivity().getActionBar().getHeight();
+        final float ratio = (float) Math.min(Math.max(scrollPos, 0), headerHeight) / headerHeight;
+        alpha = oldApha = (int) (ratio * 255);
+        fragmentDispatcher.setActionBarFade(alpha);
     }
 }

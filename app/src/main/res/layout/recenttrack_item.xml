@@ -30,6 +30,8 @@
         android:id="@+id/artist_name"
         android:layout_width="wrap_content"
         android:textSize="14sp"
+        android:maxLength="170"
+        android:maxLines="2"
         android:textColor="@color/grey_transparent50"
         android:layout_marginBottom="8dp"
         android:layout_toEndOf="@id/artist_pic"

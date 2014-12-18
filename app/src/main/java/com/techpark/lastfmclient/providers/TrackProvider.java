@@ -61,7 +61,6 @@ public class TrackProvider implements IProvider {
                 }
 
                 mContext.getContentResolver().insert(TrackTable.CONTENT_URI, TrackHelpers.getTrackContentValues(apiResponse.getData()));
-                mContext.getContentResolver().notifyChange(TrackTable.CONTENT_URI, null);
             }
         } catch (IOException e) {
             e.printStackTrace();
