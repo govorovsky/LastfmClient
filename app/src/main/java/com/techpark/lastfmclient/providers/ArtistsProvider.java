@@ -6,7 +6,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.techpark.lastfmclient.adapters.ArtistWrapper;
 import com.techpark.lastfmclient.api.ApiQuery;
 import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.artist.ArtistGetInfo;
@@ -53,7 +55,7 @@ public class ArtistsProvider implements IProvider {
         }
     }
 
-    public Artist getArtistNet(String artistName) throws IOException, JSONException {
+    public ArtistWrapper getArtistNet(String artistName) throws IOException, JSONException {
         ApiQuery query = new ArtistGetInfo(artistName);
         query.prepare();
         String response = NetworkUtils.httpRequest(query);
@@ -62,9 +64,8 @@ public class ArtistsProvider implements IProvider {
     }
 
     public Artist getArtistFromDB(String artistName) {
-        LastfmContentProvider provider = new LastfmContentProvider();
-        Cursor c = provider.query(
-                Uri.withAppendedPath(Uri.parse(ArtistsTable.COLUMN_NAME), artistName), null, null, null, null
+        Cursor c = mContext.getContentResolver().query(
+                Uri.withAppendedPath(ArtistsTable.CONTENT_URI_ID_ARTIST, artistName), null, null, null, null
         );
         return ArtistHelpers.getArtistFromCursor(c);
     }
@@ -73,7 +74,7 @@ public class ArtistsProvider implements IProvider {
         ContentValues artistsValues;
 
         try {
-            Artist a = getArtistNet(artistName);
+            ArtistWrapper a = getArtistNet(artistName);
             artistsValues = ArtistsTable.getContentValues(a);
             ContentResolver resolver = mContext.getContentResolver();
             resolver.insert(ArtistsTable.CONTENT_URI, artistsValues);
@@ -82,8 +83,29 @@ public class ArtistsProvider implements IProvider {
         }
     }
 
-
     public void getArtistInfo(String artistName) {
+        ArrayList<ContentValues> artistsValues = new ArrayList<>();
+
+        try {
+            ArtistWrapper aw = getArtistNet(artistName);
+            artistsValues.add(ArtistsTable.getContentValues(aw));
+
+            for (Artist a : aw.getSimilarArtists())
+                artistsValues.add(ArtistsTable.getContentValues(a));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ContentResolver resolver = mContext.getContentResolver();
+
+        ContentValues[] aV = new ContentValues[artistsValues.size()];
+        aV = artistsValues.toArray(aV);
+
+        resolver.bulkInsert(ArtistsTable.CONTENT_URI_ID_ARTIST, aV);
+    }
+
+
+/*    public void getArtistInfo(String artistName) {
         ArrayList<ContentValues> artistsValues = new ArrayList<>();
 
         try {
@@ -101,9 +123,9 @@ public class ArtistsProvider implements IProvider {
         ContentValues[] aV = new ContentValues[artistsValues.size()];
         aV = artistsValues.toArray(aV);
 
-        resolver.bulkInsert(ArtistsTable.CONTENT_URI, aV);
+        resolver.bulkInsert(ArtistsTable.CONTENT_URI_ID_ARTIST, aV);
     }
-
+*/
     static String getArtistImgNet(String artistName) throws IOException {
         ApiQuery queryArtist = new ArtistGetInfo(artistName);
         queryArtist.prepare();

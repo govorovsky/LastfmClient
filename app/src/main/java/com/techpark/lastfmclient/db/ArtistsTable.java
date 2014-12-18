@@ -38,10 +38,10 @@ public class ArtistsTable implements BaseColumns {
             + COLUMN_IMAGE_LARGE + " TEXT, "
             + COLUMN_IMAGE_EXTRALARGE + " TEXT, "
             + COLUMN_IMAGE_MEGA + " TEXT, "
-            + COLUMN_BIO_SUMMARY + " TEXT, "
-            + COLUMN_BIO_CONTENT + " TEXT, "
             + COLUMN_TAGS + " TEXT, "
-            + COLUMN_SIMILARS + " TEXT "
+            + COLUMN_SIMILARS + " TEXT, "
+            + COLUMN_BIO_SUMMARY + " TEXT, "
+            + COLUMN_BIO_CONTENT + " TEXT "
             + ");";
 
     public static ContentValues getContentValues(Artist artist) {
@@ -63,7 +63,7 @@ public class ArtistsTable implements BaseColumns {
 
         StringBuilder similarsBuilder = new StringBuilder();
         for (String s : artist.getSimilars())
-            tagsBuilder.append(s).append(",");
+            similarsBuilder.append(s).append(",");
         content.put(ArtistsTable.COLUMN_SIMILARS, similarsBuilder.toString());
 
         return content;

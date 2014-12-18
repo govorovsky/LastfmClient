@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+    <com.techpark.lastfmclient.views.SquareImageView
+        android:id="@+id/artist_pic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        />
+
+    <TextView
+        android:id="@+id/artist_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="Roboto Regular"
+        android:layout_alignBottom="@id/artist_pic"
+        android:background="@color/black_transparent70"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:paddingStart="8dp"
+        android:gravity="center_vertical"/>
+
+</RelativeLayout>

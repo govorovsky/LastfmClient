@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.GridLayout;
 import android.widget.ListAdapter;
 
@@ -42,5 +43,9 @@ public class StretchedGridView extends GridLayout {
 
     public void setAdapter(ListAdapter adapter) {
         gridLayoutStretchedView.setAdapter(adapter);
+    }
+
+    public ListAdapter getAdapter() {
+        return gridLayoutStretchedView.getAdapter();
     }
 }

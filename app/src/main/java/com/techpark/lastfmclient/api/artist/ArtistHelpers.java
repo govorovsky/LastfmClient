@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import com.techpark.lastfmclient.adapters.ArtistWrapper;
 import com.techpark.lastfmclient.db.ArtistsTable;
 import com.techpark.lastfmclient.providers.ArtistsProvider;
 
@@ -21,19 +22,24 @@ import java.util.HashMap;
  */
 public class ArtistHelpers {
 
-    public static Artist getArtistInfoFromJSON(JSONObject json) throws JSONException {
-        Artist a = getArtistFromJSON(json);
+    public static ArtistWrapper getArtistInfoFromJSON(JSONObject json) throws JSONException {
+        ArtistWrapper a = new ArtistWrapper(getArtistFromJSON(json));
 
         JSONArray similars = json.getJSONObject("similar").optJSONArray("artist");
-        ArrayList<String> similarArtists = new ArrayList<>();
+        ArrayList<Artist> similarArtists = new ArrayList<>();
+        ArrayList<String> similarNames = new ArrayList<>();
         if (similars != null) {
-            for (int i = 0; i < similars.length(); ++i)
-                similarArtists.add(((JSONObject) similars.get(i)).getString("name"));
+            for (int i = 0; i < similars.length(); ++i) {
+                similarArtists.add(getArtistFromJSON(similars.getJSONObject(i)));
+                similarNames.add(similarArtists.get(i).getArtistName());
+            }
         } else {
             JSONObject similar = json.getJSONObject("similar").getJSONObject("artist"); //TODO: just similar?
-            similarArtists.add(similar.getString("name"));
+            similarArtists.add(getArtistFromJSON(similar));
+            similarNames.add(similarArtists.get(0).getArtistName());
         }
-        a.addSimilar(similarArtists);
+        a.setSimilarArtists(similarArtists);
+        a.addSimilar(similarNames);
 
         JSONArray tags = json.getJSONObject("tags").optJSONArray("tag");
         ArrayList<String> artistTags = new ArrayList<>();
@@ -72,7 +78,10 @@ public class ArtistHelpers {
     }
 
     public static Artist getArtistFromCursor(Cursor cursor) {
+        Log.d("getArtistFromCursor", "here");
         cursor.moveToFirst();
+        for (int i = 0; i < cursor.getColumnCount(); ++i)
+            Log.d("TAGSTAGS: " + cursor.getColumnName(i), cursor.getString(i));
 
         HashMap<String, String> images = new HashMap<>();
         for (int i = 0; i < Artist.ImageSizes.size(); ++i) {
@@ -83,25 +92,35 @@ public class ArtistHelpers {
                 cursor.getString(1), cursor.getString(2), images
         );
 
-        a.setBioSummary(cursor.getString(8));
-        a.setBioContent(cursor.getString(9));
-
-        String[] tags = cursor.getString(10).split(",");
+        String[] tags = cursor.getString(8).split(",");
         a.addTag(new ArrayList<>(Arrays.asList(tags)));
 
-        String[] simArtists = cursor.getString(11).split(",");
+        String[] simArtists = cursor.getString(9).split(",");
         a.addSimilar(new ArrayList<>(Arrays.asList(simArtists)));
 
+        a.setBioSummary(cursor.getString(10));
+        a.setBioContent(cursor.getString(11));
+
+        for (String s : simArtists)
+            Log.d("getArtistFromCursor", s);
+
+        Log.d("getArtistFromCursor", "end");
         return a;
     }
 
-    public static ArrayList<Artist> getSimilarArtists(Artist artist, Context context) {
+    public static ArrayList<Artist> getSimilarArtists(Artist artist, Context context, int limit) {
         ArrayList<Artist> similars = new ArrayList<>();
 
-        ArtistsProvider provider = new ArtistsProvider(context);
-        for (String s : artist.getSimilars())
-            similars.add(provider.getArtistFromDB(s));
+        if (limit == -1)
+            limit = artist.getSimilars().size();
 
+        ArtistsProvider provider = new ArtistsProvider(context);
+        for (int i = 0; i < artist.getSimilars().size() && i < limit; ++i) {
+            Log.d("getSiilarArtists NNN", artist.getSimilars().get(i));
+            similars.add(provider.getArtistFromDB(
+                    artist.getSimilars().get(i)
+            ));
+        }
         return similars;
     }
 }

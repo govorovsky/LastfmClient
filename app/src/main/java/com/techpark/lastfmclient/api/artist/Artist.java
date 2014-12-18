@@ -28,8 +28,8 @@ public class Artist implements Serializable {
 
     private String artist;
     private String url;
-    private String bioSummary;
-    private String bioContent;
+    private String bioSummary = "Not info";
+    private String bioContent = "Not info";
     private HashMap<String, String> images;
     private ArrayList<String> tags;
     private ArrayList<String> similars;
@@ -45,9 +45,6 @@ public class Artist implements Serializable {
 
         this.tags = new ArrayList<>();
         this.similars = new ArrayList<>();
-
-        this.bioContent = "";
-        this.bioSummary = "";
     }
 
     public Artist(String artist, String url) {

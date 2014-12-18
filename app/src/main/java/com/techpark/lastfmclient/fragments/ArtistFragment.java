@@ -19,6 +19,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.techpark.lastfmclient.R;
+import com.techpark.lastfmclient.adapters.RecommendedAdapter;
+import com.techpark.lastfmclient.adapters.RecommendedArtistList;
+import com.techpark.lastfmclient.adapters.SimilarArtistAdapter;
 import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.artist.ArtistHelpers;
 import com.techpark.lastfmclient.db.ArtistsTable;
@@ -41,8 +44,11 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
     private ProgressBar mProgressBar;
     private RelativeLayout mHeader;
     private LinearLayout mTags;
-    private StretchedGridView mSimilarGrid;
     private TopCropImageView mCover;
+
+    private StretchedGridView mSimilarGrid;
+    private ArrayList<Artist> artistList = new ArrayList<>();
+    private SimilarArtistAdapter adapter;
 
     private class LoadersNum {
         static final int ARTIST_LOADER = 0;
@@ -93,11 +99,14 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
             mProgressBar.setVisibility(View.GONE);
         }
 
-        mSimilarGrid = (StretchedGridView) view.findViewById(R.id.similar_artists_grid);
         mArtistName = (TextView) view.findViewById(R.id.artist_name);
         mArtistBio = (TextView) view.findViewById(R.id.artist_biography);
         mTags = (LinearLayout) view.findViewById(R.id.tags);
         mCover = (TopCropImageView) view.findViewById(R.id.image_header);
+
+        adapter = new SimilarArtistAdapter(getActivity(), R.layout.similar_artist, artistList);
+        mSimilarGrid = (StretchedGridView) view.findViewById(R.id.similar_artists_grid);
+        mSimilarGrid.setAdapter(adapter);
     }
 
     @Override
@@ -117,11 +126,17 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
         }
     }
 
+    private boolean fullInfo = false;
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "Loader onFinished");
         switch (loader.getId()) {
             case LoadersNum.ARTIST_LOADER:
+                if (!fullInfo) {
+                    fullInfo = true;
+                    return;
+                }
+
                 mArtist = ArtistHelpers.getArtistFromCursor(data);
                 if (mArtist != null) {
                     isArtistLoaded = true;
@@ -154,6 +169,10 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
         } else {
             mArtistBio.setText("No info about this artist. You can help us resolve this upset fact!");
         }
+
+        ArrayList<Artist> similars = ArtistHelpers.getSimilarArtists(artist, getActivity(), 4);
+        artistList.addAll(similars);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

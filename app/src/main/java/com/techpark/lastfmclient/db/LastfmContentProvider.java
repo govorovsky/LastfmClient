@@ -64,6 +64,7 @@ public class LastfmContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selArgs, String sortOrder) {
+        Log.d("QUERY ARTIST 1", uri.toString());
         switch (uriMatcher.match(uri)) {
             case DBEntity.USER_INFO:
                 return queryUser(uri, projection, selection, selArgs);
@@ -73,6 +74,7 @@ public class LastfmContentProvider extends ContentProvider {
                 return queryLibrary(uri, projection, selection, selArgs);
             case DBEntity.ARTIST_INFO:
             case DBEntity.ARTIST:
+                Log.d("QUERY ARTIST 2", uri.toString());
                 return queryArtist(uri, projection, selection, selArgs);
             case DBEntity.RECOMMENDED:
                 return queryRecommended(uri, projection, selection, selArgs);
