@@ -36,12 +36,13 @@ public class RecentTracksLoader extends BaseLoader<RecentTracksList> {
     @Override
     protected ApiResponse<RecentTracksList> load() {
         if (type == ApiResponse.Type.CACHE) {
-            Cursor c = getContext().getContentResolver().query(RecentTracksTable.CONTENT_URI, null, null, null, null);
+            // todo add settings!
+            Cursor c = getContext().getContentResolver().query(RecentTracksTable.CONTENT_URI, null, null, null, "15");
             RecentTracksList l = UserHelpers.getRecentTracksFromCursor(c);
             c.close();
             return new ApiResponse<>(l, type);
         } else if (type == ApiResponse.Type.API) {
-            ApiQuery query = new UserGetRecentTracks(username, 4, page);
+            ApiQuery query = new UserGetRecentTracks(username, 15, page);
             query.prepare();
             try {
                 String resp = NetworkUtils.httpRequest(query);

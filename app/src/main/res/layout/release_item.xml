@@ -26,7 +26,7 @@
     <TextView
         android:id="@+id/release_name"
         android:layout_width="match_parent"
-        android:layout_height="22dp"
+        android:layout_height="wrap_content"
         android:fontFamily="Roboto Regular"
         android:layout_above="@id/release_band"
         android:background="@color/black_transparent70"

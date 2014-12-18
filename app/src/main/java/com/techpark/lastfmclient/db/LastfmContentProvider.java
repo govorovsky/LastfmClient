@@ -66,7 +66,7 @@ public class LastfmContentProvider extends ContentProvider {
             case DBEntity.USER_INFO:
                 return queryUser(uri, projection, selection, selArgs);
             case DBEntity.TRACK_RECENT:
-                return queryRecentTracks(uri, projection, selection, selArgs);
+                return queryRecentTracks(uri, projection, selection, selArgs,sortOrder);
             case DBEntity.LIBRARY:
                 return queryLibrary(uri, projection, selection, selArgs);
             case DBEntity.ARTIST:
@@ -106,8 +106,9 @@ public class LastfmContentProvider extends ContentProvider {
         return c;
     }
 
-    private Cursor queryRecentTracks(Uri uri, String[] projection, String selection, String[] selArgs) {
-        Cursor c = readDb.query(RecentTracksTable.TABLE_NAME, projection, null, null, null, null, null);
+    private Cursor queryRecentTracks(Uri uri, String[] projection, String selection, String[] selArgs, String sortOrder) {
+        Cursor c = readDb.query(RecentTracksTable.TABLE_NAME, projection, null, null, null, null, null,sortOrder);
+        Log.e("LIMIT ACUQIRED=", " " + c.getCount());
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
     }
@@ -213,6 +214,7 @@ public class LastfmContentProvider extends ContentProvider {
             case DBEntity.NEW_RELEASES:
             case DBEntity.UPCOMING_EVENTS:
             case DBEntity.TRACK_RECENT:
+            case DBEntity.TRACK:
             case DBEntity.LIBRARY:
                 return writeDb.delete(uri.getLastPathSegment(), s, strings);
         }

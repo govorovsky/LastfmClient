@@ -33,7 +33,7 @@ public class RecentTracksMoreFragment extends BaseFragment implements LoaderMana
     private RecentTracksAdapter adapter;
     private RecentTracksList list = new RecentTracksList();
 
-    private int itemCount = 4 + 1; // plus footer view!
+    private int itemCount = 15 + 1; // plus footer view!
 
     private View mProgress;
     private ProgressBar mProgressBar;

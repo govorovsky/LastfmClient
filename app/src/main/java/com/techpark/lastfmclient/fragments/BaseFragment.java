@@ -76,7 +76,8 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (oldApha != -1) fragmentDispatcher.setActionBarFade(oldApha);
+        if (oldApha != -1 && conf.getActionBarFade() != FragmentConf.ActionBarState.VISIBLE)
+            fragmentDispatcher.setActionBarFade(oldApha);
     }
 
     protected void changeActionBarFabe(int scrollPos) {

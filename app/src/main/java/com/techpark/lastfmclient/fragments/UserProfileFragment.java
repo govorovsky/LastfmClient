@@ -64,7 +64,6 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     private User mUser;
 
     private NotifyingScrollView notifyingScrollView;
-    private int newAlpha = -1;
 
 
     @Override
@@ -126,7 +125,7 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        serviceHelper.getRecentTracks(mUsername, 4);
+        serviceHelper.getRecentTracks(mUsername, 15);
         serviceHelper.getLibraryArtists(mUsername, 4);
 
         recentTracksView = (StretchedListView) view.findViewById(R.id.recent_tracks);
@@ -215,7 +214,8 @@ public class UserProfileFragment extends BaseFragment implements LoaderManager.L
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case TRACKS_LOADER:
-                return new CursorLoader(getActivity(), RecentTracksTable.CONTENT_URI, null, null, null, null);
+                // todo settings!
+                return new CursorLoader(getActivity(), RecentTracksTable.CONTENT_URI, null, null, null, "3");
             case LIBRARY_LOADER:
                 return new CursorLoader(getActivity(), LibraryTable.CONTENT_URI, null, null, null, null);
 

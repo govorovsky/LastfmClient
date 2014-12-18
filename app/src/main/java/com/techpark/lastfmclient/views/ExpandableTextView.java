@@ -3,6 +3,7 @@ package com.techpark.lastfmclient.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
@@ -44,7 +45,6 @@ public class ExpandableTextView extends TextView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
         if (!mNeedTextMeasure) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             return;
@@ -59,7 +59,8 @@ public class ExpandableTextView extends TextView {
         Log.v("Max height(measured)", "-" + getMeasuredHeight());
 
         if (getLineCount() <= maxLine) { // no need to expand
-            mStateTextView.setVisibility(INVISIBLE);
+            if (mStateTextView != null)
+                mStateTextView.setVisibility(INVISIBLE);
             return;
         }
 
@@ -147,6 +148,11 @@ public class ExpandableTextView extends TextView {
         public boolean willChangeBounds() {
             return true;
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return false;
     }
 
     public void setStateTextView(TextView mStateTextView) {

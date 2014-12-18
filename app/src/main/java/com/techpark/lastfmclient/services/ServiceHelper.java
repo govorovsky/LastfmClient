@@ -9,6 +9,7 @@ import android.util.Log;
 import com.techpark.lastfmclient.db.ArtistsTable;
 import com.techpark.lastfmclient.db.NewReleasesTable;
 import com.techpark.lastfmclient.db.RecommendedArtistsTable;
+import com.techpark.lastfmclient.db.TrackTable;
 import com.techpark.lastfmclient.db.UpcomingEventsTable;
 import com.techpark.lastfmclient.db.UsersTable;
 import com.techpark.lastfmclient.providers.EventsProvider;
@@ -101,6 +102,7 @@ public class ServiceHelper {
         resolver.delete(NewReleasesTable.CONTENT_URI, null, null);
         resolver.delete(LibraryTable.CONTENT_URI, null, null);
         resolver.delete(RecentTracksTable.CONTENT_URI, null, null);
+        resolver.delete(TrackTable.CONTENT_URI, null, null);
         resolver.delete(UpcomingEventsTable.CONTENT_URI, null, null);
     }
 
