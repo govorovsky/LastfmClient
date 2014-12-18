@@ -12,6 +12,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.techpark.lastfmclient.R;
 import com.techpark.lastfmclient.api.artist.Artist;
+import com.techpark.lastfmclient.fragments.ArtistFragment;
+import com.techpark.lastfmclient.fragments.BaseFragment;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -20,8 +22,8 @@ public class RecommendedAdapter extends BaseAdapter {
     private RecommendedArtistList mArtistList = null;
     private LayoutInflater layoutInflater = null;
 
-    public RecommendedAdapter(Context c, RecommendedArtistList artists) {
-        this.mContext = c;
+    public RecommendedAdapter(Context context, RecommendedArtistList artists) {
+        this.mContext = context;
         this.layoutInflater = LayoutInflater.from(mContext);
         this.mArtistList = artists;
     }
@@ -92,14 +94,12 @@ public class RecommendedAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private class ArtistHolder implements View.OnClickListener {
+    private class ArtistHolder {
         ImageView image;
         TextView band;
         TextView similar_band;
         CircleImageView similar_first;
         CircleImageView similar_second;
-
-        private boolean clickFlag = false;
 
         ArtistHolder(View v) {
             this.image = (ImageView) v.findViewById(R.id.band_icon);
@@ -107,20 +107,6 @@ public class RecommendedAdapter extends BaseAdapter {
             this.similar_band = (TextView) v.findViewById(R.id.band_similar);
             this.similar_first = (CircleImageView) v.findViewById(R.id.band_similar_second);
             this.similar_second = (CircleImageView) v.findViewById(R.id.band_similar_first);
-
-            this.similar_band.setOnClickListener(this);
-        }
-
-        //TODO + redirect for click on images
-        @Override
-        public void onClick(View view) {
-            /*
-            Log.d("onClick", view.toString());
-            this.clickFlag = !this.clickFlag;
-            ViewGroup.LayoutParams params = view.getLayoutParams();
-            params.height = (this.clickFlag) ? ViewGroup.LayoutParams.MATCH_PARENT : 22;
-            view.setLayoutParams(params);
-            */
         }
     }
 }

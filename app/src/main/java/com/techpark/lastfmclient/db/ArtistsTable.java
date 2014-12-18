@@ -1,7 +1,10 @@
 package com.techpark.lastfmclient.db;
 
+import android.content.ContentValues;
 import android.net.Uri;
 import android.provider.BaseColumns;
+
+import com.techpark.lastfmclient.api.artist.Artist;
 
 /**
  * Created by max on 14/11/14.
@@ -21,6 +24,10 @@ public class ArtistsTable implements BaseColumns {
     public static final String COLUMN_IMAGE_LARGE = "image_large";
     public static final String COLUMN_IMAGE_EXTRALARGE = "image_extralarge";
     public static final String COLUMN_IMAGE_MEGA = "image_mega";
+    public static final String COLUMN_BIO_SUMMARY = "bio_summary";
+    public static final String COLUMN_BIO_CONTENT = "bio_content";
+    public static final String COLUMN_TAGS = "tags";
+    public static final String COLUMN_SIMILARS = "similars";
 
     public static final String SQL_CREATE_ARTIST_TABLE = "CREATE TABLE " + TABLE_NAME + " ("
             + _ID + " INTEGER PRIMARY KEY, "
@@ -30,8 +37,37 @@ public class ArtistsTable implements BaseColumns {
             + COLUMN_IMAGE_MEDIUM + " TEXT, "
             + COLUMN_IMAGE_LARGE + " TEXT, "
             + COLUMN_IMAGE_EXTRALARGE + " TEXT, "
-            + COLUMN_IMAGE_MEGA + " TEXT "
+            + COLUMN_IMAGE_MEGA + " TEXT, "
+            + COLUMN_TAGS + " TEXT, "
+            + COLUMN_SIMILARS + " TEXT, "
+            + COLUMN_BIO_SUMMARY + " TEXT, "
+            + COLUMN_BIO_CONTENT + " TEXT "
             + ");";
+
+    public static ContentValues getContentValues(Artist artist) {
+        ContentValues content = new ContentValues(Artist.ARTIST_SIZE);
+        content.put(ArtistsTable.COLUMN_NAME, artist.getArtistName());
+        content.put(ArtistsTable.COLUMN_URL, artist.getUrl());
+        content.put(ArtistsTable.COLUMN_IMAGE_SMALL, artist.getImage(Artist.ImageSize.SMALL));
+        content.put(ArtistsTable.COLUMN_IMAGE_MEDIUM, artist.getImage(Artist.ImageSize.MEDIUM));
+        content.put(ArtistsTable.COLUMN_IMAGE_LARGE, artist.getImage(Artist.ImageSize.LARGE));
+        content.put(ArtistsTable.COLUMN_IMAGE_EXTRALARGE, artist.getImage(Artist.ImageSize.EXTRALARGE));
+        content.put(ArtistsTable.COLUMN_IMAGE_MEGA, artist.getImage(Artist.ImageSize.MEGA));
+        content.put(ArtistsTable.COLUMN_BIO_SUMMARY, artist.getBioSummary());
+        content.put(ArtistsTable.COLUMN_BIO_CONTENT, artist.getBioContent());
+
+        StringBuilder tagsBuilder = new StringBuilder();
+        for (String s : artist.getTags())
+            tagsBuilder.append(s).append(",");
+        content.put(ArtistsTable.COLUMN_TAGS, tagsBuilder.toString());
+
+        StringBuilder similarsBuilder = new StringBuilder();
+        for (String s : artist.getSimilars())
+            similarsBuilder.append(s).append(",");
+        content.put(ArtistsTable.COLUMN_SIMILARS, similarsBuilder.toString());
+
+        return content;
+    }
 
 
 }

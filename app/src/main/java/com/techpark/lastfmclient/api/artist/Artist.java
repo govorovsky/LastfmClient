@@ -1,5 +1,7 @@
 package com.techpark.lastfmclient.api.artist;
 
+import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,9 +9,9 @@ import java.util.HashMap;
 /**
  * Created by max on 13/11/14.
  */
-public class Artist {
+public class Artist implements Serializable {
 
-    public static final int ARTIST_SIZE = 7;
+    public static final int ARTIST_SIZE = 11;
 
     public class ImageSize {
         public final static String SMALL = "small";
@@ -26,7 +28,11 @@ public class Artist {
 
     private String artist;
     private String url;
+    private String bioSummary = "Not info";
+    private String bioContent = "Not info";
     private HashMap<String, String> images;
+    private ArrayList<String> tags;
+    private ArrayList<String> similars;
 
     public Artist() {
         /* void */
@@ -36,6 +42,9 @@ public class Artist {
         this.artist = artist;
         this.url = url;
         this.images = images;
+
+        this.tags = new ArrayList<>();
+        this.similars = new ArrayList<>();
     }
 
     public Artist(String artist, String url) {
@@ -61,4 +70,23 @@ public class Artist {
     public HashMap<String, String> getImages() {
         return this.images;
     }
+
+    public ArrayList<String> getTags() { return this.tags; }
+
+    public ArrayList<String> getSimilars() { return this.similars; }
+
+    public String getBioSummary() { return this.bioSummary; }
+
+    public String getBioContent() { return this.bioContent; }
+
+    public void setBioSummary(String summary) { this.bioSummary = summary; }
+
+    public void setBioContent(String content) { this.bioContent = content; }
+
+    public void addTag(ArrayList<String> tags) { this.tags.addAll(tags); }
+    public void addTag(String tag) { this.tags.add(tag); }
+
+    public void addSimilar(ArrayList<String> similars) { this.similars.addAll(similars); }
+    public void addSimilar(String similar) { this.similars.add(similar); }
+    public void addSimilar(Artist a) { this.similars.add(a.getArtistName()); }
 }

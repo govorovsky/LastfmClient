@@ -12,6 +12,7 @@ import com.techpark.lastfmclient.db.RecommendedArtistsTable;
 import com.techpark.lastfmclient.db.TrackTable;
 import com.techpark.lastfmclient.db.UpcomingEventsTable;
 import com.techpark.lastfmclient.db.UsersTable;
+import com.techpark.lastfmclient.providers.ArtistsProvider;
 import com.techpark.lastfmclient.providers.EventsProvider;
 import com.techpark.lastfmclient.db.LibraryTable;
 import com.techpark.lastfmclient.db.RecentTracksTable;
@@ -114,6 +115,20 @@ public class ServiceHelper {
         Bundle extras = new Bundle();
         extras.putString(LibraryArtistsProvider.BUNDLE_USERNAME, username);
         extras.putInt(LibraryArtistsProvider.BUNDLE_LIMIT, limit);
+        intent.putExtras(extras);
+
+        mContext.startService(intent);
+    }
+
+    public void getArtist(String artist, boolean info) {
+        Intent intent = new Intent(mContext, ServiceProcessor.class);
+        intent.putExtra(ServiceProcessor.PROVIDER, ServiceProcessor.Providers.ARIST_PROVIDER);
+
+        int method = (info) ? ArtistsProvider.Actions.INFO : ArtistsProvider.Actions.GET;
+        intent.putExtra(ServiceProcessor.METHOD, method);
+
+        Bundle extras = new Bundle();
+        extras.putString(ArtistsProvider.BUNDLE_ARTIST, artist);
         intent.putExtras(extras);
 
         mContext.startService(intent);
