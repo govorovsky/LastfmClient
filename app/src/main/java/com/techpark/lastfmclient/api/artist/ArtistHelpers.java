@@ -101,11 +101,14 @@ public class ArtistHelpers {
         a.setBioSummary(cursor.getString(10));
         a.setBioContent(cursor.getString(11));
 
-        for (String s : simArtists)
-            Log.d("getArtistFromCursor", s);
-
-        Log.d("getArtistFromCursor", "end");
         return a;
+    }
+
+    public static ArrayList<Artist> getSimilarArtists(String artist, Context context, int limit) {
+        ArtistsProvider provider = new ArtistsProvider(context);
+        Artist a = provider.getArtistFromDB(artist);
+
+        return getSimilarArtists(a, context, limit);
     }
 
     public static ArrayList<Artist> getSimilarArtists(Artist artist, Context context, int limit) {

@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +20,11 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.techpark.lastfmclient.R;
-import com.techpark.lastfmclient.adapters.RecommendedAdapter;
-import com.techpark.lastfmclient.adapters.RecommendedArtistList;
 import com.techpark.lastfmclient.adapters.SimilarArtistAdapter;
 import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.artist.ArtistHelpers;
 import com.techpark.lastfmclient.db.ArtistsTable;
+import com.techpark.lastfmclient.views.ExpandableTextView;
 import com.techpark.lastfmclient.views.StretchedGridView;
 import com.techpark.lastfmclient.views.TopCropImageView;
 
@@ -40,9 +40,11 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
     private static final String BUNDLE_ARTIST = "artist";
 
     private TextView mArtistName;
-    private TextView mArtistBio;
+    private ExpandableTextView mArtistBio;
     private ProgressBar mProgressBar;
     private RelativeLayout mHeader;
+    private RelativeLayout mArtistInfo;
+    private RelativeLayout moreSimilars;
     private LinearLayout mTags;
     private TopCropImageView mCover;
 
@@ -100,13 +102,29 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
         }
 
         mArtistName = (TextView) view.findViewById(R.id.artist_name);
-        mArtistBio = (TextView) view.findViewById(R.id.artist_biography);
         mTags = (LinearLayout) view.findViewById(R.id.tags);
         mCover = (TopCropImageView) view.findViewById(R.id.image_header);
+
+        mArtistInfo = (RelativeLayout) view.findViewById(R.id.label_artist_bio);
+        mArtistBio = (ExpandableTextView) view.findViewById(R.id.artist_biography);
+        mArtistBio.setExpandHandler(mArtistInfo);
+        mArtistBio.setStateTextView((TextView) view.findViewById(R.id.button_full_bio));
 
         adapter = new SimilarArtistAdapter(getActivity(), R.layout.similar_artist, artistList);
         mSimilarGrid = (StretchedGridView) view.findViewById(R.id.similar_artists_grid);
         mSimilarGrid.setAdapter(adapter);
+
+        moreSimilars = (RelativeLayout) view.findViewById(R.id.label_artist_similar);
+        moreSimilars.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentDispatcher.setFragment(
+                        SimilarArtistMoreFragment.getInstance(mArtist.getArtistName()),
+                        SimilarArtistMoreFragment.TAG,
+                        true
+                );
+            }
+        });
     }
 
     @Override
@@ -146,7 +164,7 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
         }
     }
 
-    private void artistInfoLoaded(Artist artist) {
+    private void artistInfoLoaded(final Artist artist) {
         mHeader.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
 
@@ -165,7 +183,7 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
 
         if (!artist.getBioSummary().isEmpty()) {
             mArtistBio.setText(Html.fromHtml(artist.getBioSummary()));
-            //TODO movement
+            mArtistBio.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             mArtistBio.setText("No info about this artist. You can help us resolve this upset fact!");
         }
