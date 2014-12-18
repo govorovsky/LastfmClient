@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -25,6 +26,7 @@ import com.techpark.lastfmclient.api.artist.Artist;
 import com.techpark.lastfmclient.api.artist.ArtistHelpers;
 import com.techpark.lastfmclient.db.ArtistsTable;
 import com.techpark.lastfmclient.views.ExpandableTextView;
+import com.techpark.lastfmclient.views.NotifyingScrollView;
 import com.techpark.lastfmclient.views.StretchedGridView;
 import com.techpark.lastfmclient.views.TopCropImageView;
 
@@ -33,8 +35,7 @@ import java.util.ArrayList;
 /**
  * Created by max on 17/12/14.
  */
-public class ArtistFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>
-{
+public class ArtistFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>, NotifyingScrollView.OnScrollChangedListener {
     public static final String TAG = ArtistFragment.class.getSimpleName();
     private static final String TITLE = "Artist Info";
     private static final String BUNDLE_ARTIST = "artist";
@@ -52,10 +53,12 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
     private ArrayList<Artist> artistList = new ArrayList<>();
     private SimilarArtistAdapter adapter;
 
+
     private class LoadersNum {
         static final int ARTIST_LOADER = 0;
 
     }
+
     private Artist mArtist;
 
     private boolean isArtistLoaded = false;
@@ -92,6 +95,9 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
 
         mHeader = (RelativeLayout) view.findViewById(R.id.header);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+
+        NotifyingScrollView notifyingScrollView = (NotifyingScrollView) view.findViewById(R.id.scroll);
+        notifyingScrollView.setListener(this);
 
         if (!isArtistLoaded) {
             mProgressBar.setVisibility(View.VISIBLE);
@@ -145,6 +151,7 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
     }
 
     private boolean fullInfo = false;
+
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "Loader onFinished");
@@ -196,5 +203,10 @@ public class ArtistFragment extends BaseFragment implements LoaderManager.Loader
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         /* void */
+    }
+
+    @Override
+    public void onScrollChanged(ScrollView from, int l, int r, int oldl, int oldt) {
+        changeActionBarFabe(r);
     }
 }
